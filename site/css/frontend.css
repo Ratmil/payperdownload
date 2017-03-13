@@ -1,0 +1,76 @@
+.front_title
+{
+	font-weight: bold;
+	font-size: 12px;
+	margin-bottom: 10px;
+}
+
+.front_title2
+{
+	font-size: 12px;
+}
+
+.front_price_label
+{
+	font-weight: bold;
+	font-size: 12px;
+}
+
+.front_price_data
+{
+	font-size: 12px;
+}
+
+.front_input_label
+{
+	font-size: 12px;
+	width: 100px;
+}
+
+.front_input
+{
+}
+
+.front_button
+{
+}
+
+.front_message
+{
+	font-weight: bold;
+	font-size: 12px;
+}
+
+ul.front_list
+{
+	list-style-type : disc;
+	list-style-position : inside;
+	margin-left: 10px;
+}
+
+.front_list li
+{
+}
+
+.front_thank_you_continue_url
+{
+	text-align: center;
+}
+
+.front_affiliate_desc
+{
+}
+
+.front_fieldset
+{
+	margin:5px;
+    padding:15px;
+    border:solid 1px
+
+}
+
+.front_powered_by
+{
+	text-align: center;
+}
+

@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<metadata>
+<layout title="LICENSE_LAYOUT">
+	</layout>
+	<state>
+		<name>LICENSE_LAYOUT</name>
+		<description>LICENSE_LAYOUT_DESC</description>
+		<url addpath="/administrator/components/com_payperdownloadplus/elements">
+			<param name="lid" type="license" default="0" label="SELECT_LICENSE" description="SELECT_LICENSE_DESC" />
+		</url>
+	</state>
+</metadata>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<metadata>
+<layout title="PAYPERDOWNLOADPLUS_LICENSE_LAYOUT">
+		<message>
+			<![CDATA[PAYPERDOWNLOADPLUS_LICENSE_LAYOUT_DESC]]>
+		</message>
+	</layout>
+		<name>PAYPERDOWNLOADPLUS_LICENSE_LAYOUT</name>
+		<description>PAYPERDOWNLOADPLUS_LICENSE_LAYOUT_DESC</description>
+		<fields name="request">
+		<fieldset name="request" addfieldpath="/administrator/components/com_payperdownload/jfields">
+			<field name="lid" type="license" default="0" label="PAYPERDOWNLOADPLUS_LICENSE" description="PAYPERDOWNLOADPLUS_LICENSE_TO_PAY" required="true" />
+		</fieldset>
+	</fields>
+</metadata>

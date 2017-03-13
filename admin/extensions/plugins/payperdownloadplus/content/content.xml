@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<install version="1.6" method="upgrade" type="plugin" group="payperdownloadplus">
+	<name>PayperDownloadPlus - Content</name>
+	<version>2.5</version>
+	<creationDate>March 2012</creationDate>
+	<author>Ratmil</author>
+	<authorUrl>www.ratmilwebsolutions.com</authorUrl>
+	<description>Plugin for Pay per download Plus component to integrate with Content elements</description>
+	<license>GNU GPL</license>
+	<languages>
+		<language tag="en-GB">en-GB.plg_payperdownloadplus_content.ini</language>
+	</languages>
+	<files>
+		<filename plugin="content">content.php</filename>
+		<filename>content_plugin.js</filename>
+	</files>
+</install>

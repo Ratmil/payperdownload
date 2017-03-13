@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<install version="1.5" method="upgrade" type="plugin" group="system">
+<name>System - PayperDownload Access</name>
+<author>Ratmil Torres</author>
+<creationDate>August 2011</creationDate>
+<version>2.0.0</version>
+<license>GNU GPL</license>
+<copyright>(c) 2009 Ratmil Torres</copyright>
+<description>Controls access to resources and redirects to payment form.</description>
+<files>
+<filename plugin="payperdownloadplus">payperdownloadplus.php</filename>
+</files>
+</install>

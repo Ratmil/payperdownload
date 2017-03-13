@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<install version="1.5" method="upgrade" type="plugin" group="payperdownloadplus">
+	<name>PayperDownloadPlus - JDownload</name>
+	<version>2.5</version>
+	<creationDate>March 2012</creationDate>
+	<author>Ratmil</author>
+	<authorUrl>www.ratmilwebsolutions.com</authorUrl>
+	<languages>
+		<language tag="en-GB">en-GB.plg_payperdownloadplus_jdownload.ini</language>
+	</languages>
+	<files>
+		<filename plugin="jdownload">jdownload.php</filename>
+		<filename>jdownload_plugin.js</filename>
+	</files>
+</install>

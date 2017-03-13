@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<install version="1.5" type="plugin" group="editors-xtd" method="upgrade">
+	<name>Button - Paytoreadmore</name>
+	<author>Ratmil</author>
+	<creationDate>November 2011</creationDate>
+	<license>http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL</license>
+	<authorUrl>www.ratmilwebsolutions.com</authorUrl>
+	<version>1.0</version>
+	<languages>
+		<language tag="en-GB">en-GB.plg_editors_xtd_paytoreadmore.ini</language>
+	</languages>
+	<files>
+		<filename plugin="paytoreadmore">paytoreadmore.php</filename>
+		<filename plugin="paytoreadmore">paytoreadmore.png</filename>
+		<filename plugin="paytoreadmore">paytoreadmore.css</filename>
+	</files>
+	<params />
+</install>

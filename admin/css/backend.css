@@ -1,0 +1,44 @@
+.icon-forward			{ background-image: url(../images/forward.png); }
+.icon-preview			{ background-image: url(../images/preview.png); }
+.icon-statistics			{ background-image: url(../images/icon-32-statistics.png); }
+.icon-resend			{ background-image: url(../images/resend.png); }
+.icon-48-resources			{ background-image: url(../images/resources.png); }
+.icon-48-payments			{ background-image: url(../images/payments.png); }
+.icon-48-users			{ background-image: url(../images/users.png); }
+.icon-48-download			{ background-image: url(../images/download.png); }
+.icon-48-licenses			{ background-image: url(../images/licenses.png); }
+.icon-48-affiliates			{ background-image: url(../images/affiliates.png); }
+.icon-48-banners			{ background-image: url(../images/banners.png); }
+.icon-48-backup			{ background-image: url(../images/backup.png); }
+.icon-extend			{ background-image: url(../images/extend.png); }
+.icon-pay			{ background-image: url(../images/pay.png); }
+.icon-upgrade			{ background-image: url(../images/upgrade.png); }
+.icon-delete_ex			{ background-image: url(../images/delete.png); }
+.icon-back			{ background-image: url(../images/back.png); }
+
+table.statistics
+{
+	border-width: 1px;
+	text-align: right;
+}
+
+tr.statistics_header
+{
+	background-color: #009900;
+}
+tr.statistics_row
+{
+}
+
+
+td.statistics_header_left
+{
+	background-color: #00DD00;
+}
+
+.plugin_div
+{
+	width: 100px;
+	margin: 10px;
+	float: left;
+}

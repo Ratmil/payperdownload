@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension version="1.6" type="plugin" group="user">
+	<name>Referer</name>
+	<author>Ratmil Torres</author>
+	<creationDate>August 2011</creationDate>
+	<license>GNU General Public License version 2 or later; see LICENSE.txt</license>
+	<version>1.0</version>
+	<files>
+		<filename plugin="referer">referer.php</filename>
+		<filename>index.html</filename>
+	</files>
+</extension>

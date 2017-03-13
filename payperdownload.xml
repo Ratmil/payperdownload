@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension type="component" version="3.0" method="upgrade">
+	<name>Payperdownload</name>
+	<author>Ratmil</author>
+	<creationDate>April 2016</creationDate>
+	<license>GNU General Public License version 2 or later; see	LICENSE.txt</license>
+	<authorEmail>ratmil_torres@yahoo.com</authorEmail>
+	<authorUrl>www.ratmilwebsolutions.com</authorUrl>
+	<version>5.6</version>
+	<description>Payperdownload component to sell online content</description>
+	<scriptfile>install.payperdownload.php</scriptfile>
+	<install> 
+		<sql>
+			<file driver="mysql" charset="utf8">sql/install.mysql.sql</file>
+		</sql>
+	</install>
+	<uninstall>
+        <sql>
+            <file driver="mysql" charset="utf8">sql/uninstall.mysql.sql</file>
+        </sql>
+    </uninstall>
+	<update>
+		<schemas>
+			<schemapath type="mysql">sql/updates</schemapath>
+		</schemas>
+	</update>
+	<administration>
+		<menu link="option=com_payperdownload">COM_PAYPERDOWNLOAD</menu>
+		<submenu>
+		<menu link="option=com_payperdownload&amp;adminpage=resources">COM_PAYPERDOWNLOAD_RESOURCES</menu>
+		<menu link="option=com_payperdownload&amp;adminpage=licenses">COM_PAYPERDOWNLOAD_LICENSES</menu>
+		<menu link="option=com_payperdownload&amp;adminpage=users">COM_PAYPERDOWNLOAD_USERS_LICENCES</menu>
+		<menu link="option=com_payperdownload&amp;adminpage=downloads">COM_PAYPERDOWNLOAD_DOWNLOAD_LINKS</menu>
+		<menu link="option=com_payperdownload&amp;adminpage=orders">COM_PAYPERDOWNLOAD_PAYMENTS</menu>
+		<menu link="option=com_payperdownload&amp;adminpage=config">COM_PAYPERDOWNLOAD_CONFIGURATION</menu>
+		<menu link="option=com_payperdownload&amp;adminpage=coupons">COM_PAYPERDOWNLOAD_COUPONS</menu>
+		<menu link="option=com_payperdownload&amp;adminpage=backup">COM_PAYPERDOWNLOAD_BACKUP</menu>
+		<menu link="option=com_payperdownload&amp;adminpage=about">COM_PAYPERDOWNLOAD_ABOUT</menu>
+		</submenu>
+		<files folder="admin">
+			<filename>payperdownload.php</filename>
+			<folder>sql</folder>
+			<folder>html</folder>
+			<folder>data</folder>
+			<folder>controllers</folder>
+			<folder>classes</folder>
+			<folder>images</folder>
+			<folder>extensions</folder>
+			<folder>jfields</folder>
+			<filename>config.xml</filename>
+			<filename>import.php</filename>
+			<filename>export.php</filename>
+			<filename>css/backend.css</filename>
+			<filename>css/stat.css</filename>
+			<filename>css/index.html</filename>
+			<filename>js/ajax_source.js</filename>
+			<filename>js/excombo.js</filename>
+			<filename>js/resources3.js</filename>
+			<filename>js/index.html</filename>
+		</files>
+		<languages folder="admin/language">
+			<language tag="en-GB">en-GB.com_payperdownload.ini</language>
+			<language tag="es-ES">es-ES.com_payperdownload.ini</language>
+			<language tag="en-GB">en-GB.com_payperdownload.sys.ini</language>
+			<language tag="es-ES">es-ES.com_payperdownload.sys.ini</language>
+		</languages>
+	</administration>
+	<files folder="site">
+		<filename>payperdownload.php</filename>
+		<filename>controller.php</filename>
+		<folder>models</folder>
+		<folder>views</folder>
+		<folder>helpers</folder>
+		<folder>js</folder>
+		<filename>language/index.html</filename>
+		<filename>css/frontend.css</filename>
+		<filename>css/index.html</filename>
+	</files>
+	<languages folder="site/language">
+		<language tag="en-GB">en-GB.com_payperdownload.ini</language>
+		<language tag="es-ES">es-ES.com_payperdownload.ini</language>
+		<language tag="en-GB">en-GB.com_payperdownload.sys.ini</language>
+		<language tag="es-ES">es-ES.com_payperdownload.sys.ini</language>
+	</languages>
+</extension>

@@ -1,0 +1,47 @@
+.stat_header
+{
+	background-color: #aaaaaa;
+}
+
+.stat_bar
+{
+	background-color: #ff0000;
+}
+
+.stat_paid
+{
+	background-color: #00ff00;
+}
+
+.stat_fee
+{
+	background-color: #0000ff;
+}
+
+.stat_collected
+{
+	background-color: #ffff00;
+}
+
+.stat_title
+{
+	font-size: 10pt;
+	font-weight: bold;
+}
+
+.stat_label
+{
+	font-size: 10pt;
+	font-weight: bold;
+}
+
+.stat_data
+{
+	font-size: 10pt;
+}
+
+.stat_warning
+{
+	color: #ff0000;
+	font-size: 10pt;
+}

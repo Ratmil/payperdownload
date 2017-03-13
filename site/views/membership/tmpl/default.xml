@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<metadata>
+<layout title="PAYPERDOWNLOADPLUS_MEMBERSHIP_LAYOUT">
+		<message>
+			<![CDATA[PAYPERDOWNLOADPLUS_MEMBERSHIP_LAYOUT_DESC]]>
+		</message>
+	</layout>
+		<name>PAYPERDOWNLOADPLUS_MEMBERSHIP_LAYOUT</name>
+		<description>PAYPERDOWNLOADPLUS_MEMBERSHIP_LAYOUT_DESC</description>
+		
+</metadata>

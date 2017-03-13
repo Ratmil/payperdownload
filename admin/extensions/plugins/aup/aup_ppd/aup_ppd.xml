@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<alphauserpoints type="plugin">
+     <rule>Buy with Payperdownload</rule>
+     <description>Assign points to users who buy a license with Payperdownload</description>
+     <component>com_payperdownload</component>
+     <plugin_function>plgaup_payperdownload_buy</plugin_function>
+     <fixed_points>false</fixed_points>
+</alphauserpoints>
