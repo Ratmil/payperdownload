@@ -397,8 +397,12 @@ class plgPayperDownloadPlusContent extends JPlugin
 			if(class_exists("ContentHelperRoute"))
 			{
 				$link = JRoute::_(ContentHelperRoute::getArticleRoute($id, $catid));
-				$protocol = $_SERVER['SERVER_PROTOCOL'];
-				if(strtolower(substr($protocol, 0, 5)) == 'https')
+				// should always work according to PHP.net 
+				// http://www.php.net/manual/en/reserved.variables.server.php
+				// 1 - Set to a non-empty value if the script was queried through the HTTPS protocol.
+				// 2 - Note that when using ISAPI with IIS, the value will be "off" if the request was not made through the HTTPS protocol
+				$is_protocol_https = (isset($_SERVER['HTTPS']) && !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== "off") ? true : false;
+				if ($is_protocol_https)
 					$prefix = "https://";
 				else
 					$prefix = "http://";
