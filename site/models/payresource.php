@@ -172,6 +172,8 @@ class PayPerDownloadModelPayResource extends JModelLegacy
 				&$response, &$validate_response, &$status, &$amount, &$tax, &$fee, &$currency));
 			if($dealt)
 			{
+				PayPerDownloadPlusDebug::debug("Got payment for gateway " . $transactionId);
+				PayPerDownloadPlusDebug::debug("Response " . $response);
 				if(!$transactionId)
 				{
 					$this->commitTransaction();
@@ -291,6 +293,7 @@ class PayPerDownloadModelPayResource extends JModelLegacy
 			else
 				PayPerDownloadPlusDebug::debug("Payment not saved");
 		}
+		$download_link = false;
 		if($payed)
 		{
 			$returnUrl = JRequest::getVar('r');
@@ -306,7 +309,10 @@ class PayPerDownloadModelPayResource extends JModelLegacy
 		$redirect = JRequest::getVar('redirect', '');
 		if($redirect)
 		{
-			$redirect = base64_decode($redirect);
+			if($download_link)
+				$redirect = $download_link;
+			else
+				$redirect = base64_decode($redirect);
 			$mainframe = JFactory::getApplication();
 			$mainframe->redirect($redirect);
 		}
@@ -346,7 +352,8 @@ class PayPerDownloadModelPayResource extends JModelLegacy
 		return $downloadLink;
 	}
 	
-	function setDownloadLinkPayed($download_id, $resource_id, $payer_email, $user_email, $returnUrl)
+	function setDownloadLinkPayed($download_id, $resource_id, 
+		$payer_email, $user_email, $returnUrl)
 	{
 		$download_id = (int)$download_id;
 		$resource_id = (int)$resource_id;

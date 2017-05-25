@@ -2,11 +2,11 @@
 <extension type="component" version="3.0" method="upgrade">
 	<name>Payperdownload</name>
 	<author>Ratmil Torres, Olivier Buisard</author>
-	<creationDate>March 2017</creationDate>
+	<creationDate>May 2017</creationDate>
 	<license>GNU General Public License version 2 or later; see	LICENSE.txt</license>
 	<authorEmail>ratmil_torres@yahoo.com</authorEmail>
 	<authorUrl>www.ratmilwebsolutions.com</authorUrl>
-	<version>5.7</version>
+	<version>5.9</version>
 	<description>Payperdownload component to sell online content</description>
 	<scriptfile>install.payperdownload.php</scriptfile>
 	<install> 
