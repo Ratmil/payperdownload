@@ -5,20 +5,20 @@
  * @copyright (C) Ratmil Torres
  * @license GNU/GPL http://www.gnu.org/copyleft/gpl.html
 **/
-/** ensure this file is being included by a parent file */
-defined( '_JEXEC' ) or
-die( 'Direct Access to this location is not allowed.' );
+
+// no direct access
+defined ( '_JEXEC' ) or die;
 
 class MenuItemVisualDataBind extends VisualDataBind
 {
-	
+
 	/**
 	Class constructor
 	$dataField      : The field of the table that will edited
 	$displayName  : Text that will show for this element
 	$tableName    :  The name of the table where the elements to choose from will be read
 	$keyField	   :   The key field on this table
-         $displayField   :   The field that will be shown for the list of elements	
+         $displayField   :   The field that will be shown for the list of elements
 	*/
 	function __construct($dataField, $displayName)
 	{
@@ -27,7 +27,7 @@ class MenuItemVisualDataBind extends VisualDataBind
 		$this->useForTextSearch = false;
 		$this->firstItem = JText::_("PAYPERDOWNLOADPLUS_NONE");
 	}
-	
+
 	/**
 	Renders filter controls for this element in list mode
 	*/
@@ -35,7 +35,7 @@ class MenuItemVisualDataBind extends VisualDataBind
 	{
 		return "";
 	}
-	
+
 	/**
 	Renders controls for this element when inserting a new record on the table
 	*/
@@ -52,10 +52,10 @@ class MenuItemVisualDataBind extends VisualDataBind
 		}
 		$last_menu_type = "";
 		$group_open = false;
-		$html .= "<select class=\"inputbox\" name=\"$dataField\" id=\"$dataField\" $disabled ".$this->renderHtmlProperties().">";  
+		$html .= "<select class=\"inputbox\" name=\"$dataField\" id=\"$dataField\" $disabled ".$this->renderHtmlProperties().">";
 		$html .= "<option value=\"0\">".htmlspecialchars($this->firstItem)."</option>";
 		foreach($items as $item)
-		{	
+		{
 			if($item->menutype != $last_menu_type)
 			{
 				if($group_open)
@@ -78,7 +78,7 @@ class MenuItemVisualDataBind extends VisualDataBind
 		$html .= "</td></tr>";
 		return $html;
 	}
-	
+
 	/**
 	Renders controls for this element when editing a record on the table
 	*/
@@ -96,10 +96,10 @@ class MenuItemVisualDataBind extends VisualDataBind
 		}
 		$last_menu_type = "";
 		$group_open = false;
-		$html .= "<select class=\"inputbox\" name=\"$dataField\" id=\"$dataField\" $disabled ".$this->renderHtmlProperties().">";  
+		$html .= "<select class=\"inputbox\" name=\"$dataField\" id=\"$dataField\" $disabled ".$this->renderHtmlProperties().">";
 		$html .= "<option value=\"0\">".htmlspecialchars($this->firstItem)."</option>";
 		foreach($items as $item)
-		{	
+		{
 			if($item->menutype != $last_menu_type)
 			{
 				if($group_open)
@@ -122,7 +122,7 @@ class MenuItemVisualDataBind extends VisualDataBind
 		$html .= "</td></tr>";
 		return $html;
 	}
-	
+
 	/**
 	Renders javascript code to validate this control before submitting
 	*/
@@ -131,7 +131,7 @@ class MenuItemVisualDataBind extends VisualDataBind
 		$javascript = "";
 		return $javascript;
 	}
-	
+
 	function reorderItems(&$items_ordered, $items, $parent_id, $depth)
 	{
 		$count = count($items);
@@ -146,14 +146,10 @@ class MenuItemVisualDataBind extends VisualDataBind
 			}
 		}
 	}
-	
+
 	function getMenuitems()
 	{
-		$version = new JVersion;
-		if($version->RELEASE == "1.5")
-			$query = "SELECT id, name as title, menutype, parent as parent_id FROM #__menu ORDER BY menutype";
-		else
-			$query = "SELECT id, title, menutype, parent_id FROM #__menu WHERE client_id = 0 ORDER BY menutype";
+		$query = "SELECT id, title, menutype, parent_id FROM #__menu WHERE client_id = 0 ORDER BY menutype";
 		$db = JFactory::getDBO();
 		$db->setQuery($query);
 		$items = $db->loadObjectList();

@@ -5,9 +5,9 @@
  * @copyright (C) Ratmil Torres
  * @license GNU/GPL http://www.gnu.org/copyleft/gpl.html
 **/
-/** ensure this file is being included by a parent file */
-defined( '_JEXEC' ) or
-die( 'Direct Access to this location is not allowed.' );
+
+// no direct access
+defined ( '_JEXEC' ) or die;
 
 /**
 This class represents an element on the admin form.
@@ -27,7 +27,7 @@ class VisualEditCheckboxDataBind extends VisualDataBind
 		parent::__construct($dataField, $displayName);
 		$this->checkboxTitle = $checkboxTitle;
 	}
-	
+
 	/**
 	Renders controls for this element when inserting a new record on the table
 	*/
@@ -57,7 +57,7 @@ class VisualEditCheckboxDataBind extends VisualDataBind
 		$html .= "</td></tr>";
 		return $html;
 	}
-	
+
 	/**
 	Renders controls for this element when editing a record on the table
 	*/

@@ -100,6 +100,7 @@ function content_plugin_category_change()
 	
 	myAjaxTrigger.async_call(site_root + 'administrator/index.php', 'option=' + 
 		encodeURIComponent(site_option) + '&adminpage=' + 
+		encodeURIComponent(site_adminpage) + '&view=' +
 		encodeURIComponent(site_adminpage) + '&task=ajaxCall&format=raw' +
 		'&plugin=content&t=a&x=' + encodeURIComponent(content_category.value), content_plugin_category_change_result, content_plugin_error);
 }
@@ -166,6 +167,7 @@ function content_plugin_search()
 	
 	myAjaxTrigger.async_call(site_root + '/administrator/index.php', 'option=' + 
 		encodeURIComponent(site_option) + '&adminpage=' + 
+		encodeURIComponent(site_adminpage) + '&view=' +
 		encodeURIComponent(site_adminpage) + '&task=ajaxCall&format=raw' +
 		'&plugin=content&t=s&x=' + encodeURIComponent(search_text.value), content_plugin_search_result, content_plugin_error);
 }

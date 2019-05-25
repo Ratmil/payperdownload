@@ -5,13 +5,9 @@
  * @copyright (C) Ratmil Torres
  * @license GNU/GPL http://www.gnu.org/copyleft/gpl.html
 **/
-defined( '_JEXEC' ) or
-die( 'Direct Access to this location is not allowed.' );
 
-/**
- * @author		Ratmil 
- * http://www.ratmilwebsolutions.com
-*/
+// no direct access
+defined ( '_JEXEC' ) or die;
 
 require_once(JPATH_COMPONENT.'/controllers/ppd.php');
 require_once(JPATH_COMPONENT.'/data/gentable.php');
@@ -31,13 +27,14 @@ class BackupForm extends PPDForm
 	{
 		parent::__construct();
 		$this->context = 'com_payperdownload';
+		$this->toolbarTitle = JText::_('COM_PAYPERDOWNLOAD_BACKUP_TITLE');
 	}
-	
+
 	function getHtmlObject()
 	{
 		return new BackupHtmlForm();
 	}
-	
+
 	function getFileNameWithDate()
 	{
 		$date = getdate();
@@ -48,13 +45,13 @@ class BackupForm extends PPDForm
 		}
 		return $date['year'].$date['mon'].$date['mday'].$date['hours'].$date['minutes'].$date['seconds'];
 	}
-	
+
 	function getTmpFile()
 	{
 		$config = JFactory::getConfig();
 		return $config->get('config.tmp_path') . '/back' . $this->getFileNameWithDate() . "bk";
 	}
-	
+
 	function compressFile($file)
 	{
 		jimport('joomla.filesystem.archive');
@@ -62,23 +59,23 @@ class BackupForm extends PPDForm
 		JArchive::create($dest, $file, 'gz');
 		return $dest;
 	}
-	
+
 	function backup()
 	{
 		require_once(JPATH_ADMINISTRATOR . "/components/com_payperdownload/export.php");
-		
+
 		ob_end_clean();
 		header("Cache-Control: public, must-revalidate");
 		header('Cache-Control: pre-check=0, post-check=0, max-age=0');
 		header("Pragma: no-cache");
-		header("Expires: 0"); 
+		header("Expires: 0");
 		header("Content-Description: File Transfer");
 		header("Expires: Sat, 30 Dec 1990 07:07:07 GMT");
 		header("Content-Type: application/octet-stream ");
-		header("Accept-Ranges: bytes"); 
+		header("Accept-Ranges: bytes");
 		header('Content-Disposition: attachment; filename="backup' . $this->getFileNameWithDate() . '.bk"');
 		header("Content-Transfer-Encoding: binary\n");
-		
+
 		$exporter = new XML_Exporter();
 		$exporter->to_file = false;
 		$exporter->write_root_open("payperdownload");
@@ -95,16 +92,16 @@ class BackupForm extends PPDForm
 		$exporter->write_root_close();
 		exit;
 	}
-	
+
 	function cleanDB()
-	{	
+	{
 		$db = JFactory::getDBO();
 		$tables = array(
 				'#__payperdownloadplus_affiliates_programs',
 				'#__payperdownloadplus_affiliates_users',
 				'#__payperdownloadplus_affiliates_banners',
 				'#__payperdownloadplus_affiliates_users_refered',
-				'#__payperdownloadplus_payments', 
+				'#__payperdownloadplus_payments',
 				'#__payperdownloadplus_resource_licenses',
 				'#__payperdownloadplus_users_licenses',
 				'#__payperdownloadplus_licenses',
@@ -117,7 +114,7 @@ class BackupForm extends PPDForm
 			$db->query();
 		}
 	}
-	
+
 	function decompressFiles($gzFile, &$decompressedFiles)
 	{
 		jimport('joomla.filesystem.file');
@@ -137,7 +134,7 @@ class BackupForm extends PPDForm
 			$ext = JFile::getExt(strtolower($file));
 			if($ext == 'bk')
 			{
-				
+
 				$decompressedFiles[] = $file;
 			}
 		}
@@ -152,10 +149,14 @@ class BackupForm extends PPDForm
 		else
 			return substr($filename, $pos + 1);
 	}
-	
+
 	function restore()
 	{
-		$importfile = JRequest::getVar('importxml', null, 'files', 'array' );
+	    $jinput = JFactory::getApplication()->input;
+
+		//$importfile = JRequest::getVar('importxml', null, 'files', 'array' );
+		$importfile = $jinput->get('importxml', null, 'array');
+
 		if ( $importfile['error'] || $importfile['size'] < 1 )
 		{
 			$success = false;
@@ -176,8 +177,6 @@ class BackupForm extends PPDForm
 				$importer->headerName = "PAYPERDOWNLOAD";
 				$importer->onValidFunction = array($this, "cleanDB");
 				$tableheader = "payperdownloadplus_";
-				if(JRequest::getVar("oldversion"))
-					$tableheader = "payperdownloadplus_";
 				if($importer->importFromXml($tmp_dest, $tableheader) && $importer->validXML)
 				{
 					$success = true;
@@ -196,13 +195,13 @@ class BackupForm extends PPDForm
 			}
 		}
 		$mainframe = JFactory::getApplication();
-		$option = JRequest::getVar( 'option', '' );
+		$option = $jinput->get('option', '');
 		if($success)
-			$mainframe->redirect("index.php?option=$option&adminpage=backup", $msg);
+			$mainframe->redirect("index.php?option=$option&adminpage=backup&view=backup", $msg);
 		else
-			$mainframe->redirect("index.php?option=$option&adminpage=backup", $msg, "error");
+			$mainframe->redirect("index.php?option=$option&adminpage=backup&view=backup", $msg, "error");
 	}
-	
+
 	function doTask($task, $option)
 	{
 		switch($task)
@@ -219,11 +218,11 @@ class BackupForm extends PPDForm
 				break;
 		}
 	}
-	
+
 	function createToolbar($task, $option)
 	{
 		JHTML::_('stylesheet', 'administrator/components/'. $option . '/css/backend.css');
-		JToolBarHelper::title( JText::_( 'PAYPERDOWNLOADPLUS_BACKUP_TITLE' ), 'backup.png' );
+		JToolBarHelper::title( JText::_( 'COM_PAYPERDOWNLOAD_BACKUP_TITLE' ), 'database' );
 	}
 }
 ?>

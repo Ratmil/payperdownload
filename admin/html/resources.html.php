@@ -6,9 +6,8 @@
  * @license GNU/GPL http://www.gnu.org/copyleft/gpl.html
 **/
 
-/** ensure this file is being included by a parent file */
-defined( '_JEXEC' ) or
-die( 'Direct Access to this location is not allowed.' );
+// no direct access
+defined ( '_JEXEC' ) or die;
 
 require_once(JPATH_COMPONENT.'/html/pricecur.html.php');
 
@@ -54,9 +53,13 @@ class ResourcesHtmlForm extends BaseHtmlForm
 			return true;
 		}
 		</script>
+		<div id="j-sidebar-container" class="span2">
+		<?php echo JHtmlSidebar::render(); ?>
+	</div>
+	<div id="j-main-container" class="span10">
 		<fieldset class="adminform">
 		<legend><?php echo JText::_("PAYPERDOWNLOADPLUS_SELECT_THE_TYPE_OF_RESOURCE_27"); ?></legend>
-		<?php 
+		<?php
 		$i = 0;
 		foreach($plugins as $plugin)
 		{
@@ -80,18 +83,20 @@ class ResourcesHtmlForm extends BaseHtmlForm
 		</tr>
 		</table>
 		</div>
-		<?php 
+		<?php
 		$i++;
 		} ?>
 		<input type="hidden" id="pluginscount" name="pluginscount" value="<?php echo $i;?>"/>
 		</fieldset>
+		<br/>
+		<?php echo JText::sprintf('PAYPERDOWNLOADPLUS_DOWNLOAD_PLUGINS', '<a href="http://www.ratmilwebsolutions.com">www.ratmilwebsolutions.com</a>'); ?>
+		</div>
 		<?php
 	}
-	
-	
+
 	function renderPluginConfig($task, $option, $resourceType)
 	{
-		$option = JRequest::getVar("option");
+	    $option = JFactory::getApplication()->input->get("option");
 		$scriptPath = "administrator/components/$option/js/";
 		JHTML::script($scriptPath . "resources3.js", false);
 		JPluginHelper::importPlugin("payperdownloadplus");
@@ -102,13 +107,17 @@ class ResourcesHtmlForm extends BaseHtmlForm
 		var invalid_expiration_text = '<?php echo JText::_("PAYPERDOWNLOADPLUS_INVALID_RESOURCE_EXPIRATION");?>';
 		var invalid_maxdownload_text = '<?php echo JText::_("PAYPERDOWNLOADPLUS_INVALID_MAX_DOWNLOAD_COUNT");?>';
 		</script>
+		<div id="j-sidebar-container" class="span2">
+		<?php echo JHtmlSidebar::render(); ?>
+	</div>
+	<div id="j-main-container" class="span10">
 		<fieldset class="adminform">
 		<legend><?php echo JText::_("PAYPERDOWNLOADPLUS_NEW_RESOURCE_28"); ?></legend>
 		<table class="admintable">
 		<input type="hidden" name="resourceType" value="<?php echo htmlspecialchars($resourceType);?>" />
 	<?php
 		$dispatcher->trigger('onRenderConfig', array (&$resourceType, null));
-		$bind = new ComboVisualDataBind('license_id', JText::_('PAYPERDOWNLOADPLUS_LICENSE_29'), 
+		$bind = new ComboVisualDataBind('license_id', JText::_('PAYPERDOWNLOADPLUS_LICENSE_29'),
 			'#__payperdownloadplus_licenses', 'license_id', 'license_name');
 		$bind->allowBlank = true;
 		$bind->setEditToolTip(JText::_("PAYPERDOWNLOADPLUS_LICENSE_TO_APPLY_TO_RESOURCE_30"));
@@ -145,12 +154,13 @@ class ResourcesHtmlForm extends BaseHtmlForm
 		?>
 		</table>
 		</fieldset>
+		</div>
 	<?php
 	}
-	
+
 	function renderPluginConfigEdit($task, $option, $dataBindModel, $resource)
 	{
-		$option = JRequest::getVar("option");
+	    $option = JFactory::getApplication()->input->get("option");
 		$scriptPath = "administrator/components/$option/js/";
 		JHTML::script($scriptPath . "resources3.js", false);
 		JPluginHelper::importPlugin("payperdownloadplus");
@@ -162,6 +172,10 @@ class ResourcesHtmlForm extends BaseHtmlForm
 		var invalid_expiration_text = '<?php echo JText::_("PAYPERDOWNLOADPLUS_INVALID_RESOURCE_EXPIRATION");?>';
 		var invalid_maxdownload_text = '<?php echo JText::_("PAYPERDOWNLOADPLUS_INVALID_MAX_DOWNLOAD_COUNT");?>';
 		</script>
+		<div id="j-sidebar-container" class="span2">
+		<?php echo JHtmlSidebar::render(); ?>
+	</div>
+	<div id="j-main-container" class="span10">
 		<fieldset class="adminform">
 		<legend><?php echo JText::_("PAYPERDOWNLOADPLUS_EDIT_RESOURCE_LICENSE_118"); ?></legend>
 		<table class="admintable">
@@ -170,7 +184,7 @@ class ResourcesHtmlForm extends BaseHtmlForm
 		</script>
 		<input type="hidden" name="resourceType" value="<?php echo htmlspecialchars($resourceType);?>" />
 		<input type="hidden" name="resource_license_id" value="<?php echo htmlspecialchars($resource->resource_license_id);?>" />
-		
+
 	<?php
 		$dataBinds = $dataBindModel->dataBinds;
 		for ($i=0, $n=count( $dataBinds ); $i < $n; $i++)
@@ -183,9 +197,9 @@ class ResourcesHtmlForm extends BaseHtmlForm
 					echo "<script>".$databind->onRenderJavascriptRoutine."</script>";
 			}
 		}
-		
+
 		$dispatcher->trigger('onRenderConfig', array (&$resourceType, $resource));
-		$bind = new ComboVisualDataBind('license_id', JText::_('PAYPERDOWNLOADPLUS_LICENSE_29'), 
+		$bind = new ComboVisualDataBind('license_id', JText::_('PAYPERDOWNLOADPLUS_LICENSE_29'),
 			'#__payperdownloadplus_licenses', 'license_id', 'license_name');
 		$bind->setEditToolTip(JText::_("PAYPERDOWNLOADPLUS_LICENSE_TO_APPLY_TO_RESOURCE_30"));
 		$bind->allowBlank = true;
@@ -221,6 +235,7 @@ class ResourcesHtmlForm extends BaseHtmlForm
 	?>
 		</table>
 		</fieldset>
+		</div>
 		<script type="text/javascript">
 		license_select();
 		</script>

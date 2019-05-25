@@ -5,7 +5,8 @@
  * @copyright (C) Ratmil Torres
  * @license GNU/GPL http://www.gnu.org/copyleft/gpl.html
 **/
-defined( '_JEXEC' ) or die( 'Restricted access' );
+defined('_JEXEC') or die;
+
 $root = JURI::root();
 ?>
 <?php echo $this->content;?>

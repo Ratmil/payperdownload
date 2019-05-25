@@ -6,7 +6,8 @@
  * @license GNU/GPL http://www.gnu.org/copyleft/gpl.html
 **/
 
-defined( '_JEXEC' ) or die( 'Restricted access' );
+defined('_JEXEC') or die;
+
 $controller = JControllerLegacy::getInstance('Payperdownload');
 $controller->execute(JFactory::getApplication()->input->get('task'));
 $controller->redirect();

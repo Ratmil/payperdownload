@@ -7,7 +7,7 @@
 **/
 
 // no direct access
-defined( '_JEXEC' ) or die( 'Restricted access' );
+defined('_JEXEC') or die;
 
 class PayPerDownloadPrices
 {
@@ -35,7 +35,7 @@ class PayPerDownloadPrices
 				foreach($resources as $resource)
 				{
 					$html .= "<li>";
-					$html .= "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" . 
+					$html .= "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" .
 						htmlspecialchars(JText::_("PAYPERDOWNLOADPLUS_SYSTEM_PLUGIN_GUEST_DOWNLOAD"));
 					$html .= "&nbsp;&nbsp;";
 					$html .= htmlspecialchars(JText::_("PAYPERDOWNLOADPLUS_SYSTEM_PLUGIN_PRICE"));
@@ -45,7 +45,7 @@ class PayPerDownloadPrices
 						$html .= htmlspecialchars($resource->max_download) . ", ";
 					else
 						$html .= htmlspecialchars(JText::_("PAYPERDOWNLOADPLUS_SYSTEM_PLUGIN_UNLIMITED_DOWNLOADS")) . ", ";
-					$html .= htmlspecialchars(JText::sprintf("PAYPERDOWNLOADPLUS_SYSTEM_PLUGIN_EXPIRES", $resource->download_expiration));
+					$html .= htmlspecialchars(JText::sprintf("PAYPERDOWNLOADPLUS_SYSTEM_PLUGIN_EXPIRESIN", $resource->download_expiration));
 					$html .= "</li>";
 				}
 			}
@@ -54,7 +54,7 @@ class PayPerDownloadPrices
 				foreach($licenses as $license)
 				{
 					$html .= "<li>";
-					$html .= "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" . 
+					$html .= "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" .
 						htmlspecialchars($license->license_name);
 					$html .= ":&nbsp;&nbsp;";
 					$html .= htmlspecialchars(JText::_("PAYPERDOWNLOADPLUS_SYSTEM_PLUGIN_PRICE"));
@@ -64,7 +64,7 @@ class PayPerDownloadPrices
 						$html .= htmlspecialchars($license->max_download) . ", ";
 					else
 						$html .= htmlspecialchars(JText::_("PAYPERDOWNLOADPLUS_SYSTEM_PLUGIN_UNLIMITED_DOWNLOADS")) . ", ";
-					$html .= htmlspecialchars(JText::sprintf("PAYPERDOWNLOADPLUS_SYSTEM_PLUGIN_EXPIRES", $license->expiration));
+					$html .= htmlspecialchars(JText::sprintf("PAYPERDOWNLOADPLUS_SYSTEM_PLUGIN_EXPIRESIN", $license->expiration));
 					$html .= "</li>";
 				}
 			}
@@ -72,7 +72,7 @@ class PayPerDownloadPrices
 		}
 		return $html;
 	}
-	
+
 	static function getLicensesForResources($resources)
 	{
 		$licenses = array();
@@ -88,7 +88,7 @@ class PayPerDownloadPrices
 					foreach($licenses as $license)
 					{
 						if($license->license_id == $lic->license_id)
-						{	
+						{
 							$found = true;
 							break;
 						}
@@ -104,7 +104,7 @@ class PayPerDownloadPrices
 	static function getLicensesForResource($resource_id)
 	{
 		$db = JFactory::getDBO();
-		$query = "SELECT license_id FROM #__payperdownloadplus_resource_licenses 
+		$query = "SELECT license_id FROM #__payperdownloadplus_resource_licenses
 			WHERE resource_license_id = " . (int)$resource_id;
 		$db->setQuery( $query );
 		$license_id = (int)$db->loadResult();
@@ -114,7 +114,7 @@ class PayPerDownloadPrices
 		$license = $db->loadObject();
 		if($license)
 		{
-			
+
 			$level = (int)$license->level;
 			if($level > 0)
 			{
@@ -135,7 +135,7 @@ class PayPerDownloadPrices
 		else
 			return null;
 	}
-		
+
 	static function getResourcesData($resources)
 	{
 		$resources = implode(",", $resources);

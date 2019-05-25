@@ -6,9 +6,8 @@
  * @license GNU/GPL http://www.gnu.org/copyleft/gpl.html
 **/
 
-/** ensure this file is being included by a parent file */
-defined( '_JEXEC' ) or
-die( 'Direct Access to this location is not allowed.' );
+// no direct access
+defined ( '_JEXEC' ) or die;
 
 require_once(JPATH_COMPONENT.'/html/pricecur.html.php');
 
@@ -25,9 +24,9 @@ class DownloadsHtmlForm extends BaseHtmlForm
 		$bindemail = new VisualDataBind('user_email', JText::_('PAYPERDOWNLOADPLUS_USER_EMAIL'));
 		$bindemail->setRegExp("\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*");
 		$bindemail->setEditToolTip(JText::_("PAYPERDOWNLOADPLUS_USER_EMAIL_DESC"));
-		$bindresource = new ComboVisualDataBind('resource_id', JText::_('PAYPERDOWNLOADPLUS_RESOURCE'), 
+		$bindresource = new ComboVisualDataBind('resource_id', JText::_('PAYPERDOWNLOADPLUS_RESOURCE'),
 				'', 'resource_license_id', 'resource_name');
-		$bindresource->setItemsQuery("SELECT resource_license_id AS value, CONCAT(resource_name, ' - ', resource_type) AS display 
+		$bindresource->setItemsQuery("SELECT resource_license_id AS value, CONCAT(resource_name, ' - ', resource_type) AS display
 			FROM #__payperdownloadplus_resource_licenses
 			WHERE license_id IS NULL");
 		$bindresource->setEditToolTip(JText::_("PAYPERDOWNLOADPLUS_RESOURCE_DESC"));
@@ -46,8 +45,12 @@ class DownloadsHtmlForm extends BaseHtmlForm
 		}
 		var html_insert_mode = 'add';
 		</script>
+		<div id="j-sidebar-container" class="span2">
+		<?php echo JHtmlSidebar::render(); ?>
+	</div>
+	<div id="j-main-container" class="span10">
 		<?php
-		$this->renderVars(JRequest::getVar('option'));
+		$this->renderVars(JFactory::getApplication()->input->get('option'));
 		?>
 		<fieldset class="adminform">
 		<legend><?php echo htmlspecialchars(JText::_("PAYPERDOWNLOADPLUS_NEW_DOWNLOADLINK"));?></legend>
@@ -58,6 +61,7 @@ class DownloadsHtmlForm extends BaseHtmlForm
 		?>
 		</table>
 		</fieldset>
+		</div>
 	<?php
 	}
 }

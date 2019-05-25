@@ -6,7 +6,7 @@
  * @license GNU/GPL http://www.gnu.org/copyleft/gpl.html
 **/
 // no direct access
-defined( '_JEXEC' ) or die( 'Restricted access' );
+defined('_JEXEC') or die;
 
 class PayPerDownloadUserLicenses
 {
@@ -33,14 +33,13 @@ class PayPerDownloadUserLicenses
 					$html .= "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" . htmlspecialchars($license->license_name);
 					if($license->license_max_downloads > 0)
 					{
-						$html .= ",&nbsp;&nbsp;" . JText::_("PAYPERDOWNLOADPLUS_SYSTEM_PLUGIN_DOWNLOADS_LEFT") . 
-							":&nbsp;" .  ($license->license_max_downloads - $license->download_hits);
+						$html .= ",&nbsp;&nbsp;" . JText::_("PAYPERDOWNLOADPLUS_SYSTEM_PLUGIN_DOWNLOADS_LEFT") . ":&nbsp;" .  ($license->license_max_downloads - $license->download_hits);
 					}
 					if($license->expiration_date)
 					{
 						$date = new JDate($license->expiration_date);
 						$format = JText::_("PAYPERDOWNLOADPLUS_SYSTEM_PLUGIN_DATE_FORMAT");
-						if($format == "PAYPERDOWNLOADPLUS_SYSTEM_PLUGIN_DATE_FORMAT")
+						if(empty($format))
 							$format = "l, F d, Y";
 						$html .=  ",&nbsp;&nbsp;" . JText::_("PAYPERDOWNLOADPLUS_SYSTEM_PLUGIN_EXPIRES") . ":&nbsp;&nbsp;" . $date->format($format);
 					}
@@ -59,7 +58,7 @@ class PayPerDownloadUserLicenses
 		else
 			return "";
 	}
-	
+
 	function getUserHighestLicenseHtml($matches)
 	{
 		$user_id = 0;
@@ -153,7 +152,7 @@ class PayPerDownloadUserLicenses
 				$user_id = (int)$this->getUserIdFromName($user_name);
 			}
 		}
-		
+
 		$license = $this->getUserHighestLicense($user_id);
 		if($license)
 		{
@@ -169,7 +168,7 @@ class PayPerDownloadUserLicenses
 		else
 			return $matches[0];
 	}
-	
+
 	function getUserFromAUPReferrer($referrer)
 	{
 		$db = JFactory::getDBO();
@@ -179,7 +178,7 @@ class PayPerDownloadUserLicenses
 		$userid = (int)$db->loadResult();
 		return $userid;
 	}
-	
+
 	function getUserIdFromName($user_name)
 	{
 		$db = JFactory::getDBO();
@@ -189,7 +188,7 @@ class PayPerDownloadUserLicenses
 		$userid = (int)$db->loadResult();
 		return $userid;
 	}
-	
+
 	function getUserHighestLicense($user_id)
 	{
 		$user_id = (int)$user_id;
@@ -197,24 +196,24 @@ class PayPerDownloadUserLicenses
 			return $user_higher_license[$user_id];
 		if($user_id)
 		{
-			$query = "SELECT 
-				#__payperdownloadplus_licenses.license_id, 
-				#__payperdownloadplus_users_licenses.user_id, 
+			$query = "SELECT
+				#__payperdownloadplus_licenses.license_id,
+				#__payperdownloadplus_users_licenses.user_id,
 				#__payperdownloadplus_users_licenses.expiration_date,
 				#__payperdownloadplus_licenses.member_title,
 				#__payperdownloadplus_licenses.license_name,
 				#__payperdownloadplus_licenses.level,
 				#__payperdownloadplus_licenses.expiration,
 				#__payperdownloadplus_licenses.license_image,
-				#__payperdownloadplus_users_licenses.license_max_downloads, 
+				#__payperdownloadplus_users_licenses.license_max_downloads,
 				#__payperdownloadplus_users_licenses.download_hits
-				FROM #__payperdownloadplus_users_licenses 
-				INNER JOIN #__payperdownloadplus_licenses 
+				FROM #__payperdownloadplus_users_licenses
+				INNER JOIN #__payperdownloadplus_licenses
 				ON #__payperdownloadplus_users_licenses.license_id = #__payperdownloadplus_licenses.license_id
-				WHERE (expiration_date >= NOW() || expiration_date IS NULL) AND 
+				WHERE (expiration_date >= NOW() || expiration_date IS NULL) AND
 				(#__payperdownloadplus_users_licenses.license_max_downloads = 0 OR #__payperdownloadplus_users_licenses.download_hits < #__payperdownloadplus_users_licenses.license_max_downloads)  AND
 				#__payperdownloadplus_users_licenses.user_id = $user_id AND
-				#__payperdownloadplus_users_licenses.enabled = 1 
+				#__payperdownloadplus_users_licenses.enabled = 1
 				ORDER BY #__payperdownloadplus_licenses.level DESC";
 			$db = JFactory::getDBO();
 			$db->setQuery($query, 0, 1);
@@ -225,29 +224,29 @@ class PayPerDownloadUserLicenses
 		else
 			return null;
 	}
-	
+
 	function getLicenses($user_id)
 	{
 		$user_id = (int)$user_id;
 		if($user_id)
 		{
-			$query = "SELECT 
-				#__payperdownloadplus_licenses.license_id, 
-				#__payperdownloadplus_users_licenses.user_id, 
+			$query = "SELECT
+				#__payperdownloadplus_licenses.license_id,
+				#__payperdownloadplus_users_licenses.user_id,
 				#__payperdownloadplus_users_licenses.expiration_date,
 				#__payperdownloadplus_licenses.member_title,
 				#__payperdownloadplus_licenses.license_name,
 				#__payperdownloadplus_licenses.level,
 				#__payperdownloadplus_licenses.expiration,
-				#__payperdownloadplus_users_licenses.license_max_downloads, 
+				#__payperdownloadplus_users_licenses.license_max_downloads,
 				#__payperdownloadplus_users_licenses.download_hits
-				FROM #__payperdownloadplus_users_licenses 
-				INNER JOIN #__payperdownloadplus_licenses 
+				FROM #__payperdownloadplus_users_licenses
+				INNER JOIN #__payperdownloadplus_licenses
 				ON #__payperdownloadplus_users_licenses.license_id = #__payperdownloadplus_licenses.license_id
-				WHERE (expiration_date >= NOW() || expiration_date IS NULL) AND 
+				WHERE (expiration_date >= NOW() || expiration_date IS NULL) AND
 				(#__payperdownloadplus_users_licenses.license_max_downloads = 0 OR #__payperdownloadplus_users_licenses.download_hits < #__payperdownloadplus_users_licenses.license_max_downloads)  AND
 				#__payperdownloadplus_users_licenses.user_id = $user_id AND
-				#__payperdownloadplus_users_licenses.enabled = 1 
+				#__payperdownloadplus_users_licenses.enabled = 1
 				ORDER BY #__payperdownloadplus_licenses.level DESC";
 			$db = JFactory::getDBO();
 			$db->setQuery($query, 0, 20);

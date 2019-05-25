@@ -1,17 +1,13 @@
-<?php 
+<?php
 /**
  * @component Pay per Download component
  * @author Ratmil Torres
  * @copyright (C) Ratmil Torres
  * @license GNU/GPL http://www.gnu.org/copyleft/gpl.html
 **/
-defined( '_JEXEC' ) or
-die( 'Direct Access to this location is not allowed.' );
 
-/**
- * @author		Ratmil 
- * http://www.ratmilwebsolutions.com
-*/
+// no direct access
+defined ( '_JEXEC' ) or die;
 
 require_once(JPATH_COMPONENT.'/controllers/ppd.php');
 require_once(JPATH_COMPONENT.'/data/gentable.php');
@@ -34,9 +30,10 @@ class DownloadsForm extends PPDForm
 	{
 		parent::__construct();
 		$this->context = 'com_payperdownload.downloads';
-		$this->formTitle = $this->toolbarTitle = JText::_('PAYPERDOWNLOADPLUS_DOWNLOAD_LINKS');
+		$this->formTitle = JText::_('PAYPERDOWNLOADPLUS_DOWNLOAD_LINKS');
+		$this->toolbarTitle = JText::_('COM_PAYPERDOWNLOAD_DOWNLOADLINKS_TITLE');
 		$this->editItemTitle = JText::_("PAYPERDOWNLOADPLUS_EDIT_DOWNLOAD_LINK");
-		$this->toolbarIcon = 'download.png';
+		$this->toolbarIcon = 'link';
 		$this->registerTask('resend');
 		$this->registerTask('del');
 		$this->registerTask('newdownload');
@@ -44,71 +41,71 @@ class DownloadsForm extends PPDForm
 		//use transaction to restrict exclusive access to download_links table
 		$this->useTransaction = true;
 	}
-	
+
 	function getHtmlObject()
 	{
 		return new DownloadsHtmlForm();
 	}
-	
+
 	/**
-	Create the elements that define how data is to be shown and handled. 
+	Create the elements that define how data is to be shown and handled.
 	*/
 	function createDataBinds()
 	{
 		if($this->dataBindModel == null)
 		{
-			$option = JRequest::getVar('option');
-		
+		    $option = JFactory::getApplication()->input->get('option');
+
 			$this->dataBindModel = new VisualDataBindModel();
 			$this->dataBindModel->setKeyField("download_id");
 			$this->dataBindModel->setTableName("#__payperdownloadplus_download_links");
-			
+
 			$bind = new VisualDataBind('payer_email', JText::_('PAYPERDOWNLOADPLUS_PAYER_EMAIL'));
 			$bind->setEditLink(true);
 			$bind->setColumnWidth(15);
 			$bind->setRegExp("\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*");
 			$bind->setEditToolTip(JText::_("PAYPERDOWNLOADPLUS_PAYER_EMAIL_DESC"));
 			$this->dataBindModel->addDataBind( $bind );
-			
-			$bind = new ComboVisualDataBind('resource_id', JText::_('PAYPERDOWNLOADPLUS_RESOURCE_120'), 
-				"#__payperdownloadplus_resource_licenses", 
+
+			$bind = new ComboVisualDataBind('resource_id', JText::_('PAYPERDOWNLOADPLUS_RESOURCE_120'),
+				"#__payperdownloadplus_resource_licenses",
 				"resource_license_id", "resource_name");
 			$bind->showInGrid = true;
 			$bind->showInEditForm = false;
 			$bind->useForFilter = false;
 			$this->dataBindModel->addDataBind( $bind );
-			
+
 			$bind = new VisualDataBind('download_hits', JText::_('PAYPERDOWNLOADPLUS_DOWNLOAD_HITS'));
 			$bind->allowBlank = true;
 			$bind->setColumnWidth(5);
 			$bind->setRegExp("\d+");
 			$bind->setEditToolTip(JText::_("PAYPERDOWNLOADPLUS_DOWNLOAD_HITS_DESC"));
 			$this->dataBindModel->addDataBind( $bind );
-			
+
 			$bind = new VisualDataBind('link_max_downloads', JText::_('PAYPERDOWNLOADPLUS_DOWNLOAD_MAX'));
 			$bind->allowBlank = true;
 			$bind->setColumnWidth(5);
 			$bind->setRegExp("\d+");
 			$bind->setEditToolTip(JText::_("PAYPERDOWNLOADPLUS_DOWNLOAD_MAX_DESC"));
 			$this->dataBindModel->addDataBind( $bind );
-						
+
 			$bind = new VisualDataBind('email_subject', JText::_('PAYPERDOWNLOADPLUS_DOWNLOAD_EMAIL_SUBJECT'));
 			$bind->allowBlank = false;
 			$bind->showInGrid = false;
 			$bind->setEditToolTip(JText::_("PAYPERDOWNLOADPLUS_DOWNLOAD_EMAIL_SUBJECT_DESC"));
 			$this->dataBindModel->addDataBind( $bind );
-			
+
 			$bind = new WYSIWYGEditotVisualDataBind('email_text', JText::_('PAYPERDOWNLOADPLUS_DOWNLOAD_EMAIL_BODY'));
 			$bind->showInGrid = false;
 			$bind->setEditToolTip(JText::_("PAYPERDOWNLOADPLUS_DOWNLOAD_EMAIL_BODY_DESC"));
 			$this->dataBindModel->addDataBind( $bind );
-			
+
 			$bind = new CalendarVisualDataBind('expiration_date', JText::_('PAYPERDOWNLOADPLUS_DOWNLOAD_EXPIRATION_DATE'));
 			$bind->allowBlank = false;
 			$bind->setColumnWidth(10);
 			$bind->setEditToolTip(JText::_("PAYPERDOWNLOADPLUS_DOWNLOAD_EXPIRATION_DATE_DESC"));
 			$this->dataBindModel->addDataBind( $bind );
-			
+
 			$bind = new RadioVisualDataBind('payed', JText::_('PAYPERDOWNLOADPLUS_PAYED_112'));
 			$bind->allowBlank = true;
 			$bind->setColumnWidth(5);
@@ -116,13 +113,13 @@ class DownloadsForm extends PPDForm
 			$bind->yes_image = "administrator/components/$option/images/published.png";
 			$bind->no_image = "administrator/components/$option/images/unpublished.png";
 			$this->dataBindModel->addDataBind( $bind );
-			
+
 		}
 	}
-	
+
 	function resend($task, $option)
 	{
-		$cid = JRequest::getVar('cid', array(0), '', 'array' );
+		$cid = JFactory::getApplication()->input->get('cid', array(0), 'array');
 		$cids = implode(', ', $cid);
 		$db = JFactory::getDBO();
 		$query = "SELECT * FROM #__payperdownloadplus_download_links WHERE download_id IN($cids)";
@@ -142,12 +139,12 @@ class DownloadsForm extends PPDForm
 			$joomla_config = new JConfig();
 			$mail->setSender(array($joomla_config->mailfrom, $joomla_config->fromname));
 			$mail->Send();
-			/*$mail->sendMail($joomla_config->mailfrom, $joomla_config->fromname, 
+			/*$mail->sendMail($joomla_config->mailfrom, $joomla_config->fromname,
 				$link->payer_email, $link->email_subject, $link->email_text);*/
 		}
 		$this->redirectToList(JText::_("PAYPERDOWNLOADPLUS_RESENT"));
 	}
-	
+
 	function del($task, $option)
 	{
 		$db = JFactory::getDBO();
@@ -155,23 +152,25 @@ class DownloadsForm extends PPDForm
 		$db->query();
 		$this->redirectToList(JText::sprintf("PAYPERDOWNLOADPLUS_EXPIRED_DOWNLOADLINKS_DELETED", $db->getAffectedRows()));
 	}
-	
+
 	function getFilters()
 	{
 		$filters = parent::getFilters();
 		$this->addSqlCondition($filters['where'], "#__payperdownloadplus_download_links.payed <> 0");
 		return $filters;
 	}
-	
+
 	function newdownload($task, $option)
 	{
 		$this->htmlObject->addNewDownloadLink();
 	}
-	
+
 	function savenewdownload($task, $option)
 	{
+	    $jinput = JFactory::getApplication()->input;
+
 		require_once(JPATH_COMPONENT_SITE . '/models/payresource.php');
-		$resource_id = JRequest::getInt('resource_id', 0);
+		$resource_id = $jinput->getInt('resource_id', 0);
 		if($resource_id)
 		{
 			$payResourceModel = new PayPerDownloadModelPayResource();
@@ -179,7 +178,7 @@ class DownloadsForm extends PPDForm
 			if($downloadLink)
 			{
 				$download_id = (int)$downloadLink->downloadId;
-				$user_email = JRequest::getVar('user_email');
+				$user_email = $jinput->getString('user_email');
 				$downloadurl = $payResourceModel->setDownloadLinkPayed($download_id, $resource_id, $user_email, $user_email, JURI::root());
 				$payResourceModel->updateDownloadLink($download_id, 'download link', $downloadurl, $downloadurl);
 				$this->redirectToList(JText::_("PAYPERDOWNLOADPLUS_DOWNLOADLINK_SUCCESSFULLY_CREATED"));
@@ -190,7 +189,7 @@ class DownloadsForm extends PPDForm
 		else
 			$this->redirectToList(JText::_("PAYPERDOWNLOADPLUS_DOWNLOADLINK_NOT_CREATED"));
 	}
-	
+
 	/*** Creates toolbar***/
 	function createToolbar($task, $option)
 	{
@@ -202,7 +201,7 @@ class DownloadsForm extends PPDForm
 			case 'apply':
 				parent::createToolbar($task, $option);
 			break;
-			case 'newdownload':	
+			case 'newdownload':
 				JToolBarHelper::save('savenewdownload');
 				JToolBarHelper::cancel();
 				break;
@@ -210,12 +209,12 @@ class DownloadsForm extends PPDForm
 				JToolBarHelper::addNew('newdownload');
 				JToolBarHelper::editList();
 				JToolBarHelper::deleteList();
-				JToolBarHelper::custom('del', 'delete_ex', '', JText::_('PAYPERDOWNLOADPLUS_DELETE_EXPIRED'), false);
-				JToolBarHelper::custom('resend', 'resend', '', JText::_('PAYPERDOWNLOADPLUS_RESEND'));		
+				JToolBarHelper::custom('del', 'delete', '', JText::_('PAYPERDOWNLOADPLUS_DELETE_EXPIRED'), false);
+				JToolBarHelper::custom('resend', 'mail-2', '', JText::_('PAYPERDOWNLOADPLUS_RESEND'));
 			break;
 		}
 		JToolBarHelper::title( $this->toolbarTitle, $this->toolbarIcon );
 	}
-	
+
 }
 ?>

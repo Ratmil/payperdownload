@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<extension version="3.1" type="plugin" group="payperdownloadplus" method="upgrade">
+	<name>PayperDownloadPlus - Menuitem</name>
+	<author>Ratmil</author>
+	<authorUrl>www.ratmilwebsolutions.com</authorUrl>
+	<creationDate>September 2012</creationDate>
+	<copyright>(c) 2009 Ratmil Torres</copyright>
+	<license>GNU General Public License version 2 or later; see LICENSE.txt</license>
+	<version>6.0.3</version>
+	<description>Plugin for Pay per download Plus component to integrate with Joomla menu items</description>
+	<languages>
+		<language tag="de-DE">de-DE.plg_payperdownloadplus_menuitem.ini</language>
+		<language tag="en-GB">en-GB.plg_payperdownloadplus_menuitem.ini</language>
+	</languages>
+	<files>
+		<filename plugin="menuitem">menuitem.php</filename>
+		<filename>index.html</filename>
+		<filename>menuitem.png</filename>
+	</files>
+</extension>

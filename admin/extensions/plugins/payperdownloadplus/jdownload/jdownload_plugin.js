@@ -56,6 +56,7 @@ function jdownload_plugin_category_change()
 	
 	myAjaxTrigger.async_call(site_root + 'administrator/index.php', 'option=' + 
 		encodeURIComponent(site_option) + '&adminpage=' + 
+		encodeURIComponent(site_adminpage) + '&view=' +
 		encodeURIComponent(site_adminpage) + '&task=ajaxCall&format=raw' +
 		'&plugin=jdownload&x=' + encodeURIComponent(jdownload_category.value), jdownload_plugin_category_change_result, jdownload_plugin_error);
 }

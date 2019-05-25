@@ -1,17 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<install version="1.5" method="upgrade" type="plugin" group="payperdownloadplus">
+<extension version="3.1" type="plugin" group="payperdownloadplus" method="upgrade">
 	<name>PayperDownloadPlus - Kunena</name>
-	<version>4.4</version>
-	<creationDate>May 201y</creationDate>
 	<author>Ratmil</author>
 	<authorUrl>www.ratmilwebsolutions.com</authorUrl>
-	<license>GNU GPL</license>
+	<creationDate>May 2012</creationDate>
+	<copyright>(c) 2009 Ratmil Torres</copyright>
+	<license>GNU General Public License version 2 or later; see LICENSE.txt</license>
+	<version>6.0.3</version>
+	<description>Plugin for Pay per download Plus component to integrate with Kunena categories</description>
 	<languages>
+		<language tag="de-DE">de-DE.plg_payperdownloadplus_kunena.ini</language>
 		<language tag="en-GB">en-GB.plg_payperdownloadplus_kunena.ini</language>
 	</languages>
 	<files>
 		<filename plugin="kunena">kunena.php</filename>
-		<filename>kunena.jpg</filename>
 		<filename>index.html</filename>
+		<filename>kunena.png</filename>
 	</files>
-</install>
+</extension>

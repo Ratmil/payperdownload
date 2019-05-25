@@ -5,11 +5,13 @@
  * @copyright (C) Ratmil Torres
  * @license GNU/GPL http://www.gnu.org/copyleft/gpl.html
 **/
-/** ensure this file is being included by a parent file */
-defined( '_JEXEC' ) or
-die( 'Direct Access to this location is not allowed.' );
 
-jimport('joomla.html.pane');
+// no direct access
+defined ( '_JEXEC' ) or die;
+
+jimport('joomla.html.html.bootstrap');
+
+// NOT USED
 
 class CPanelSeparatorVisualDataBind extends VisualDataBind
 {
@@ -17,7 +19,7 @@ class CPanelSeparatorVisualDataBind extends VisualDataBind
 	var $open;
 	var $paneName;
 	var $panelName;
-	
+
 	function __construct($displayName, $panelName, $open = true, $close = true)
 	{
 		parent::__construct("", $displayName);
@@ -31,50 +33,50 @@ class CPanelSeparatorVisualDataBind extends VisualDataBind
 		$this->useForTextSearch = false;
 		$this->paneName = "unnamed-pane";
 	}
-	
+
 	function setPaneName($paneName)
-	{	
-		$this->paneName = $paneName;	
+	{
+		$this->paneName = $paneName;
 	}
-	
+
 	function renderNew()
 	{
 		return $this->renderEdit();
 	}
-	
+
 	function renderEdit()
 	{
-		$pane = JPane::getInstance('sliders');
+		//JHtml::_('bootstrap.startAccordion', 'slidepanel', array());
+
 		if($this->open && $this->close)
 		{
 			return "</table>".
-				$pane->endPanel() . 
-				$pane->startPanel($this->displayName, 'panel-' . $this->panelName).
+			 			JHtml::_('bootstrap.endSlide') .
+			 			JHtml::_('bootstrap.addSlide', 'slidepanel', $this->displayName, 'panel-' . $this->panelName) .
 				"<table class=\"admintable\">";
 		}
 		else if($this->open)
 		{
 			return "</table>".
-				$pane->startPane($this->paneName) . 
-				$pane->startPanel($this->displayName, 'panel-' . $this->panelName).
+			 	JHtml::_('bootstrap.addSlide', 'slidepanel', $this->displayName, 'panel-' . $this->panelName) .
 				"<table class=\"admintable\">";
 		}
 		else if($this->close)
 		{
 			return "</table>".
-				$pane->endPanel() . $pane->endPane().
+			 			JHtml::_('bootstrap.endSlide') .
 				"<table class=\"admintable\">";
 		}
 		else
 			return "";
 	}
-	
+
 	function renderValidateJavascript()
 	{
 		return "";
 	}
-	
-	
+
+
 }
 /*
 <ul class="nav nav-tabs">
@@ -93,6 +95,6 @@ class CPanelSeparatorVisualDataBind extends VisualDataBind
 	<div class="tab-pane" id="metadata">
 	3333333333
 	</div>
-</div>	
+</div>
 */
 ?>

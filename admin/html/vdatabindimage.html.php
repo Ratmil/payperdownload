@@ -1,13 +1,13 @@
-﻿<?php
+<?php
 /**
  * @component Pay per Download component
  * @author Ratmil Torres
  * @copyright (C) Ratmil Torres
  * @license GNU/GPL http://www.gnu.org/copyleft/gpl.html
 **/
-/** ensure this file is being included by a parent file */
-defined( '_JEXEC' ) or
-die( 'Direct Access to this location is not allowed.' );
+
+// no direct access
+defined ( '_JEXEC' ) or die;
 
 class ImageVisualDataBind extends VisualDataBind
 {
@@ -32,7 +32,7 @@ class ImageVisualDataBind extends VisualDataBind
 		$this->savePreview = false;
 		$this->acceptVideos = false;
 	}
-	
+
 	function setImageLimits($minWidth, $minHeight, $maxWidth, $maxHeight)
 	{
 		$this->minWidth = $minWidth;
@@ -40,7 +40,7 @@ class ImageVisualDataBind extends VisualDataBind
 		$this->maxWidth = $maxWidth;
 		$this->maxHeight = $maxHeight;
 	}
-	
+
 	function renderNew()
 	{
 		$html = "<tr>" . $this->renderFieldLabel() . "<td>";
@@ -50,10 +50,10 @@ class ImageVisualDataBind extends VisualDataBind
 		$html .= "</td></tr>";
 		return $html;
 	}
-	
+
 	function renderEdit(&$row)
 	{
-		$option = JRequest::getVar('option');
+	    $option = JFactory::getApplication()->input->get('option');
 		if($this->acceptVideos)
 		{
 			$scriptPath = "administrator/components/$option/flowplayer/";
@@ -64,7 +64,7 @@ class ImageVisualDataBind extends VisualDataBind
 		$dataField = $this->dataField;
 		if($this->allowBlank)
 		{
-			$html .= "<input type=\"checkbox\" name=\"$dataField" . "_isnull\"/>&nbsp;" . 
+			$html .= "<input type=\"checkbox\" name=\"$dataField" . "_isnull\"/>&nbsp;" .
 				JText::_("PAYPERDOWNLOADPLUS_HTML_REMOVE_IMAGE")
 				. "<br/>";
 		}
@@ -82,10 +82,10 @@ class ImageVisualDataBind extends VisualDataBind
 			else
 			{
 				$imageSrc = str_replace("\\", "/", $row->{$this->dataField});
-				$html .= "<a  
-						 href=\"" .  htmlspecialchars($url . $imageSrc) . "\"  
-						 style=\"display:block;width:520px;height:330px\"  
-						 id=\"player\"> 
+				$html .= "<a
+						 href=\"" .  htmlspecialchars($url . $imageSrc) . "\"
+						 style=\"display:block;width:520px;height:330px\"
+						 id=\"player\">
 					</a> ";
 				$html .= "<script>
 						flowplayer(\"player\", \"" . $url . "/administrator/components/$option/flowplayer/flowplayer.swf\");
@@ -95,7 +95,7 @@ class ImageVisualDataBind extends VisualDataBind
 		$html .= "</td></tr>";
 		return $html;
 	}
-	
+
 	function getFileName($name)
 	{
 		$file_name = $name;
@@ -113,7 +113,7 @@ class ImageVisualDataBind extends VisualDataBind
 		$tmp_dest .= $ext_name;
 		return $tmp_dest;
 	}
-	
+
 	function saveImagePreview($sourceFile)
 	{
 		if(!function_exists("imagecreatefromjpeg"))
@@ -150,13 +150,16 @@ class ImageVisualDataBind extends VisualDataBind
 		}
 		return false;
 	}
-	
+
 	function onBeforeStore(&$row)
 	{
 		if($this->ignoreToBind)
 			return true;
 		$mainframe = JFactory::getApplication();
-		$is_null = JRequest::getVar($this->dataField . "_isnull");
+
+		$jinput = JFactory::getApplication()->input;
+
+		$is_null = $jinput->get($this->dataField . "_isnull");
 		if($this->allowBlank && $is_null == "on")
 		{
 			if($row->{$this->dataField})
@@ -168,7 +171,8 @@ class ImageVisualDataBind extends VisualDataBind
 			$row->{$this->dataField} = null;
 			return true;
 		}
-		$userfile = JRequest::getVar($this->dataField . "_file", null, 'files', 'array' );
+		//$userfile = JRequest::getVar($this->dataField . "_file", null, 'files', 'array' );
+		$userfile = $jinput->get($this->dataField . "_file", null, 'array');
 		if ( !is_array($userfile) || $userfile['error'] || $userfile['size'] < 1 )
 		{
 			if($row->{$this->dataField} != null)
@@ -193,7 +197,7 @@ class ImageVisualDataBind extends VisualDataBind
 				$row->setError(JText::_("PAYPERDOWNLOADPLUS_HTML_INVALID_IMAGE"));
 				return false;
 			}
-				
+
 			if($image_size[0] < $this->minWidth || $image_size[0] > $this->maxWidth ||
 				$image_size[1] < $this->minHeight || $image_size[1] > $this->maxHeight)
 			{
@@ -201,10 +205,10 @@ class ImageVisualDataBind extends VisualDataBind
 				return false;
 			}
 		}
-		
+
 		jimport('joomla.filesystem.file');
-		
-		
+
+
 		// Move uploaded file
 		if(JFile::upload($tmp_src, JPATH_ROOT . '/' . $tmp_dest))
 		{
@@ -225,7 +229,7 @@ class ImageVisualDataBind extends VisualDataBind
 			return false;
 		}
 	}
-	
+
 	function onBeforeDelete($row, $id)
 	{
 		$db = JFactory::getDBO();
@@ -234,30 +238,30 @@ class ImageVisualDataBind extends VisualDataBind
 		$object = $db->loadObject();
 		if(isset($object) && $object != null)
 			$this->image_path = $object->image_path;
-		else 
+		else
 			$this->image_path = null;
 		return true;
 	}
-	
+
 	function onAfterDelete($row, $id)
 	{
-		
+
 		jimport('joomla.filesystem.file');
 		if($this->image_path)
 			JFile::delete(JPATH_ROOT . '/' . $this->image_path);
 		return true;
 	}
-	
+
 	function check(&$row)
 	{
 		return true;
 	}
-	
+
 	function renderValidateJavascript()
 	{
 		return "";
 	}
-	
+
 	function renderGridCell(&$row, $rowNumber, $columnNumber, $columnCount)
 	{
 		if(!$this->acceptVideos && $this->savePreview)

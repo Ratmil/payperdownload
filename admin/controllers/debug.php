@@ -5,13 +5,9 @@
  * @copyright (C) Ratmil Torres
  * @license GNU/GPL http://www.gnu.org/copyleft/gpl.html
 **/
-defined( '_JEXEC' ) or
-die( 'Direct Access to this location is not allowed.' );
 
-/**
- * @author		Ratmil 
- * http://www.ratmilwebsolutions.com
-*/
+// no direct access
+defined ( '_JEXEC' ) or die;
 
 require_once(JPATH_COMPONENT.'/controllers/ppd.php');
 require_once(JPATH_COMPONENT.'/data/gentable.php');
@@ -30,33 +26,38 @@ class DebugForm extends PPDForm
 	{
 		parent::__construct();
 		$this->context = 'com_payperdownload.debug';
-		$this->formTitle = $this->toolbarTitle = JText::_('PAYPERDOWNLOADPLUS_DEBUG');
-		$this->toolbarIcon = 'generic.png';
+		$this->formTitle = JText::_('PAYPERDOWNLOADPLUS_DEBUG');
+		$this->toolbarTitle = JText::_('COM_PAYPERDOWNLOAD_DEBUG_TITLE');
+		$this->toolbarIcon = 'wrench';
 	}
-	
+
 	/**
-	Create the elements that define how data is to be shown and handled. 
+	Create the elements that define how data is to be shown and handled.
 	*/
 	function createDataBinds()
 	{
 		if($this->dataBindModel == null)
 		{
-			$option = JRequest::getVar('option');
-		
+		    $option = JFactory::getApplication()->input->get('option');
+
 			$this->dataBindModel = new VisualDataBindModel();
 			$this->dataBindModel->setKeyField("debug_id");
 			$this->dataBindModel->setTableName("#__payperdownloadplus_debug");
-			
+
 			$bind = new VisualDataBind('debug_text', JText::_('PAYPERDOWNLOADPLUS_DEBUG_TEXT'));
 			$bind->setColumnWidth(80);
 			$this->dataBindModel->addDataBind( $bind );
-			
+
 			$bind = new VisualDataBind('debug_time', JText::_('PAYPERDOWNLOADPLUS_DEBUG_TIME'));
+			$bind->setColumnWidth(20);
+			$this->dataBindModel->addDataBind( $bind );
+
+			$bind = new VisualDataBind('debug_id', JText::_("PAYPERDOWNLOADPLUS_ID"));
 			$bind->setColumnWidth(10);
 			$this->dataBindModel->addDataBind( $bind );
 		}
 	}
-	
+
 	function createToolbar($task, $option)
 	{
 		JToolBarHelper::title( $this->toolbarTitle, $this->toolbarIcon );

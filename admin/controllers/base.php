@@ -5,13 +5,9 @@
  * @copyright (C) Ratmil Torres
  * @license GNU/GPL http://www.gnu.org/copyleft/gpl.html
 **/
-/** ensure this file is being included by a parent file */
-defined( '_JEXEC' ) or
-die( 'Direct Access to this location is not allowed.' );
-/**
- * @author		Ratmil 
- * http://www.ratmilwebsolutions.com
-*/
+
+// no direct access
+defined ( '_JEXEC' ) or die;
 
 require_once(JPATH_COMPONENT.'/html/base.html.php');
 require_once(JPATH_COMPONENT.'/data/gentable.php');
@@ -40,7 +36,7 @@ class BaseForm extends JObject
 	var $loadErrorMessage;
 	var $successfulSaveMessage;
 	var $registeredTasks = null;
-	
+
 	/**
 	Class constructor
 	*/
@@ -53,7 +49,7 @@ class BaseForm extends JObject
 		$this->successfulSaveMessage = JText::_("PAYPERDOWNLOADPLUS_DATA_SUCCESSFULLY_SAVED_81");
 		$this->toolbarIcon = 'generic.png';
 	}
-	
+
 	/**
 	Create the elements that define how data is to be shown and handled. Derived classes must implement this function.
 	*/
@@ -61,7 +57,7 @@ class BaseForm extends JObject
 	{
 		$this->dataBindModel = null;
 	}
-	
+
 	/**
 	Returns the object that will handle data. In this case the object returned
 	is a generic table derived from JTable.
@@ -77,7 +73,7 @@ class BaseForm extends JObject
 		else
 			return null;
 	}
-	
+
 	/***
 	Executes a task.
 	 ***/
@@ -140,23 +136,23 @@ class BaseForm extends JObject
 			}
 		}
 	}
-	
-	function publish($task, $option, $cid)
+
+	function publish($task, $option)
 	{
-		$cid = JRequest::getVar('cid', array(0), '', 'array' );
+    	$cid = JFactory::getApplication()->input->get('cid', array(0), 'array');
 		$row = $this->getTableObject();
 		$row->publish($cid);
 		$this->redirectToList();
 	}
-	
-	function unpublish($cid)
+
+	function unpublish($task, $option)
 	{
-		$cid = JRequest::getVar('cid', array(0), '', 'array' );
+		$cid = JFactory::getApplication()->input->get('cid', array(0), 'array');
 		$row = $this->getTableObject();
 		$row->unpublish($cid);
 		$this->redirectToList();
 	}
-	
+
 	/**
 	Handles the task 'cancel'
 	*/
@@ -164,13 +160,13 @@ class BaseForm extends JObject
 	{
 		$this->display($task, $option);
 	}
-	
+
 	/**
 	Handles the task 'remove'
 	*/
 	function trash($task, $option)
 	{
-		$cid = JRequest::getVar('cid', array(0), '', 'array' );
+		$cid = JFactory::getApplication()->input->get('cid', array(0), 'array');
 		$row = $this->getTableObject();
 		$result = true;
 		if($this->useTransaction)
@@ -208,10 +204,10 @@ class BaseForm extends JObject
 					}
 				}
 			}
-			else 
+			else
 				$msg = htmlspecialchars($this->deleteErrorMessage);
 		}
-			
+
 		if($this->useTransaction)
 		{
 			$db = JFactory::getDBO();
@@ -225,11 +221,11 @@ class BaseForm extends JObject
 				$db->setQuery("ROLLBACK");
 				$db->query();
 			}
-			
+
 		}
 		$this->redirectToList($msg, ($count == count($cid) && $result) ? "message" : "error");
 	}
-	
+
 	/**
 	Handles the task 'add'
 	*/
@@ -248,7 +244,7 @@ class BaseForm extends JObject
 			$this->htmlObject->add($option, $task, $this->dataBindModel, $this->newItemTitle);
 		}
 	}
-	
+
 	/**
 	Handles the task 'edit'
 	*/
@@ -256,7 +252,7 @@ class BaseForm extends JObject
 	{
 		if($this->dataBindModel != null)
 		{
-			$cid = JRequest::getVar('cid', array(0), '', 'array' );
+			$cid = JFactory::getApplication()->input->get('cid', array(0), 'array');
 			$id = $cid[0];
 			$row = $this->getTableObject();
 			if($row->load($id))
@@ -283,7 +279,7 @@ class BaseForm extends JObject
 			}
 		}
 	}
-	
+
 	/**
 	Handles the task 'save'
 	*/
@@ -304,7 +300,7 @@ class BaseForm extends JObject
 			$this->editFromPost($task, $option, $msg);
 		}
 	}
-	
+
 	/**
 	Handles the task 'apply'
 	*/
@@ -313,9 +309,12 @@ class BaseForm extends JObject
 		$result = $this->store();
 		if(is_numeric($result))
 		{
-			$link = 'index.php?option='.urlencode(JRequest::getVar('option')).
-						'&adminpage='.urlencode(JRequest::getVar('adminpage')).
-						'&task=edit&cid[]='.urlencode($result);
+		    $jinput = JFactory::getApplication()->input;
+
+		    $link = 'index.php?option='.urlencode($jinput->get('option')).
+                '&adminpage='.urlencode($jinput->getString('adminpage')).
+                '&view='.urlencode($jinput->get('view')).
+                '&task=edit&cid[]='.urlencode($result);
 			$this->redirect($link, htmlspecialchars($this->successfulSaveMessage));
 		}
 		else
@@ -325,16 +324,21 @@ class BaseForm extends JObject
 			$this->editFromPost($task, $option, $msg);
 		}
 	}
-	
+
 	/**
 	Show the edit form after an apply task
 	*/
 	function editFromPost($task, $option, $msg)
 	{
+	    $jinput = JFactory::getApplication()->input;
+
 		$row = $this->getTableObject();
-		if($row->bind(JRequest::get('post')))
+
+
+		if ($row->bind($jinput->post->getArray()))
+		//if($row->bind(JRequest::get('post')))
 		{
-			JRequest::setVar("task", "edit");
+		    $jinput->set("task", "edit");
 			$mainframe = JFactory::getApplication();
 			$mainframe->enqueueMessage($msg, "error");
 			if($this->editItemScripts != null)
@@ -348,23 +352,25 @@ class BaseForm extends JObject
 			$this->htmlObject->edit($option, $task, $row, $this->dataBindModel, $this->editItemTitle);
 		}
 	}
-	
+
 	/**
 	Stores data into database
 	*/
 	function store()
 	{
 		$row = $this->getTableObject();
-		if (!$row->bind(JRequest::get('post')))
+
+		if (!$row->bind(JFactory::getApplication()->input->post->getArray()))
+		//if (!$row->bind(JRequest::get('post')))
 		{
 			$this->setError($row->getError());
 			return false;
 		}
 		$keyField = $this->dataBindModel->keyField;
 		$isUpdate = $row->$keyField != null;
-		
+
 		$result = true;
-		
+
 		if($this->useTransaction)
 		{
 			$db = JFactory::getDBO();
@@ -396,10 +402,10 @@ class BaseForm extends JObject
 		}
 		if($result)
 			return $row->$keyField;
-		else 
+		else
 			return false;
 	}
-	
+
 	/**
 	Executed before data is stored. Derived classes can redifine this function to take action accordingly
 	*/
@@ -407,7 +413,7 @@ class BaseForm extends JObject
 	{
 		return true;
 	}
-	
+
 	/**
 	Executed after data is stored. Derived classes can redifine this function to take action accordingly
 	*/
@@ -415,7 +421,7 @@ class BaseForm extends JObject
 	{
 		return true;
 	}
-	
+
 	/**
 	Executed before data is deleted. Derived classes can redifine this function to take action accordingly
 	*/
@@ -423,7 +429,7 @@ class BaseForm extends JObject
 	{
 		return true;
 	}
-	
+
 	/**
 	Executed after data is deleted. Derived classes can redifine this function to take action accordingly
 	*/
@@ -431,7 +437,7 @@ class BaseForm extends JObject
 	{
 		return true;
 	}
-	
+
 	/**
 	Handles the task 'display'. Show lists of elements
 	*/
@@ -452,23 +458,23 @@ class BaseForm extends JObject
 				JHTML::script($scriptPath . $script, false);
 			}
 		}
-		$this->htmlObject->listItems($option, $rows, $pageNav, 
+		$this->htmlObject->listItems($option, $rows, $pageNav,
 			$this->formTitle, $this->dataBindModel, $filters);
 	}
-	
+
 	/*** Returns object that handles html  ***/
 	function getHtmlObject()
 	{
 		return new baseHtmlForm();
 	}
-	
+
 	/**
 	Renders submenu.
 	*/
 	function renderSubmenu()
 	{
 	}
-	
+
 	//Render the admin form and handles the supplied task.
 	function showForm($task, $option)
 	{
@@ -486,7 +492,7 @@ class BaseForm extends JObject
 			$this->htmlObject->endForm($task, $option);
 		}
 	}
-	
+
 	/*** Creates toolbar***/
 	function createToolbar($task, $option)
 	{
@@ -515,12 +521,12 @@ class BaseForm extends JObject
 		$mainframe = JFactory::getApplication();
 		$limit = $mainframe->getUserStateFromRequest( $this->context.'.list.limit', 'limit', $mainframe->getCfg('list_limit'), 'int' );
 		$limitstart = $mainframe->getUserStateFromRequest( $this->context.'.list.limitstart', 'limitstart', 0, 'int' );
-		
+
 		jimport( 'joomla.html.pagination' );
 		$pageNav = new JPagination( $total, $limitstart, $limit );
 		return $pageNav;
 	}
-	
+
 	/***
 	Adds a condition with an and join to a sql condition
 	*/
@@ -531,7 +537,7 @@ class BaseForm extends JObject
 		else
 			$conditions = $condition;
 	}
-	
+
 	/**
 	Returns an array containing data to create a where clause for the elements that will be shown
 	*/
@@ -553,13 +559,13 @@ class BaseForm extends JObject
 		}
 		return $filters;
 	}
-	
+
 	/**
 	Handles the task 'orderup'
 	*/
 	function orderup($task, $option)
 	{
-		$cid = JRequest::getVar('cid', array(0), '', 'array' );
+		$cid = JFactory::getApplication()->input->get('cid', array(0), 'array');
 		if(count($cid) > 0)
 		{
 			$row = $this->getTableObject();
@@ -568,13 +574,13 @@ class BaseForm extends JObject
 		}
 		$this->redirectToList();
 	}
-	
+
 	/**
 	Handles the task 'orderdown'
 	*/
 	function orderdown($task, $option)
 	{
-		$cid = JRequest::getVar('cid', array(0), '', 'array' );
+		$cid = JFactory::getApplication()->input->get('cid', array(0), 'array');
 		if(count($cid) > 0)
 		{
 			$row = $this->getTableObject();
@@ -583,16 +589,21 @@ class BaseForm extends JObject
 		}
 		$this->redirectToList();
 	}
-	
+
 	/**
 	Handles the task 'saveorder'
 	*/
 	function saveorder($task, $option)
 	{
-		$db			= JFactory::getDBO();
-		$cid 		= JRequest::getVar('cid', array(0), '', 'array' );
-		$order 		= JRequest::getVar( 'order', array(0), 'post', 'array' );
-		$total		= count( $cid );
+		$db = JFactory::getDBO();
+		$app = JFactory::getApplication();
+
+		$cid = $app->input->get('cid', array(0), 'array');
+
+		//$order = JRequest::getVar( 'order', array(0), 'post', 'array' );
+		$order = JFactory::getApplication()->input->get('order', array(0), 'array');
+
+		$total = count( $cid );
 		JArrayHelper::toInteger($order, array(0));
 		$row = $this->getTableObject();
 		for( $i=0; $i < $total; $i++ ) {
@@ -601,26 +612,29 @@ class BaseForm extends JObject
 			if ($row->ordering != $order[$i]) {
 				$row->ordering = $order[$i];
 				if (!$row->store()) {
-					//TODO - convert to JError
-					JError::raiseError(500, $db->getErrorMsg() );
+					$app->enqueueMessage($db->getErrorMsg(), 'error');
+					$app->setHeader('status', 500, true);
 				}
 			}
 		}
 		$row->reorder();
 		$this->redirectToList();
 	}
-	
+
 	/**
 	Redirects with to show the list of elements of the current admin page.
 	*/
 	function redirectToList($msg = "", $type = "message")
 	{
+	    $jinput = JFactory::getApplication()->input;
+
 		$mainframe = JFactory::getApplication();
-		$link = 'index.php?option='.urlencode(JRequest::getVar('option')).
-					'&adminpage='.urlencode(JRequest::getVar('adminpage'));
+		$link = 'index.php?option='.urlencode($jinput->get('option')).
+            '&adminpage='.urlencode($jinput->getString('adminpage')).
+            '&view='.urlencode($jinput->get('view'));
 		$mainframe->redirect($link, $msg, $type);
 	}
-	
+
 	/**
 	Handles an ajax call
 	*/
@@ -637,7 +651,7 @@ class BaseForm extends JObject
 			}
 		}
 	}
-	
+
 	/**
 	Redirects to the specified url
 	*/
@@ -646,7 +660,7 @@ class BaseForm extends JObject
 		$mainframe = JFactory::getApplication();
 		$mainframe->redirect($url, $msg, $type);
 	}
-	
+
 	/**
 	Registers a task that can be call using the task parameter
 	*/

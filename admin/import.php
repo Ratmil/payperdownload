@@ -6,7 +6,7 @@
  * @license GNU/GPL http://www.gnu.org/copyleft/gpl.html
 **/
 
-defined( '_JEXEC' ) or die( 'Restricted access' );
+defined('_JEXEC') or die;
 
 class XML_Importer
 {
@@ -19,10 +19,10 @@ class XML_Importer
 	var $headerName = "";
 	var $onValidFunction = null;
 
-	function endElement($parser, $name) 
+	function endElement($parser, $name)
 	{
 	}
-	
+
 	function startElement($parser, $name, $attrs)
 	{
 		$name = str_replace("PAYPERDOWNLOAD_", "PAYPERDOWNLOADPLUS_", $name);
@@ -131,23 +131,23 @@ class XML_Importer
 	{
 		$this->validXML = false;
 		$this->table_prefix = strtoupper ($table_prefix);
-		$xml_parser = xml_parser_create(); 
+		$xml_parser = xml_parser_create();
 		xml_set_object($xml_parser, $this);
-		xml_parser_set_option($xml_parser, XML_OPTION_CASE_FOLDING, true); 
-		xml_set_element_handler($xml_parser, "startElement", "endElement"); 
-		if (!($fp = @fopen($filePath, "r"))) { 
+		xml_parser_set_option($xml_parser, XML_OPTION_CASE_FOLDING, true);
+		xml_set_element_handler($xml_parser, "startElement", "endElement");
+		if (!($fp = @fopen($filePath, "r"))) {
 		   return false;
-		} 
+		}
 
-		while ($data = @fread($fp, 4096)) { 
-			if (!xml_parse($xml_parser, $data, feof($fp))) { 
-				echo (sprintf("XML error: %s at line %d", 
-				   xml_error_string(xml_get_error_code($xml_parser)), 
+		while ($data = @fread($fp, 4096)) {
+			if (!xml_parse($xml_parser, $data, feof($fp))) {
+				echo (sprintf("XML error: %s at line %d",
+				   xml_error_string(xml_get_error_code($xml_parser)),
 				   xml_get_current_line_number($xml_parser)));
-				return false;   
-			} 
-		} 
-		xml_parser_free($xml_parser); 
+				return false;
+			}
+		}
+		xml_parser_free($xml_parser);
 		return $this->errorCount == 0;
 	}
 }

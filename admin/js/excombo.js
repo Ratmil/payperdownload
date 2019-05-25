@@ -106,6 +106,7 @@ function excombo_search(dataField)
 	buttonElement.disabled = true;
 	myAjaxTrigger.async_call(site_root + '/administrator/index.php', 'option=' + 
 		encodeURIComponent(site_option) + '&adminpage=' + 
+		encodeURIComponent(site_adminpage) + '&view=' + 
 		encodeURIComponent(site_adminpage) + '&task=ajaxCall&format=raw' +
 		'&v=' + dataField + '&x=' + encodeURIComponent(searchText), excombo_search_results, excombo_search_error);
 }

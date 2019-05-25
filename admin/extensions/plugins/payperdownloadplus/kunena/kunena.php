@@ -6,8 +6,8 @@
  * @license GNU/GPL http://www.gnu.org/copyleft/gpl.html
 **/
 
-defined( '_JEXEC' ) or
-die( 'Direct Access to this location is not allowed.' );
+// no direct access
+defined ( '_JEXEC' ) or die;
 
 // import the JPlugin class
 jimport('joomla.event.plugin');
@@ -16,13 +16,7 @@ global $mainframe;
 
 class plgPayperDownloadPlusKunena extends JPlugin
 {
-	public function __construct(&$subject, $config = array())
-    {
-        parent::__construct($subject);
-		// load the language file
-		$lang = JFactory::getLanguage();
-		$lang->load('plg_payperdownloadplus_kunena', JPATH_SITE.'/administrator');
-	}
+    protected $autoloadLanguage = true;
 
 	function onIsActive(&$plugins)
 	{
@@ -32,25 +26,10 @@ class plgPayperDownloadPlusKunena extends JPlugin
 		$component = JComponentHelper::getComponent('com_kunena', true);
 		if($component->enabled)
 		{
-			jimport('joomla.filesystem.file');
-			$image = "";
-			$version = new JVersion;
-			if($version->RELEASE == "1.5")
-			{
-				if(JFile::exists(JPATH_ROOT . '/plugins/payperdownloadplus/kunena.jpg'))
-					$image = "plugins/payperdownloadplus/kunena.jpg";
-			}
-			else
-			{
-				if(JFile::exists(JPATH_ROOT . '/plugins/payperdownloadplus/kunena/kunena.jpg'))
-					$image = "plugins/payperdownloadplus/kunena/kunena.jpg";
-			}
-				
-			$plugins[] = array("name" => "Kunena", "description" => JText::_("Kunena access"), 
-				"image" => $image);
+			$plugins[] = array("name" => "Kunena", "description" => JText::_("PAYPERDOWNLOADPLUS_KUNENA_PLUGIN_KUNENAACCESS"), "image" => "plugins/payperdownloadplus/kunena/kunena.png");
 		}
 	}
-	
+
 	function reorderCats(&$cats_ordered, $cats, $parent_id, $depth)
 	{
 		$count = count($cats);
@@ -65,22 +44,38 @@ class plgPayperDownloadPlusKunena extends JPlugin
 			}
 		}
 	}
-	
+
 	function getCategories()
 	{
 		$db = JFactory::getDBO();
-		$db->setQuery('SELECT id, name, parent_id AS parentid FROM #__kunena_categories');
-		$cats = $db->loadObjectList();
+
+		$query = $db->getQuery(true);
+
+		$query->select($db->quoteName('id'));
+		$query->select($db->quoteName('name'));
+		$query->select($db->quoteName('parent_id', 'parentid'));
+		$query->from($db->quoteName('#__kunena_categories'));
+
+		$db->setQuery($query);
+
 		$cats_ordered = array();
-		$this->reorderCats($cats_ordered, $cats, 0, 0);
+
+		try {
+		    $cats = $db->loadObjectList();
+		    $this->reorderCats($cats_ordered, $cats, 0, 0);
+		} catch (RuntimeException $e) {
+		    JFactory::getApplication()->enqueueMessage(JText::_('JERROR_AN_ERROR_HAS_OCCURRED'), 'error');
+		}
+
 		return $cats_ordered;
 	}
-	
+
 	function onRenderConfig($pluginName, $resource)
 	{
 		if($pluginName == "Kunena")
 		{
 			$access = 0;
+			$category_id = '';
 			if($resource)
 			{
 				$category_id = $resource->resource_id;
@@ -133,7 +128,7 @@ class plgPayperDownloadPlusKunena extends JPlugin
 			<option value="0" <?php if($access == 0) echo "selected";?>><?php echo JText::_("PAYPERDOWNLOADPLUS_KUNENA_PLUGIN_POST_ACCESS");?></option>
 			</select>
 			<div id="access_desc">
-			<?php 
+			<?php
 				if($access == 1)
 					echo JText::_("PAYPERDOWNLOADPLUS_KUNENA_PLUGIN_FULL_ACCESS_DESC");
 				else
@@ -145,18 +140,17 @@ class plgPayperDownloadPlusKunena extends JPlugin
 			<?php
 		}
 	}
-	
-	function onGetSaveData(&$resourceId, 
-		$pluginName, &$resourceName, &$resourceParams, &$optionParameter,
-		&$resourceDesc)
+
+	function onGetSaveData(&$resourceId, $pluginName, &$resourceName, &$resourceParams, &$optionParameter, &$resourceDesc)
 	{
 		if($pluginName == "Kunena")
 		{
+		    $jinput = JFactory::getApplication()->input;
+
 			$optionParameter = "com_kunena";
-			$resourceId = JRequest::getInt('kunena_category');
-			$kunena_access = JRequest::getInt('kunena_access');
-			$db = JFactory::getDBO();
-			$query = "";
+			$resourceId = $jinput->getInt('kunena_category');
+			$kunena_access = $jinput->getInt('kunena_access');
+
 			if($kunena_access)
 				$access = JText::_("PAYPERDOWNLOADPLUS_KUNENA_PLUGIN_FULL_ACCESS");
 			else
@@ -164,35 +158,60 @@ class plgPayperDownloadPlusKunena extends JPlugin
 			$resourceName = JText::_("PAYPERDOWNLOADPLUS_KUNENA_PLUGIN_ALL_CATEGORIES");
 			if($resourceId)
 			{
-				$query = 'SELECT id, name as title FROM #__kunena_categories WHERE id = ' . $resourceId;
-				$db->setQuery($query);
-				$resource = $db->loadObject();
-				if($resource)
-					$resourceName = $resource->title;
+			    $db = JFactory::getDBO();
+
+			    $query = $db->getQuery(true);
+
+			    $query->select($db->quoteName('id'));
+			    $query->select($db->quoteName('name', 'title'));
+			    $query->from($db->quoteName('#__kunena_categories'));
+			    $query->where($db->quoteName('id') . ' = ' . $resourceId);
+
+			    $db->setQuery($query);
+
+			    try {
+			        $resource = $db->loadObject();
+			        if($resource)
+			            $resourceName = $resource->title;
+			    } catch (RuntimeException $e) {
+			        JFactory::getApplication()->enqueueMessage(JText::_('JERROR_AN_ERROR_HAS_OCCURRED'), 'error');
+			    }
 			}
 			else
 				$resourceId = -1;
-			$resourceDesc = JText::sprintf("PAYPERDOWNLOADPLUS_KUNENA_PLUGIN_RESOURCE_DESC", 
-				$access, $resourceName);
+			$resourceDesc = JText::sprintf("PAYPERDOWNLOADPLUS_KUNENA_PLUGIN_RESOURCE_DESC", $access, $resourceName);
 			$resourceParams = $kunena_access;
 		}
 	}
-	
+
 	function getHigherLicense($license_ids)
 	{
 		if(count($license_ids))
 		{
 			$db = JFactory::getDBO();
-			$nl = implode(',', $license_ids);
-			$query = "SELECT level FROM #__payperdownloadplus_licenses WHERE license_id IN ($nl) 
-				ORDER BY level DESC ";
+
+			$query = $db->getQuery(true);
+
+			$query->select($db->quoteName('level'));
+			$query->from($db->quoteName('#__payperdownloadplus_licenses'));
+			$query->where($db->quoteName('license_id') . ' IN (' . implode(',', $license_ids) . ')');
+			$query->order($db->quoteName('level') . ' DESC');
+
 			$db->setQuery($query);
-			return $db->loadResult();
+
+			$level = 0;
+			try {
+			    $level = $db->loadResult();
+			} catch (RuntimeException $e) {
+			    JFactory::getApplication()->enqueueMessage(JText::_('JERROR_AN_ERROR_HAS_OCCURRED'), 'error');
+			}
+
+			return $level;
 		}
 		else
 			return null;
 	}
-	
+
 	function onCheckDecreaseDownloadCount($option, $resources, $requiredLicenses, $resourcesId, &$decreaseDownloadCount)
 	{
 		if($option == 'com_kunena')
@@ -200,7 +219,7 @@ class plgPayperDownloadPlusKunena extends JPlugin
 			$decreaseDownloadCount = false;
 		}
 	}
-	
+
 	function getParents($category)
 	{
 		$db = JFactory::getDBO();
@@ -209,91 +228,121 @@ class plgPayperDownloadPlusKunena extends JPlugin
 		$parents[] = $category;
 		while($category != 0)
 		{
-			$query = "SELECT parent_id AS parent FROM #__kunena_categories WHERE id = " . $category;
-			$db->setQuery( $query );
-			$category = (int)$db->loadResult();
-			$parents[] = $category;
+		    $query = $db->getQuery(true);
+
+		    $query->select($db->quoteName('parent_id', 'parent'));
+		    $query->from($db->quoteName('#__kunena_categories'));
+		    $query->where($db->quoteName('id') . ' = ' . $category);
+
+		    $db->setQuery($query);
+
+		    try {
+		        $category = (int)$db->loadResult();
+		        $parents[] = $category;
+		    } catch (RuntimeException $e) {
+		        JFactory::getApplication()->enqueueMessage(JText::_('JERROR_AN_ERROR_HAS_OCCURRED'), 'error');
+		        $category = 0; // to get out of the loop
+		    }
 		}
 		return $parents;
 	}
-	
+
 	function onValidateAccess($option, $resources, &$allowAccess, &$requiredLicenses, &$resourcesId)
 	{
 		if($option == 'com_kunena')
 		{
+		    $jinput = JFactory::getApplication()->input;
+
 			$requiredLicenses = array();
 			$resourcesId = array();
 			$db = JFactory::getDBO();
-			$catid = JRequest::getInt('catid', 0);
-			$id = JRequest::getInt('id', 0);
+			$catid = $jinput->getInt('catid', 0);
+			$id = $jinput->getInt('id', 0);
 			if($catid == 0)
 			{
-				$db->setQuery("SELECT catid FROM #__kunena_messages WHERE id = " . $id);
-				$catid = $db->loadResult();
+			    $query = $db->getQuery(true);
+
+			    $query->select($db->quoteName('catid'));
+			    $query->from($db->quoteName('#__kunena_messages'));
+			    $query->where($db->quoteName('id') . ' = ' . $id);
+
+			    $db->setQuery($query);
+
+			    try {
+			        $catid = $db->loadResult();
+			    } catch (RuntimeException $e) {
+			        JFactory::getApplication()->enqueueMessage(JText::_('JERROR_AN_ERROR_HAS_OCCURRED'), 'error');
+			    }
 			}
 			$parents = $this->getParents($catid);
-			$func = JRequest::getVar('func');
-			$view = JRequest::getVar('view');
-			$layout = JRequest::getVar('layout');
-			$task = JRequest::getVar('task');
+			$func = $jinput->get('func');
+			$view = $jinput->get('view');
+			$layout = $jinput->get('layout');
+			$task = $jinput->get('task');
 			foreach($resources as $resource)
 			{
-				if($resource->resource_id != -1 && array_search($resource->resource_id, $parents) !== false)
-				{
-					if((($func == 'view' || $view == 'topic') && $resource->resource_params == 1) ||
-					 $func == 'post' || $layout == 'reply' || $task == 'post')
-					{
-						if($resource->license_id)
-						{
-							if(array_search($resource->license_id, $requiredLicenses) === false)
-								$requiredLicenses[] = $resource->license_id;
-						}
-						else
-						{
-							if(array_search($resource->resource_license_id, $resourcesId) === false)
-								$resourcesId[] = $resource->resource_license_id;
-						}
-						$allowAccess = false;
-					}
-				}
+			    if ($resource->resource_type === 'Kunena') {
+    				if($resource->resource_id != -1 && array_search($resource->resource_id, $parents) !== false)
+    				{
+    					if((($func == 'view' || $view == 'topic') && $resource->resource_params == 1) ||
+    					 $func == 'post' || $layout == 'reply' || $task == 'post')
+    					{
+    						if($resource->license_id)
+    						{
+    							if(array_search($resource->license_id, $requiredLicenses) === false)
+    								$requiredLicenses[] = $resource->license_id;
+    						}
+    						else
+    						{
+    							if(array_search($resource->resource_license_id, $resourcesId) === false)
+    								$resourcesId[] = $resource->resource_license_id;
+    						}
+    						$allowAccess = false;
+    					}
+    				}
+			    }
 			}
-			
+
 			if(count($requiredLicenses) == 0)
 			{
-				
+
 				foreach($resources as $resource)
 				{
-					if($resource->resource_id == -1)
-					{
-						if((($func == 'view' || $view == 'topic') && $resource->resource_params == 1) ||
-							$func == 'post' || $layout == 'reply' || $task == 'post')
-						{
-							if($resource->license_id)
-							{
-								if(array_search($resource->license_id, $requiredLicenses) === false)
-									$requiredLicenses[] = $resource->license_id;
-							}
-							else
-							{
-								if(array_search($resource->resource_license_id, $resourcesId) === false)
-									$resourcesId[] = $resource->resource_license_id;
-							}
-							$allowAccess = false;
-						}
-					}
+				    if ($resource->resource_type === 'Kunena') {
+    					if($resource->resource_id == -1)
+    					{
+    						if((($func == 'view' || $view == 'topic') && $resource->resource_params == 1) ||
+    							$func == 'post' || $layout == 'reply' || $task == 'post')
+    						{
+    							if($resource->license_id)
+    							{
+    								if(array_search($resource->license_id, $requiredLicenses) === false)
+    									$requiredLicenses[] = $resource->license_id;
+    							}
+    							else
+    							{
+    								if(array_search($resource->resource_license_id, $resourcesId) === false)
+    									$resourcesId[] = $resource->resource_license_id;
+    							}
+    							$allowAccess = false;
+    						}
+    					}
+				    }
 				}
 			}
 		}
 	}
-	
-	
+
+
 	function getReturnPage($option, &$returnPage)
 	{
 		if($option == "com_kunena")
 		{
-			$func = JRequest::getVar('func', '');
-			$id = JRequest::getInt('id', 0);
-			$catid = JRequest::getInt('catid', 0);
+		    $jinput = JFactory::getApplication()->input;
+
+		    $func = $jinput->get('func', '');
+		    $id = $jinput->getInt('id', 0);
+		    $catid = $jinput->getInt('catid', 0);
 			if($func == 'view' || $func == 'post')
 			{
 				if($id)
@@ -307,17 +356,17 @@ class plgPayperDownloadPlusKunena extends JPlugin
 				$returnPage = "index.php?option=com_kunena";
 		}
 	}
-	
+
 	/*
-	Returns item id for current forum topic. 
+	Returns item id for current forum topic.
 	*/
 	function onGetItemId($option, &$itemId)
 	{
 		if($option == 'com_kunena')
 		{
-			$itemId = JRequest::getInt('id', 0);
+		    $itemId = JFactory::getApplication()->input->getInt('id', 0);
 		}
 	}
-	
+
 }
 ?>

@@ -1,44 +1,122 @@
-.icon-forward			{ background-image: url(../images/forward.png); }
-.icon-preview			{ background-image: url(../images/preview.png); }
-.icon-statistics			{ background-image: url(../images/icon-32-statistics.png); }
-.icon-resend			{ background-image: url(../images/resend.png); }
-.icon-48-resources			{ background-image: url(../images/resources.png); }
-.icon-48-payments			{ background-image: url(../images/payments.png); }
-.icon-48-users			{ background-image: url(../images/users.png); }
-.icon-48-download			{ background-image: url(../images/download.png); }
-.icon-48-licenses			{ background-image: url(../images/licenses.png); }
-.icon-48-affiliates			{ background-image: url(../images/affiliates.png); }
-.icon-48-banners			{ background-image: url(../images/banners.png); }
-.icon-48-backup			{ background-image: url(../images/backup.png); }
-.icon-extend			{ background-image: url(../images/extend.png); }
-.icon-pay			{ background-image: url(../images/pay.png); }
-.icon-upgrade			{ background-image: url(../images/upgrade.png); }
-.icon-delete_ex			{ background-image: url(../images/delete.png); }
-.icon-back			{ background-image: url(../images/back.png); }
+/* .icon-forward			{ background-image: url(../images/forward.png); } */
+/* .icon-preview			{ background-image: url(../images/preview.png); } */
+/* .icon-statistics			{ background-image: url(../images/icon-32-statistics.png); } */
+/* .icon-resend			{ background-image: url(../images/resend.png); } */
+/* .icon-48-resources			{ background-image: url(../images/resources.png); } */
+/* .icon-48-payments			{ background-image: url(../images/payments.png); } */
+/* .icon-48-users			{ background-image: url(../images/users.png); } */
+/* .icon-48-download			{ background-image: url(../images/download.png); } */
+/* .icon-48-licenses			{ background-image: url(../images/licenses.png); } */
+/* .icon-48-affiliates			{ background-image: url(../images/affiliates.png); } */
+/* .icon-48-banners			{ background-image: url(../images/banners.png); } */
+/* .icon-48-backup			{ background-image: url(../images/backup.png); } */
+/* .icon-extend			{ background-image: url(../images/extend.png); } */
+/* .icon-pay			{ background-image: url(../images/pay.png); } */
+/* .icon-upgrade			{ background-image: url(../images/upgrade.png); } */
+/* .icon-delete_ex			{ background-image: url(../images/delete.png); } */
+/* .icon-back			{ background-image: url(../images/back.png); } */
 
-table.statistics
-{
-	border-width: 1px;
-	text-align: right;
-}
+/* table.statistics */
+/* { */
+/* 	border-width: 1px; */
+/* 	text-align: right; */
+/* } */
 
-tr.statistics_header
-{
-	background-color: #009900;
-}
-tr.statistics_row
-{
-}
+/* tr.statistics_header */
+/* { */
+/* 	background-color: #009900; */
+/* } */
+/* tr.statistics_row */
+/* { */
+/* } */
 
 
-td.statistics_header_left
-{
-	background-color: #00DD00;
-}
+/* td.statistics_header_left */
+/* { */
+/* 	background-color: #00DD00; */
+/* } */
+
+/* resources */
 
 .plugin_div
 {
 	width: 100px;
 	margin: 10px;
 	float: left;
+}
+
+/* all pages */
+
+.copyright-container {
+	text-align: center;
+	margin-top: 20px;
+	margin-left: 0 !important;
+}
+
+.copyright {
+	font-size: 0.8em;
+	color: #aaa;
+}
+
+/* info page */
+
+#content .icon a {
+	background-color: #fff;
+	color: #000;
+	background-position: -30px;
+	display: block;
+	float: left;
+	height: 110px;
+	width: 140px;
+	color: #565656;
+	vertical-align: middle;
+	text-decoration: none;
+	text-align: center;
+	margin-right: 15px;
+	margin-bottom: 15px;
+	border: 1px solid #CCC;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	border-radius: 5px;
+	-webkit-transition-property: background-position,
+		-webkit-border-bottom-left-radius, -webkit-box-shadow;
+	-moz-transition-property: background-position,
+		-moz-border-radius-bottomleft, -moz-box-shadow;
+	-webkit-transition-duration: .8s;
+	-moz-transition-duration: .8s;
+	transition-property: background-position, border-bottom-left-radius,
+		box-shadow;
+	transition-duration: .8s
+}
+
+#content .icon a:hover, #content .icon a:focus, #content .icon a:active
+	{
+	color: #ef432a;
+	background-position: 0 0;
+	-webkit-border-bottom-left-radius: 50% 20px;
+	-moz-border-radius-bottomleft: 50% 20px;
+	border-bottom-left-radius: 50% 20px;
+	-webkit-box-shadow: -5px 10px 15px rgba(0, 0, 0, 0.25);
+	-moz-box-shadow: -5px 10px 15px rgba(0, 0, 0, 0.25);
+	box-shadow: -5px 10px 15px rgba(0, 0, 0, 0.25);
+	position: relative;
+	z-index: 10
+}
+
+#content .icon .task i {
+	padding-top: 10px;
+	margin: 0;
+	font-size: 48px;
+	width: 48px;
+	height: 48px;
+	line-height: 48px;
+	display: inline-block;
+}
+
+#content .icon .task span {
+	font-size: 12px;
+	font-weight: bold;
+	display: block;
+	text-align: center;
+	margin-top: 8px
 }

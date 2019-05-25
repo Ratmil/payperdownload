@@ -7,8 +7,7 @@
 **/
 ?>
 <?php
-defined( '_JEXEC' ) or die( 'Restricted access' );
-
+defined('_JEXEC') or die;
 
 class PayPerDownloadController extends JControllerLegacy
 {
@@ -20,7 +19,7 @@ class PayPerDownloadController extends JControllerLegacy
 			$model->handleResponse();
 		}
 	}
-	
+
 	function confirmres()
 	{
 		$model = $this->getModel( "PayResource", 'PayPerDownloadModel' );
@@ -29,32 +28,37 @@ class PayPerDownloadController extends JControllerLegacy
 			$model->handleResponse();
 		}
 	}
-	
+
 	function getfree()
 	{
 		$result = false;
 		$model = $this->getModel( "Pay", 'PayPerDownloadModel' );
+
+		$jinput = JFactory::getApplication()->input;
+
 		if($model)
 		{
 			$user = JFactory::getUser();
 			if($user->id)
 			{
-				$license_id = JRequest::getInt('license_id');
+			    $license_id = $jinput->getInt('license_id');
 				$result = $model->getFree($license_id, $user->id);
 			}
 		}
 		$mainframe = JFactory::getApplication();
-		$returnUrl = base64_decode(JRequest::getVar("returnurl"));
+		$returnUrl = base64_decode($jinput->getBase64('returnurl', ''));
 		$msg = "";
 		if(!$result)
 			$msg = JText::_("PAYPERDOWNLOADPLUS_DISCOUNT_GET_FREE_ERROR");
 		$mainframe->redirect($returnUrl, $msg);
 	}
-	
+
 	function joinaffiliate()
 	{
-		$aff = JRequest::getInt('aff');
-		$Itemid = JRequest::getInt('Itemid');
+	    $jinput = JFactory::getApplication()->input;
+
+	    $aff = $jinput->getInt('aff');
+	    $Itemid = $jinput->getInt('Itemid');
 		$model = $this->getModel( "Affiliate", 'PayPerDownloadModel' );
 		$isUpdate = false;
 		$result = $model->updateAffiliateData($isUpdate);
@@ -78,7 +82,7 @@ class PayPerDownloadController extends JControllerLegacy
 				$msg, "error");
 		}
 	}
-	
+
 	function confirmaffiliatepayment()
 	{
 		$model = $this->getModel( "PayAffiliate", 'PayPerDownloadModel' );
@@ -87,23 +91,25 @@ class PayPerDownloadController extends JControllerLegacy
 			$model->handleResponse();
 		}
 	}
-	
+
 	function paypalsim()
 	{
-		$notify_url = JRequest::getVar('notify_url');
-		$req = "receiver_email=" . urlencode(JRequest::getVar('business'));
-		$req .= "&business=" . urlencode(JRequest::getVar('business'));
+	    $jinput = JFactory::getApplication()->input;
+
+	    $notify_url = $jinput->getString('notify_url');
+	    $req = "receiver_email=" . urlencode($jinput->getString('business'));
+	    $req .= "&business=" . urlencode($jinput->getString('business'));
 		$req .= "&payer_email=" . urlencode("paypalsimulator@paypal.com");
 		$req .= "&txn_id=" . urlencode(rand());
 		$req .= "&test_ipn=1";
-		$req .= "&custom=" . urlencode(JRequest::getVar('custom'));
-		$req .= "&item_number=" . urlencode(JRequest::getVar('item_number'));
-		$req .= "&mc_gross=" . urlencode(JRequest::getVar('amount'));
-		$req .= "&mc_currency=" . urlencode(JRequest::getVar('currency_code'));
+		$req .= "&custom=" . urlencode($jinput->getInt('custom'));
+		$req .= "&item_number=" . urlencode($jinput->getInt('item_number'));
+		$req .= "&mc_gross=" . urlencode($jinput->getFloat('amount'));
+		$req .= "&mc_currency=" . urlencode($jinput->getString('currency_code'));
 		$req .= "&payment_status=COMPLETED";
 		$req .= "&mc_fee=0.01";
 		$req .= "&tax=0.00";
-		
+
 		$ch = curl_init();
 		curl_setopt($ch,CURLOPT_SSL_VERIFYPEER, false);
 		curl_setopt($ch,CURLOPT_URL, $notify_url);
@@ -112,50 +118,45 @@ class PayPerDownloadController extends JControllerLegacy
 		curl_exec($ch);
 		curl_close($ch);
 		$mainframe = JFactory::getApplication();
-		$mainframe->redirect("index.php?option=com_payperdownload&view=paypalsim&return=" . 
-			urlencode(JRequest::getVar('return')));
+		$return = $jinput->getString('return');
+		$mainframe->redirect("index.php?option=com_payperdownload&view=paypalsim&return=" .	urlencode($return));
 	}
-	
+
 	function quickRegister()
 	{
 		$lang = JFactory::getLanguage();
 		$lang->load('com_users', JPATH_SITE . '/administrator');
-	
-		$return = JRequest::getVar('return');
+
+		$jinput = JFactory::getApplication()->input;
+
+		$return = $jinput->getBase64('return', '');
 		if($return)
 			$return = base64_decode($return);
-	
+
 		$mainframe = JFactory::getApplication();
 		$usersConfig = JComponentHelper::getParams( 'com_users' );
 		$newUsertype = $usersConfig->get( 'new_usertype' );
-		
+
 		jimport('joomla.user.user');
-		$userName = JRequest::getVar('regusername');
-		$userFullName = JRequest::getVar('name');
-		$userPassword = JRequest::getString('regpassword', '', 'post', JREQUEST_ALLOWRAW);
-		$userPassword2 = JRequest::getString('regpassword2', '', 'post', JREQUEST_ALLOWRAW);
-		
-		$email = JRequest::getVar('email');
-		$email2 = JRequest::getVar('email2');
-		$params = array("name" => $userFullName, "username" => $userName, 
-			"password" => $userPassword, "password2" => $userPassword2, 
+		$userName = $jinput->getUsername('regusername');
+		$userFullName = $jinput->getString('name');
+
+		//$userPassword = JRequest::getString('regpassword', '', 'post', JREQUEST_ALLOWRAW);
+		//$userPassword2 = JRequest::getString('regpassword2', '', 'post', JREQUEST_ALLOWRAW);
+
+		$userPassword = $jinput->getRaw('regpassword', '');
+		$userPassword2 = $jinput->getRaw('regpassword2', '');
+
+		$email = $jinput->getString('email');
+		$email2 = $jinput->getString('email2');
+		$params = array("name" => $userFullName, "username" => $userName,
+			"password" => $userPassword, "password2" => $userPassword2,
 			"email" => $email);
+
 		$user = new JUser();
-		$version = new JVersion();
-		if($version->RELEASE == "1.5")
-		{
-			if (!$newUsertype) {
-				$newUsertype = 'Registered';
-			}
-			$acl = JFactory::getACL();
-			$user->gid = $acl->get_group_id($newUsertype);
-			$user->usertype = $newUsertype;
-		}
-		else
-		{
-			$user->groups = array();
-			$user->groups []= $newUsertype;
-		}
+		$user->groups = array();
+		$user->groups []= $newUsertype;
+
 		if(!$user->bind($params))
 		{
 			$mainframe->redirect($return, JText::_( $user->getError()));
@@ -175,7 +176,7 @@ class PayPerDownloadController extends JControllerLegacy
 		}
 		$options = array();
 		$options['return'] = $return;
-		$options['remember'] = JRequest::getBool('remember', false);
+		$options['remember'] = $jinput->getBool('remember', false);
 		$credentials = array();
 		$credentials['username'] = $userName;
 		$credentials['password'] = $userPassword;
@@ -198,12 +199,14 @@ class PayPerDownloadController extends JControllerLegacy
 			}
 		}
 	}
-	
+
 	function buyWithAup()
 	{
+	    $jinput = JFactory::getApplication()->input;
+
 		require_once(JPATH_COMPONENT . '/models/pay.php');
 		$model = new PayPerDownloadModelPay();
-		$return = JRequest::getVar("return");
+		$return = $jinput->getBase64('return', '');
 		if($return)
 			$return = base64_decode($return);
 		$mainframe = JFactory::getApplication();
@@ -214,7 +217,7 @@ class PayPerDownloadController extends JControllerLegacy
 			if($user->id)
 			{
 				$user_points = $model->getAUP();
-				$license_id = JRequest::getInt("lid", 0);
+				$license_id = $jinput->getInt('lid', 0);
 				$license = $model->getLicense($license_id);
 				if($license && $license->aup > 0 && $license->aup <= $user_points)
 				{
@@ -235,11 +238,13 @@ class PayPerDownloadController extends JControllerLegacy
 		else
 			$mainframe->redirect($return, JText::_("PAYPERDOWNLOADPLUS_AUP_NOT_ENABLED"), "error");
 	}
-	
+
 	function sendLink()
 	{
-		$access = JRequest::getVar('access');
-		$m = JRequest::getVar('m', '');
+	    $jinput = JFactory::getApplication()->input;
+
+	    $access = $jinput->getRaw('access');
+	    $m = $jinput->getString('m', '');
 		$regexp = "/^\s*\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*\s*$/";
 		if(preg_match($regexp, $m))
 		{
@@ -247,9 +252,9 @@ class PayPerDownloadController extends JControllerLegacy
 			$db = JFactory::getDBO();
 			$downloadId = (int)$downloadId;
 			$rand = $db->escape($rand);
-			$query = "SELECT * FROM #__payperdownloadplus_download_links 
+			$query = "SELECT * FROM #__payperdownloadplus_download_links
 				WHERE download_id = $downloadId AND random_value = '$rand' AND payed <> 0 AND
-				(expiration_date > NOW() OR expiration_date IS NULL) AND 
+				(expiration_date > NOW() OR expiration_date IS NULL) AND
 				(link_max_downloads = 0 OR download_hits < link_max_downloads)";
 			$db->setQuery( $query );
 			$downloadLink = $db->loadObject();
@@ -274,7 +279,7 @@ class PayPerDownloadController extends JControllerLegacy
 		echo "<<0>>";
 		exit();
 	}
-	
+
 	function donate()
 	{
 		JPluginHelper::importPlugin("payperdownloadplus");
@@ -282,9 +287,11 @@ class PayPerDownloadController extends JControllerLegacy
 		$dispatcher->trigger('onDonationReceived');
 		exit;
 	}
-	
+
 	function paypalpay()
 	{
+	    $jinput = JFactory::getApplication()->input;
+
 		require_once(JPATH_COMPONENT . '/models/pay.php');
 		$model = new PayPerDownloadModelPay();
 		$paymentInfo = $model->getPaymentInfo();
@@ -305,33 +312,31 @@ class PayPerDownloadController extends JControllerLegacy
 		}
 		$requests = array();
 		$hasBusiness = false;
-		$coupon_code = JRequest::getVar("coupon_code");
-		$price = JRequest::getFloat("amount");
+		$coupon_code = $jinput->getString("coupon_code");
+		$price = $jinput->getFloat("amount");
 		if($coupon_code)
 		{
-			$ppd_item_type = JRequest::getVar("ppd_item_type");
+		    $ppd_item_type = $jinput->getString("ppd_item_type");
 			if($ppd_item_type == "license")
 			{
-				$item = JRequest::getInt("item_number");
+			    $item = $jinput->getInt("item_number");
 			}
 			else
 			{
-				$item = JRequest::getInt("custom");
+			    $item = $jinput->getInt("custom");
 			}
-			$new_price = $model->applyDiscountCoupon($coupon_code, $price, 
+			$new_price = $model->applyDiscountCoupon($coupon_code, $price,
 				$item, $ppd_item_type == "license");
 			if($new_price && $new_price > 0)
 				$price = round($new_price, 2);
 		}
-		foreach ($_POST as $key => $value)
+		foreach (/*$_POST*/$jinput->post->getArray() as $key => $value)
 		{
-			if($key != "task" && $key != "option" && $key != "ppd_item_type" &&
-				$key != "coupon_code" && $key != "amount")
+			if($key != "task" && $key != "option" && $key != "ppd_item_type" && $key != "coupon_code" && $key != "amount")
 			{
 				if($key == "business")
 					$hasBusiness = true;
-				$save_value = JRequest::getVar($key);
-				$requests []= $key . "=" . urlencode($save_value);
+				$requests []= $key . "=" . urlencode($value);
 			}
 		}
 		$requests []= "amount=" . urlencode($price);
@@ -345,7 +350,7 @@ class PayPerDownloadController extends JControllerLegacy
 		header("Location: $request");
 		die();
 	}
-	
+
 	function _sendmail($useremail, $username)
 	{
 		$mainframe = JFactory::getApplication();
@@ -364,7 +369,7 @@ class PayPerDownloadController extends JControllerLegacy
 		$mail->setSender(array($joomla_config->mailfrom, $joomla_config->fromname));
 		$mail->send();
 	}
-	
+
 	function _getGroupId($groupName)
 	{
 		$db = JFactory::getDBO();

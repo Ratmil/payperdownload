@@ -6,7 +6,7 @@
  * @license GNU/GPL http://www.gnu.org/copyleft/gpl.html
 **/
 // no direct access
-defined( '_JEXEC' ) or die( 'Restricted access' );
+defined('_JEXEC') or die;
 
 define('PAYPERDOWNLOADPLUS_VERSION', '1.6');
 
@@ -18,9 +18,9 @@ jimport( 'joomla.plugin.plugin' );
  * @package		Joomla
  * @subpackage	System
  */
- 
 
- 
+
+
 class  plgSystemPayperDownloadPlus extends JPlugin
 {
 	/**
@@ -39,20 +39,20 @@ class  plgSystemPayperDownloadPlus extends JPlugin
 	{
 		parent::__construct($subject, $config);
 	}
-	
+
 	/*
 	Check affiliate referrer from request parameters.
 	*/
 	function checkReferer()
 	{
-		$affid = JRequest::getInt('ppd_affid', 0);
+	    $affid = JFactory::getApplication()->input->getInt('ppd_affid', 0);
 		if($affid)
 		{
 			$session = JFactory::getSession();
 			$session->set("ppd_affid", $affid);
 		}
 	}
-	
+
 	/*
 	onAfterRoute event.
 	In this event it is checked if there is any protected resource and if user has
@@ -67,12 +67,12 @@ class  plgSystemPayperDownloadPlus extends JPlugin
 			return;
 		$this->checkReferer();
 		$this->validateResourceAccessFromRequestParameters();
-		$option = JRequest::getVar('option');
+		$option = JFactory::getApplication()->input->get('option');
 		$db = JFactory::getDBO();
 		$escaped_option = $db->escape($option);
-		$query = "SELECT resource_license_id, resource_id, resource_type, license_id, resource_params, shared 
+		$query = "SELECT resource_license_id, resource_id, resource_type, license_id, resource_params, shared
 			FROM #__payperdownloadplus_resource_licenses
-			WHERE (resource_option_parameter = '$escaped_option' OR 
+			WHERE (resource_option_parameter = '$escaped_option' OR
 				resource_option_parameter = '') AND #__payperdownloadplus_resource_licenses.enabled = 1";
 		$db->setQuery( $query );
 		$resources = $db->loadObjectList();
@@ -101,7 +101,7 @@ class  plgSystemPayperDownloadPlus extends JPlugin
 				{
 					if(
 					  $this->isPrivilegedUser($user) ||
-					  (count($requiredLicenses) > 0 && $this->isThereValidLicense($requiredLicenses, $decreaseDownloadCount, $item, $checkSession, $deleteResourceFromSession)) || 
+					  (count($requiredLicenses) > 0 && $this->isThereValidLicense($requiredLicenses, $decreaseDownloadCount, $item, $checkSession, $deleteResourceFromSession)) ||
 					  (count($resourcesId) > 0 && $this->isTherePaidResource($resourcesId, $item, $decreaseDownloadCount, $shared, $checkSession, $deleteResourceFromSession)))
 					{
 						$requiresPayment = false;
@@ -128,7 +128,7 @@ class  plgSystemPayperDownloadPlus extends JPlugin
 				}
 				else
 				{
-					// should always work according to PHP.net 
+					// should always work according to PHP.net
 					// http://www.php.net/manual/en/reserved.variables.server.php
 					// 1 - Set to a non-empty value if the script was queried through the HTTPS protocol.
 					// 2 - Note that when using ISAPI with IIS, the value will be "off" if the request was not made through the HTTPS protocol
@@ -171,7 +171,7 @@ class  plgSystemPayperDownloadPlus extends JPlugin
 			}
 		}
 	}
-	
+
 	/*
 	onAfterRender event
 	It is called after page is created. This event checks if current page is a Kunena forum
@@ -179,10 +179,13 @@ class  plgSystemPayperDownloadPlus extends JPlugin
 	*/
 	function onAfterRender()
 	{
+	    if(JFactory::getApplication()->isAdmin())
+	        return;
+
 		$this->showLicensesPrices();
 		$this->showUserLicenses();
 	}
-	
+
 	/*
 	If the specified resource is shared returns the specific item that is about to be download.
 	This item is id of download for Phocadownload or id of article for a content article, etc.
@@ -195,7 +198,7 @@ class  plgSystemPayperDownloadPlus extends JPlugin
 		$dispatcher->trigger('onGetItemId', array ($option, &$itemId));
 		return $itemId;
 	}
-	
+
 	/*
 	Returns wheather user should be redirected to the "No access" page if he or her has
 	no access to the resource
@@ -206,7 +209,7 @@ class  plgSystemPayperDownloadPlus extends JPlugin
 		$db->setQuery("SELECT usenoaccesspage FROM #__payperdownloadplus_config", 0, 1);
 		return $db->loadResult();
 	}
-	
+
 	/*
 	Return menu items assigned to payment page and thank you page
 	*/
@@ -216,7 +219,7 @@ class  plgSystemPayperDownloadPlus extends JPlugin
 		$db->setQuery("SELECT config_id, payment_page_menuitem, thankyou_page_menuitem FROM #__payperdownloadplus_config", 0, 1);
 		return $db->loadObject();
 	}
-	
+
 	/*
 	Returns licenses with their level given licenses ids.
 	*/
@@ -225,8 +228,7 @@ class  plgSystemPayperDownloadPlus extends JPlugin
 		if(count($licenses) > 0)
 		{
 			$lics = implode(", ", $licenses);
-			$query = "SELECT license_id, level FROM #__payperdownloadplus_licenses WHERE 
-				license_id IN ($lics)";
+			$query = "SELECT license_id, level FROM #__payperdownloadplus_licenses WHERE license_id IN ($lics)";
 			$db = JFactory::getDBO();
 			$db->setQuery($query);
 			return $db->loadObjectList();
@@ -234,7 +236,7 @@ class  plgSystemPayperDownloadPlus extends JPlugin
 		else
 			return array();
 	}
-	
+
 	/*
 	Checks if current user owns one of the specified required licenses.
 	Parameter decreaseDownloadCount specifies if the available download count is decreased.
@@ -255,7 +257,7 @@ class  plgSystemPayperDownloadPlus extends JPlugin
 		}
 		return false;
 	}
-	
+
 	/*
 	Adds a menu item parameter (Itemid) to the specified url
 	*/
@@ -268,11 +270,11 @@ class  plgSystemPayperDownloadPlus extends JPlugin
 		$db->setQuery($query);
 		$itemId = $db->loadResult();
 		if(!$itemId)
-			$itemId = JRequest::getVar('Itemid');
+		    $itemId = JFactory::getApplication()->input->getInt('Itemid');
 		if($itemId)
 			$url .= "&Itemid=" . urlencode($itemId);
 	}
-	
+
 	/*
 	Returns component configuration
 	*/
@@ -282,11 +284,11 @@ class  plgSystemPayperDownloadPlus extends JPlugin
 		$db->setQuery("SELECT * FROM #__payperdownloadplus_config", 0, 1);
 		return $db->loadObject();
 	}
-	
+
 	/*
 	Checks if some of the requested resources has been activated though url parameters
 	**/
-	function isTherePaidResource($resources, $item, $decreaseDownloadCount, 
+	function isTherePaidResource($resources, $item, $decreaseDownloadCount,
 		$shared = true, $checkSession = true,
 		$deleteResourceFromSession = false)
 	{
@@ -294,13 +296,13 @@ class  plgSystemPayperDownloadPlus extends JPlugin
 		{
 			$this->checkResourceForUser($resource, $item);
 			if($this->isResourceAccessInSession(
-				$resource, $item, $decreaseDownloadCount, 
+				$resource, $item, $decreaseDownloadCount,
 				$checkSession, $shared, $deleteResourceFromSession))
 				return true;
 		}
 		return false;
 	}
-	
+
 	function checkResourceForUser($resource_id, $item_id)
 	{
 		$user_id = (int)JFactory::getUser()->id;
@@ -308,7 +310,7 @@ class  plgSystemPayperDownloadPlus extends JPlugin
 		{
 			$resource_id = (int)$resource_id;
 			$db = JFactory::getDBO();
-			$query = "SELECT * FROM #__payperdownloadplus_download_links 
+			$query = "SELECT * FROM #__payperdownloadplus_download_links
 				WHERE resource_id = $resource_id AND user_id = $user_id AND
 				(expiration_date IS NULL OR expiration_date >= NOW()) AND payed <> 0";
 			if($item_id != null && $item_id != 0)
@@ -323,12 +325,12 @@ class  plgSystemPayperDownloadPlus extends JPlugin
 			}
 		}
 	}
-	
+
 	/*
 	Checks if the specified resource has been activated though url parameters
 	*/
 	function isResourceAccessInSession(
-		$req_resource, $item, 
+		$req_resource, $item,
 		$decreaseDownloadCount, $checkSession = true, $shared = true,
 		$deleteResourceFromSession = false)
 	{
@@ -339,7 +341,7 @@ class  plgSystemPayperDownloadPlus extends JPlugin
 			foreach($resources as $key => $resource)
 			{
 				if($resource && $req_resource == $resource->resource_id &&
-				  ($shared || $resource->item == $item) && 
+				  ($shared || $resource->item == $item) &&
 				  $this->isDownloadCountValid($resource, $decreaseDownloadCount, $item, $checkSession))
 				{
 					if($deleteResourceFromSession)
@@ -353,20 +355,20 @@ class  plgSystemPayperDownloadPlus extends JPlugin
 		}
 		return false;
 	}
-	
+
 	/*
 	Returns if the specified resource is shared
 	*/
 	function isResourceShared($resource_id)
 	{
 		$db = JFactory::getDBO();
-		$query = "SELECT shared FROM #__payperdownloadplus_resource_licenses 
+		$query = "SELECT shared FROM #__payperdownloadplus_resource_licenses
 			WHERE resource_license_id = " . (int)$resource_id;
 		$db->setQuery( $query );
 		$shared = $db->loadResult();
 		return $shared;
 	}
-	
+
 	/*
 	Increase download count for download link
 	*/
@@ -399,7 +401,7 @@ class  plgSystemPayperDownloadPlus extends JPlugin
 		}
 		return $result;
 	}
-	
+
 	/*
 	Checks if user has not exceeded its allowed download count limit.
 	*/
@@ -409,7 +411,7 @@ class  plgSystemPayperDownloadPlus extends JPlugin
 		$resource_id = (int)$resource->resource_id;
 		$query = "SELECT download_id,
 			(link_max_downloads = 0 || download_hits < link_max_downloads) AS downloadcount_valid
-			FROM #__payperdownloadplus_download_links 
+			FROM #__payperdownloadplus_download_links
 			WHERE (link_max_downloads = 0 || download_hits <= link_max_downloads) AND download_id = " . (int)$resource->download_link;
 		$db->setQuery( $query );
 		$download = $db->loadObject();
@@ -417,11 +419,11 @@ class  plgSystemPayperDownloadPlus extends JPlugin
 		{
 			if($this->increaseDownloadCount($resource->download_link, $item, $checkSession,
 					$download->downloadcount_valid))
-				$download->downloadcount_valid = true;		
+				$download->downloadcount_valid = true;
 		}
 		return $download != null && $download->downloadcount_valid;
 	}
-	
+
 	/*
 	Adds resource to a session variable.
 	This resource has been activated though url parameters.
@@ -436,8 +438,8 @@ class  plgSystemPayperDownloadPlus extends JPlugin
 		}
 		foreach($resources as $resource)
 		{
-			if($resource->resource_id == $resource_id && 
-				$resource->item == $item && 
+			if($resource->resource_id == $resource_id &&
+				$resource->item == $item &&
 				$resource->download_link == $download_link)
 				return;
 		}
@@ -448,13 +450,13 @@ class  plgSystemPayperDownloadPlus extends JPlugin
 		$resources []= $resource;
 		$session->set("ActiveResourceAccess", $resources);
 	}
-	
+
 	/*
 	Checks request parameters and searches for a download link activation
 	*/
 	function validateResourceAccessFromRequestParameters()
 	{
-		$access = JRequest::getVar('ppdaccess', '');
+	    $access = JFactory::getApplication()->input->getRaw('ppdaccess', '');
 		if($access == '')
 			return;
 		// get item id if available in request
@@ -467,11 +469,11 @@ class  plgSystemPayperDownloadPlus extends JPlugin
 			list($resource_id, $hash, $rand, $item_id) = explode(":", $access);
 		else if(preg_match("/\\S+\\:\\S+\\:\\S+/", $access))
 			list($resource_id, $hash, $rand) = explode(":", $access);
-		
+
 		$db = JFactory::getDBO();
 		$resource_id = (int)$resource_id;
 		$esc_rand = $db->escape($rand);
-		$query = "SELECT * FROM #__payperdownloadplus_download_links 
+		$query = "SELECT * FROM #__payperdownloadplus_download_links
 			WHERE resource_id = $resource_id AND random_value = '$esc_rand' AND
 			(expiration_date IS NULL OR expiration_date >= NOW()) AND payed <> 0";
 		if($item_id != null)
@@ -487,10 +489,10 @@ class  plgSystemPayperDownloadPlus extends JPlugin
 				$this->addResourceAccessToSession($resource_id, $item_id, $downloadlink->download_id);
 		}
 	}
-	
+
 	/*
-	Checks wheather the current user owns the specified license. 
-	If he or she does and decreaseDownloadCount parameter is true then 
+	Checks wheather the current user owns the specified license.
+	If he or she does and decreaseDownloadCount parameter is true then
 	the allowed download count for this license is decreased.
 	*/
 	function isLicenseValid($license, $decreaseDownloadCount, $item, $checkSession = true, $deleteResourceFromSession = false)
@@ -499,7 +501,7 @@ class  plgSystemPayperDownloadPlus extends JPlugin
 		if(!$user || $user->id == 0)
 		{
 			return false;
-		}	
+		}
 		$db = JFactory::getDBO();
 		$license_id = (int)$license->license_id;
 		$user_id = (int)$user->id;
@@ -508,13 +510,13 @@ class  plgSystemPayperDownloadPlus extends JPlugin
 		if($level > 0) //If license level is zero then don't search for higher licenses
 			$sqlHiherLevelCondition = "#__payperdownloadplus_licenses.level > $level OR";
 		$query = "SELECT user_license_id,
-			(#__payperdownloadplus_users_licenses.license_max_downloads = 0 OR #__payperdownloadplus_users_licenses.download_hits < #__payperdownloadplus_users_licenses.license_max_downloads) 
+			(#__payperdownloadplus_users_licenses.license_max_downloads = 0 OR #__payperdownloadplus_users_licenses.download_hits < #__payperdownloadplus_users_licenses.license_max_downloads)
 				AS download_count_valid
 			FROM #__payperdownloadplus_users_licenses
 			INNER JOIN #__payperdownloadplus_licenses
 			ON #__payperdownloadplus_users_licenses.license_id = #__payperdownloadplus_licenses.license_id
-			WHERE #__payperdownloadplus_users_licenses.user_id = $user_id AND 
-				(#__payperdownloadplus_users_licenses.expiration_date >= NOW() OR 
+			WHERE #__payperdownloadplus_users_licenses.user_id = $user_id AND
+				(#__payperdownloadplus_users_licenses.expiration_date >= NOW() OR
 				#__payperdownloadplus_users_licenses.expiration_date IS NULL) AND
 				($sqlHiherLevelCondition
 				#__payperdownloadplus_users_licenses.license_id = $license_id
@@ -542,7 +544,7 @@ class  plgSystemPayperDownloadPlus extends JPlugin
 					$licensesHits = $session->get('licenses_hits', array());
 					foreach($licensesHits as $key => $licenseHit)
 					{
-						if($licenseHit && $licenseHit->user_license_id == $user_license->user_license_id && 
+						if($licenseHit && $licenseHit->user_license_id == $user_license->user_license_id &&
 							$licenseHit->item == $item)
 						{
 							$decreaseDownloadCount = false;
@@ -577,34 +579,34 @@ class  plgSystemPayperDownloadPlus extends JPlugin
 		else
 			return false;
 	}
-	
+
 	function showLicensesPrices()
 	{
-		JLoader::register('PayPerDownloadPrices', 
+		JLoader::register('PayPerDownloadPrices',
 			JPATH_ADMINISTRATOR . "/components/com_payperdownload/classes/prices.php");
-		$app = JFactory::getApplication();
-		if($app->isAdmin())
-			return;
+// 		$app = JFactory::getApplication();
+// 		if($app->isAdmin())
+// 			return;
 		$body = JResponse::getBody();
 		$pattern = "/\\{PPD_RESOURCE_PRICES\\:(\\d+(,\\d+)*)\\}/";
 		if(preg_match($pattern, $body))
 		{
-			$body = preg_replace_callback($pattern, 
+			$body = preg_replace_callback($pattern,
 				array("PayPerDownloadPrices", "replaceResourcePrice"), $body);
 			JResponse::setBody($body);
 		}
 	}
-	
+
 	/*
 	Shows users owned valid licenses on Kunena forum
 	*/
 	function showUserLicenses()
 	{
-		JLoader::register('PayPerDownloadUserLicenses', 
+		JLoader::register('PayPerDownloadUserLicenses',
 			JPATH_ADMINISTRATOR . "/components/com_payperdownload/classes/userlic.php");
-		$app = JFactory::getApplication();
-		if($app->isAdmin())
-			return;
+// 		$app = JFactory::getApplication();
+// 		if($app->isAdmin())
+// 			return;
 		$setBody = false;
 		$body = JResponse::getBody();
 		$userlic = null;
@@ -615,11 +617,14 @@ class  plgSystemPayperDownloadPlus extends JPlugin
 			$body = str_replace("{PPD_USER_LICENSES}", $html, $body);
 			$setBody = true;
 		}
-		$option = JRequest::getVar('option');
+
+		$jinput = JFactory::getApplication()->input;
+
+		$option = $jinput->get('option');
 		if($option == 'com_kunena')
 		{
-			$func = JRequest::getVar('func');
-			$view = JRequest::getVar('view');
+		    $func = $jinput->get('func');
+		    $view = $jinput->get('view');
 			if($func == 'view' || $view == 'topic')
 			{
 				if($this->isShowLicenseOnKunenaSet())
@@ -635,7 +640,7 @@ class  plgSystemPayperDownloadPlus extends JPlugin
 		if($setBody)
 			JResponse::setBody($body);
 	}
-	
+
 	/*
 	Checks if showing user licenses on Kunena is enabled.
 	*/
@@ -646,7 +651,7 @@ class  plgSystemPayperDownloadPlus extends JPlugin
 		$db->setQuery( $query, 0, 1 );
 		return $db->loadResult();
 	}
-	
+
 	/*
 	Returns wheather current user belongs to one of the privileged user groups that don't
 	need to pay to access protected resources.
@@ -658,54 +663,50 @@ class  plgSystemPayperDownloadPlus extends JPlugin
 		$db->setQuery( $query, 0, 1 );
 		$privileged_groups = $db->loadResult();
 		$groups = explode(',', $privileged_groups);
-		$version = new JVersion();
-		if($version->RELEASE == "1.5")
-			return array_search($user->gid, $groups) !== false;
-		else
+
+		foreach($user->groups as $group)
 		{
-			foreach($user->groups as $group)
-			{
-				if(array_search($group, $groups) !== false)
-					return true;
-			}
-			return false;
+			if(array_search($group, $groups) !== false)
+				return true;
 		}
+		return false;
 	}
-	
+
 	function doMaintenance()
 	{
-		$version = new JVersion();
-		if($version->RELEASE < "1.6")
-			return;
 		$db = JFactory::getDBO();
-		$query = "SELECT COUNT(*) FROM #__payperdownloadplus_last_time_check 
+		$query = "SELECT COUNT(*) FROM #__payperdownloadplus_last_time_check
 			WHERE DATE_ADD(last_time_check, INTERVAL 1 HOUR) > NOW()";
 		$db->setQuery( $query );
-		$count = $db->loadResult();
-		if($count == 0)
-		{
-			$db->setQuery("START TRANSACTION");
-			$db->query();
-			$query = "SELECT COUNT(*) FROM #__payperdownloadplus_last_time_check";
-			$db->setQuery( $query );
-			$count = $db->loadResult();
-			if($count == 0)
-				$query = "INSERT INTO #__payperdownloadplus_last_time_check(last_time_check) VALUES(NOW())";
-			else
-				$query = "UPDATE #__payperdownloadplus_last_time_check SET last_time_check = NOW()";
-			$db->setQuery( $query );
-			$db->query();
-			$this->unassignUserGroupsForExpiredLicenses();
-			$db->setQuery("COMMIT");
-			$db->query();
+
+		try {
+    		$count = $db->loadResult();
+    		if($count == 0)
+    		{
+    			$db->setQuery("START TRANSACTION");
+    			$db->query();
+    			$query = "SELECT COUNT(*) FROM #__payperdownloadplus_last_time_check";
+    			$db->setQuery( $query );
+    			$count = $db->loadResult();
+    			if($count == 0)
+    				$query = "INSERT INTO #__payperdownloadplus_last_time_check(last_time_check) VALUES(NOW())";
+    			else
+    				$query = "UPDATE #__payperdownloadplus_last_time_check SET last_time_check = NOW()";
+    			$db->setQuery( $query );
+    			$db->query();
+    			$this->unassignUserGroupsForExpiredLicenses();
+    			$db->setQuery("COMMIT");
+    			$db->query();
+    		}
+		} catch (RuntimeException $e) {
+		    // do nothing: will mostly occur on uninstall, after the tables have been deleted but not the plugins
 		}
-		
 	}
-	
+
 	function unassignUserGroupsForExpiredLicenses()
 	{
 		$db = JFactory::getDBO();
-		$query = "SELECT user_license_id, assigned_user_group, user_id FROM #__payperdownloadplus_users_licenses 
+		$query = "SELECT user_license_id, assigned_user_group, user_id FROM #__payperdownloadplus_users_licenses
 			WHERE expiration_date < NOW() AND expiration_date IS NOT NULL AND assigned_user_group IS NOT NULL";
 		$db->setQuery($query, 0, 5);
 		$expired = $db->loadObjectList();
@@ -718,28 +719,24 @@ class  plgSystemPayperDownloadPlus extends JPlugin
 		if(count($ids))
 		{
 			$ids = implode(",", $ids);
-			$query = "UPDATE #__payperdownloadplus_users_licenses SET assigned_user_group = NULL 
+			$query = "UPDATE #__payperdownloadplus_users_licenses SET assigned_user_group = NULL
 				WHERE user_license_id IN ($ids)";
 			$db->setQuery( $query );
 			$db->query();
 		}
 	}
-	
+
 	function unassignUserGroupForLicense($user_license)
 	{
 		if($user_license->assigned_user_group)
 		{
-			$version = new JVersion();
-			if($version->RELEASE >= "1.6")
-			{
-				$user = JFactory::getUser($user_license->user_id);
-				$gid = array_search($user_license->assigned_user_group, $user->groups);
-				if($gid !== false)
-				{
-					unset($user->groups[$gid]);
-					$user->save();
-				}
-			}
+    		$user = JFactory::getUser($user_license->user_id);
+    		$gid = array_search($user_license->assigned_user_group, $user->groups);
+    		if($gid !== false)
+    		{
+    			unset($user->groups[$gid]);
+    			$user->save();
+    		}
 		}
 	}
 }

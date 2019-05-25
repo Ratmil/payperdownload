@@ -5,12 +5,13 @@
  * @copyright (C) Ratmil Torres
  * @license GNU/GPL http://www.gnu.org/copyleft/gpl.html
 **/
-defined( '_JEXEC' ) or die( 'Restricted access' );
+defined('_JEXEC') or die;
+
 $root = JURI::root();
 ?>
 
 <?php
-	
+
 $first = true;
 foreach($this->licenses as $license)
 {
@@ -22,13 +23,13 @@ foreach($this->licenses as $license)
 	<span class="front_price_label"><?php echo htmlspecialchars(JText::_("PAYPERDOWNLOADPLUS_PRICE___4"));?></span>
 	<span class="front_price_data"><?php echo htmlspecialchars($license->price) . "&nbsp;" . htmlspecialchars($license->currency_code);?></span>
 	<br/>
-	<?php 
+	<?php
 	if($license->price - $license->discount_price > 0.001)
 	{
 	?>
 	<span class="front_price_label"><?php echo htmlspecialchars(JText::_("PAYPERDOWNLOADPLUS_DISCOUNT_PRICE"));?></span>
 	<span class="front_price_data">
-	<?php 
+	<?php
 	if($license->discount_price > 0.001)
 		echo htmlspecialchars($license->discount_price) . "&nbsp;" . htmlspecialchars($license->currency_code);
 	else
@@ -39,24 +40,24 @@ foreach($this->licenses as $license)
 	}
 	?>
 	<span class="front_price_label"><?php echo htmlspecialchars(JText::_("PAYPERDOWNLOADPLUS_LICENSE_EXPIRATION_TIME"));?></span>
-	<span class="front_price_data"><?php 
+	<span class="front_price_data"><?php
 		if($license->expiration > 0)
-			echo htmlspecialchars(JText::sprintf("PAYPERDOWNLOADPLUS_LICENSE_EXPIRATION_TIME_VALUE", $license->expiration)); 
+			echo htmlspecialchars(JText::sprintf("PAYPERDOWNLOADPLUS_LICENSE_EXPIRATION_TIME_VALUE", $license->expiration));
 		else
 			echo htmlspecialchars(JText::_("PAYPERDOWNLOADPLUS_LICENSE_EXPIRATION_LIFE_TIME"));
 		?>
 	</span>
 	<br/>
 	<span class="front_price_label"><?php echo htmlspecialchars(JText::_("PAYPERDOWNLOADPLUS_DOWNLOADS_COUNT"));?></span>
-	<span class="front_price_data"><?php 
+	<span class="front_price_data"><?php
 		if($license->max_download > 0)
-			echo htmlspecialchars($license->max_download); 
+			echo htmlspecialchars($license->max_download);
 		else
 			echo htmlspecialchars(JText::_("PAYPERDOWNLOADPLUS_UNLIMITED_DOWNLOADS"));
 		?>
 	</span>
 	<br/>
-	<?php 
+	<?php
 	if($license->canRenew)
 	{
 	?>
@@ -74,7 +75,7 @@ foreach($this->licenses as $license)
 	<?php
 	}
 	?>
-	
+
 	<?php
 	if($this->showResources)
 	{
@@ -85,11 +86,11 @@ foreach($this->licenses as $license)
 		{
 		?>
 		<li>
-		<?php 
+		<?php
 			if($resource->alternate_resource_description)
 				echo htmlspecialchars($resource->alternate_resource_description);
 			else
-				echo htmlspecialchars($resource->resource_description) . " : " . 
+				echo htmlspecialchars($resource->resource_description) . " : " .
 					htmlspecialchars($resource->resource_name);?>
 		</li>
 		<?php
@@ -99,7 +100,7 @@ foreach($this->licenses as $license)
 		<?php
 	}
 	?>
-	
+
 	<?php
 		echo $license->description;
 	?>

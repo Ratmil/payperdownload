@@ -253,9 +253,8 @@ CREATE TABLE IF NOT EXISTS `#__payperdownloadplus_users_licenses_discount` (
   PRIMARY KEY  (`license_id`, `user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
 
-
 CREATE TABLE IF NOT EXISTS #__payperdownloadplus_coupons_users (
-	`coupon_code` varchar(64) NULL,	
+	`coupon_code` varchar(64) NOT NULL,	
 	`user_id` int(11) NOT NULL,	
    PRIMARY KEY  (`coupon_code`, `user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;

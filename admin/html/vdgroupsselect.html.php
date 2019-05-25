@@ -5,10 +5,9 @@
  * @copyright (C) Ratmil Torres
  * @license GNU/GPL http://www.gnu.org/copyleft/gpl.html
 **/
-/** ensure this file is being included by a parent file */
 
-defined( '_JEXEC' ) or
-die( 'Direct Access to this location is not allowed.' );
+// no direct access
+defined ( '_JEXEC' ) or die;
 
 class MultipleJoomlaGroupsSelect extends VisualDataBind
 {
@@ -16,20 +15,19 @@ class MultipleJoomlaGroupsSelect extends VisualDataBind
 	{
 		parent::__construct($dataField, $displayName);
 	}
-	
+
 	function renderNew()
 	{
 		$html = "<tr>" . $this->renderFieldLabel() . "<td>";
 		$dataField = $this->dataField;
 		$groups = $this->getGroups();
 		$i = 0;
-		$version = new JVersion();
 		$html .= "<input type=\"hidden\" name=\"$dataField" . "_count\" value=\"" . count($groups) . "\"/><br/>";
 		$html .= "<table>";
 		foreach($groups as $group)
 		{
 			$html .= "<tr><td>";
-			
+
 			$html .= "<input type=\"checkbox\" name=\"$dataField" . "_" . $i ."\" value=\"1\"/>";
 			$html .= "</td><td>";
 			for($s = 0; $s < $group->depth; $s++)
@@ -39,11 +37,11 @@ class MultipleJoomlaGroupsSelect extends VisualDataBind
 			$i++;
 			$html .= "</td></tr>";
 		}
-		
+
 		$html .= "</table>";
 		return $html;
 	}
-	
+
 	function renderEdit(&$row)
 	{
 		JHTML::_('behavior.calendar');
@@ -55,29 +53,25 @@ class MultipleJoomlaGroupsSelect extends VisualDataBind
 		$i = 0;
 		$html .= "<input type=\"hidden\" name=\"$dataField" . "_count\" value=\"" . count($groups) . "\"/><br/>";
 		$html .= "<table>";
-		$version = new JVersion();
 		foreach($groups as $group)
 		{
-			if($version->RELEASE >= "1.6" || ($group->id != 17 && $group->id != 28 && $group->id != 29 && $group->id != 30))
-			{
-				$html .= "<tr><td valign=\"bottom\">";
-				$checked = "";
-				if(array_search($group->id, $ids) !== false)
-					$checked = " checked ";
-				$html .= "<input type=\"checkbox\" name=\"$dataField" . "_" . $i ."\" $checked/>";
-				$html .= "</td><td>";
-				for($s = 0; $s < $group->depth; $s++)
-					$html .= "&nbsp;&nbsp;&nbsp;&nbsp;";
-				$html .= htmlspecialchars($group->title);
-				$html .= "<input type=\"hidden\" name=\"$dataField" . "_id_" . $i ."\" value=\"" . $group->id . "\"/><br/>";
-				$html .= "</td></tr>";
-				$i++;
-			}
+			$html .= "<tr><td valign=\"bottom\">";
+			$checked = "";
+			if(array_search($group->id, $ids) !== false)
+				$checked = " checked ";
+			$html .= "<input type=\"checkbox\" name=\"$dataField" . "_" . $i ."\" $checked/>";
+			$html .= "</td><td>";
+			for($s = 0; $s < $group->depth; $s++)
+				$html .= "&nbsp;&nbsp;&nbsp;&nbsp;";
+			$html .= htmlspecialchars($group->title);
+			$html .= "<input type=\"hidden\" name=\"$dataField" . "_id_" . $i ."\" value=\"" . $group->id . "\"/><br/>";
+			$html .= "</td></tr>";
+			$i++;
 		}
 		$html .= "</table>";
 		return $html;
 	}
-	
+
 	function reorder(&$items_ordered, $items, $parent_id, $depth)
 	{
 		$count = count($items);
@@ -92,18 +86,10 @@ class MultipleJoomlaGroupsSelect extends VisualDataBind
 			}
 		}
 	}
-	
+
 	function getGroups()
 	{
-		$version = new JVersion();
-		if($version->RELEASE >= "1.6")
-		{
-			$query = "SELECT id, parent_id, title FROM #__usergroups";
-		}
-		else
-		{
-			$query = "SELECT id, parent_id, value as title FROM #__core_acl_aro_groups";
-		}
+		$query = "SELECT id, parent_id, title FROM #__usergroups";
 		$db = JFactory::getDBO();
 		$db->setQuery( $query );
 		$groups = $db->loadObjectList();
@@ -111,24 +97,26 @@ class MultipleJoomlaGroupsSelect extends VisualDataBind
 		$this->reorder($groups_ordered, $groups, 0, 0);
 		return $groups_ordered;
 	}
-	
+
 	function onBeforeStore(&$row)
 	{
+	    $jinput = JFactory::getApplication()->input;
+
 		if($this->ignoreToBind)
 			return true;
 		$result = array();
-		$count = JRequest::getInt( $this->dataField . "_count");
+		$count = $jinput->getInt($this->dataField . "_count");
 		for($i = 0 ; $i < $count; $i++)
 		{
-			if(JRequest::getVar( $this->dataField . "_" . $i))
+		    if ($jinput->getString($this->dataField . "_" . $i))
 			{
-				$result[] = JRequest::getInt( $this->dataField . "_id_" . $i);
+			    $result[] = $jinput->getInt($this->dataField . "_id_" . $i);
 			}
 		}
 		$row->{$this->dataField} = implode(",", $result);
 		return true;
 	}
-	
+
 	function renderValidateJavascript()
 	{
 		return "";

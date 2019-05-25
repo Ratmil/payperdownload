@@ -5,29 +5,15 @@
  * @copyright (C) Ratmil Torres
  * @license GNU/GPL http://www.gnu.org/copyleft/gpl.html
 **/
-defined( '_JEXEC' ) or die( 'Restricted access' );
+defined('_JEXEC') or die;
 
-$version = new JVersion;
-if($version->RELEASE == "1.5")
-{
-	$form_id = "form-login";
-	$form_name = "login";
-	$pwd_id = "modlgn_passwd";
-	$pwd_name = "passwd";
-	$user_com = "com_user";
-	$login_task = "login";
-	$registerview = "register";
-}
-else
-{
-	$form_id = "login-form";
-	$form_name = "com-login";
-	$pwd_id = "modlgn-passwd";
-	$pwd_name = "password";
-	$user_com = "com_users";
-	$login_task = "user.login";
-	$registerview = "registration";
-}
+$form_id = "login-form";
+$form_name = "com-login";
+$pwd_id = "modlgn-passwd";
+$pwd_name = "password";
+$user_com = "com_users";
+$login_task = "user.login";
+$registerview = "registration";
 ?>
 <form action="index.php" method="post" name="<?php echo $form_name;?>" id="<?php echo $form_id;?>">
 <fieldset class="input">
@@ -51,7 +37,7 @@ else
 		</div>
 	</div>
 </fieldset>
-	
+
 	<input type="hidden" name="option" value="<?php echo $user_com;?>" />
 	<input type="hidden" name="task" value="<?php echo $login_task;?>" />
 	<input type="hidden" name="return" value="<?php echo base64_encode($this->returnUrl); ?>" />

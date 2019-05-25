@@ -5,7 +5,8 @@
  * @copyright (C) Ratmil Torres
  * @license GNU/GPL http://www.gnu.org/copyleft/gpl.html
 **/
-defined( '_JEXEC' ) or die( 'Restricted access' );
+defined('_JEXEC') or die;
+
 jimport('joomla.application.component.view');
 
 class PayPerDownloadViewPay extends JViewLegacy
@@ -15,20 +16,22 @@ class PayPerDownloadViewPay extends JViewLegacy
 		$model = $this->getModel();
 		if($model)
 		{
+		    $jinput = JFactory::getApplication()->input;
+
 			$user = JFactory::getUser();
-			$lids = JRequest::getVar( 'lid', '' );
-			$resource_id = JRequest::getInt('res', 0);
-			$option = JRequest::getVar('option');
+			$lids = $jinput->getRaw('lid', '');
+			$resource_id = $jinput->getInt('res', 0);
+			$option = $jinput->get('option');
 			JHtml::stylesheet('components/'. $option . '/css/frontend.css');
 			$scriptPath = "components/$option/js/";
 			JHtml::script($scriptPath . "pay.js", $scriptPath, false);
 
-			$returnUrl = JRequest::getVar('returnurl');
+			$returnUrl = $jinput->getBase64('returnurl', '');
 			if($returnUrl)
 				$returnUrl = base64_decode($returnUrl);
 			else
 				$returnUrl = $_SERVER['HTTP_REFERER'];
-			$showMessage = JRequest::getInt('m', 0);
+			$showMessage = $jinput->getInt('m', 0);
 			$usePayPlugin = $model->getUsePayPluginConfig();
 			$usePaypal = $model->getUsePaypal();
 			$paymentInfo = $model->getPaymentInfo();
@@ -47,7 +50,7 @@ class PayPerDownloadViewPay extends JViewLegacy
 			$resourceAccessParams = "";
 			if($resource_id)
 			{
-				$itemId = JRequest::getInt('item', 0);
+			    $itemId = $jinput->getInt('item', 0);
 				$resource = $model->getResource($resource_id);
 				if(!$resource->shared)
 				{
@@ -61,22 +64,22 @@ class PayPerDownloadViewPay extends JViewLegacy
 				{
 					$itemId = 0;
 				}
-				$downloadLink = $model->createDownloadLink($resource_id, $itemId); 
+				$downloadLink = $model->createDownloadLink($resource_id, $itemId);
 				$download_id = $downloadLink->downloadId;
 				$resourceAccessParams .= "&accesscode=" . urlencode($downloadLink->accessCode);
 			}
-			
+
 			$thankyou_url = JURI::base() . "index.php?option=com_payperdownload&view=thankyou&return=" .
 					urlencode(base64_encode($returnUrl)) . $resourceAccessParams;
-					
+
 			$menuitems = $this->getMenuItems();
 			if($menuitems && $menuitems->thankyou_page_menuitem)
 				$thankyou_url .= "&Itemid=" . (int)$menuitems->thankyou_page_menuitem;
-				
+
 			$hasLicenses = $lids != "";
 			$lids = explode(",", $lids);
 			$licenses = array();
-			
+
 			$min_level = -1;
 			foreach($lids as $lid)
 			{
@@ -93,7 +96,7 @@ class PayPerDownloadViewPay extends JViewLegacy
 					$licenses[] = $license;
 				}
 			}
-			if($min_level > -1 && JRequest::getInt('h', 0))
+			if($min_level > -1 && $jinput->getInt('h', 0))
 			{
 				$higherLicenses = $model->getHigherLicenses($min_level);
 				foreach($higherLicenses as $lid)
@@ -116,12 +119,12 @@ class PayPerDownloadViewPay extends JViewLegacy
 				}
 			}
 			$model->sortLicenses($licenses);
-			
+
 			$points = 0;
 			if($alpha_integration == 2)
 				$points = $model->getAUP();
-			
-			// should always work according to PHP.net 
+
+			// should always work according to PHP.net
 			// http://www.php.net/manual/en/reserved.variables.server.php
 			// 1 - Set to a non-empty value if the script was queried through the HTTPS protocol.
 			// 2 - Note that when using ISAPI with IIS, the value will be "off" if the request was not made through the HTTPS protocol
@@ -130,7 +133,7 @@ class PayPerDownloadViewPay extends JViewLegacy
 				$thisUrl = "https://";
 			else
 				$thisUrl = "http://";
-			
+
 			$port = $_SERVER['SERVER_PORT'];
 			if($port == '80')
 				$port = '';
@@ -165,22 +168,22 @@ class PayPerDownloadViewPay extends JViewLegacy
 			$this->assignRef("alpha_integration", $alpha_integration);
 			$this->assignRef("points", $points);
 			$this->assignRef("tax_percent", $tax_percent);
-			
+
 			$this->useDiscountCoupon = $model->getUseDiscountCoupon();
 			parent::display($tpl);
 		}
 		else
 			echo "model not found";
 	}
-	
+
 	function getMenuItems()
 	{
 		$db = JFactory::getDBO();
 		$db->setQuery("SELECT config_id, payment_page_menuitem, thankyou_page_menuitem FROM #__payperdownloadplus_config", 0, 1);
 		return $db->loadObject();
 	}
-	
-	
+
+
 }
 
 ?>

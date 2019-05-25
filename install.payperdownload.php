@@ -13,15 +13,6 @@ jimport('joomla.filesystem.folder');
 class com_payperdownloadInstallerScript
 {
 	/**
-	 * Constructor
-	 *
-	 * @param   JAdapterInstance  $adapter  The object responsible for running this script
-	 */
-	public function __constructor(JAdapterInstance $adapter)
-	{
-	}
-
-	/**
 	 * Called before any type of action
 	 *
 	 * @param   string  $route  Which action is happening (install|uninstall|discover_install)
@@ -29,8 +20,10 @@ class com_payperdownloadInstallerScript
 	 *
 	 * @return  boolean  True on success
 	 */
-	public function preflight($route, JAdapterInstance $adapter)
+    public function preflight($type, $parent)
 	{
+	    JFactory::getApplication()->enqueueMessage('Pay Per Download', 'message');
+
 		return true;
 	}
 
@@ -42,9 +35,50 @@ class com_payperdownloadInstallerScript
 	 *
 	 * @return  boolean  True on success
 	 */
-	public function postflight($route, JAdapterInstance $adapter)
+	public function postflight($type, $parent)
 	{
-		return true;
+	    // remove files
+
+	    $files = array();
+	    $files[] = '/components/com_payperdownload/helpers/version.php';
+	    $files[] = '/administrator/components/com_payperdownload/install.payperdownload.php';
+	    $files[] = '/administrator/components/com_payperdownload/html/about.html.php';
+	    $files[] = '/administrator/components/com_payperdownload/extensions/plugins/payperdownloadplus/phocadownload/phocadownload.zip';
+	    $files[] = '/administrator/components/com_payperdownload/extensions/plugins/editors-xtd/paytoreadmore/paytoreadmore.png';
+	    $files[] = '/administrator/components/com_payperdownload/extensions/plugins/editors-xtd/paytoreadmore/paytoreadmore.css';
+	    $files[] = '/administrator/components/com_payperdownload/extensions/plugins/editors-xtd/paytoreadmore/en-GB.plg_editors_xtd_paytoreadmore.ini';
+	    $files[] = '/administrator/components/com_payperdownload/css/frontend.css';
+	    $files[] = '/administrator/components/com_payperdownload/css/stat.css';
+	    $files[] = '/administrator/components/com_payperdownload/controllers/about.php';
+	    $files[] = '/administrator/components/com_payperdownload/images/icon-48-phocadownload.png';
+	    $files[] = '/administrator/components/com_payperdownload/images/jd.png';
+	    $files[] = '/administrator/components/com_payperdownload/extensions/plugins/payperdownloadplus/kunena/kunena.jpg';
+
+	    $folders = array();
+
+	    foreach ($files as $file) {
+	        if (JFile::exists(JPATH_ROOT.$file) && !JFile::delete(JPATH_ROOT.$file)) {
+	            JFactory::getApplication()->enqueueMessage(JText::sprintf('COM_PAYPERDOWNLOAD_ERROR_DELETINGFILEFOLDER', $file), 'warning');
+	        }
+	    }
+
+	    foreach ($folders as $folder) {
+	        if (JFolder::exists(JPATH_ROOT.$folder) && !JFolder::delete(JPATH_ROOT.$folder)) {
+	            JFactory::getApplication()->enqueueMessage(JText::sprintf('COM_PAYPERDOWNLOAD_ERROR_DELETINGFILEFOLDER', $folder), 'warning');
+	        }
+	    }
+
+		// enable plugins
+
+	    //if ($type == 'install') {
+	        $this->enableExtension('plugin', 'paytoreadmore', 'content');
+	        $this->enableExtension('plugin', 'paytoreadmore', 'editors-xtd');
+	        $this->enableExtension('plugin', 'content', 'payperdownloadplus');
+	        $this->enableExtension('plugin', 'menuitem', 'payperdownloadplus');
+	        $this->enableExtension('plugin', 'payperdownloadplus', 'system');
+	    //}
+
+	    return true;
 	}
 
 	/**
@@ -54,10 +88,27 @@ class com_payperdownloadInstallerScript
 	 *
 	 * @return  boolean  True on success
 	 */
-	public function install(JAdapterInstance $adapter)
+	public function install($parent)
 	{
-		$this->updatePlugins();
-		return true;
+	    $manifest = $parent->get("manifest");
+	    $parent = $parent->getParent();
+	    $source = $parent->getPath("source");
+
+	    // Install plugins
+	    foreach($manifest->plugins->plugin as $plugin) {
+	        $attributes = $plugin->attributes();
+
+	        $plugin_name = JText::_($attributes['name']);
+
+	        $plg = $source.'/'.$attributes['folder'].'/'.$attributes['plugin'];
+
+	        $installer = new JInstaller();
+	        if ($installer->install($plg)) {
+	            JFactory::getApplication()->enqueueMessage(JText::sprintf('COM_PAYPERDOWNLOAD_INSTALLED_SUCCESSFULLY', 'plg_'.$attributes['group'].'_'.$attributes['plugin']), 'message');
+	        } else {
+	            JFactory::getApplication()->enqueueMessage(JText::sprintf('COM_PAYPERDOWNLOAD_INSTALLED_UNSUCCESSFULLY', 'plg_'.$attributes['group'].'_'.$attributes['plugin']), 'error');
+	        }
+	    }
 	}
 
 	/**
@@ -67,10 +118,35 @@ class com_payperdownloadInstallerScript
 	 *
 	 * @return  boolean  True on success
 	 */
-	public function update(JAdapterInstance $adapter)
+	public function update($parent)
 	{
-		$this->updatePlugins();
-		return true;
+	    $manifest = $parent->get("manifest");
+	    $parent = $parent->getParent();
+	    $source = $parent->getPath("source");
+
+	    // Install or update plugins
+	    foreach($manifest->plugins->plugin as $plugin) {
+	        $attributes = $plugin->attributes();
+
+	        $plugin_name = JText::_($attributes['name']);
+
+	        $plg = $source.'/'.$attributes['folder'].'/'.$attributes['plugin'];
+
+	        $installer = new JInstaller();
+	        if (JFolder::exists(JPATH_SITE.'/plugins/'.$attributes['group'].'/'.$attributes['plugin'])) {
+    	        if ($installer->update($plg)) {
+    	            JFactory::getApplication()->enqueueMessage(JText::sprintf('COM_PAYPERDOWNLOAD_UPDATED_SUCCESSFULLY', 'plg_'.$attributes['group'].'_'.$attributes['plugin']), 'message');
+    	        } else {
+    	            JFactory::getApplication()->enqueueMessage(JText::sprintf('COM_PAYPERDOWNLOAD_UPDATED_UNSUCCESSFULLY', 'plg_'.$attributes['group'].'_'.$attributes['plugin']), 'error');
+    	        }
+	        } else {
+	            if ($installer->install($plg)) {
+	                JFactory::getApplication()->enqueueMessage(JText::sprintf('COM_PAYPERDOWNLOAD_INSTALLED_SUCCESSFULLY', 'plg_'.$attributes['group'].'_'.$attributes['plugin']), 'message');
+	            } else {
+	                JFactory::getApplication()->enqueueMessage(JText::sprintf('COM_PAYPERDOWNLOAD_INSTALLED_UNSUCCESSFULLY', 'plg_'.$attributes['group'].'_'.$attributes['plugin']), 'error');
+	            }
+	        }
+	    }
 	}
 
 	/**
@@ -78,172 +154,104 @@ class com_payperdownloadInstallerScript
 	 *
 	 * @param   JAdapterInstance  $adapter  The object responsible for running this script
 	 */
-	public function uninstall(JAdapterInstance $adapter)
+	public function uninstall($parent)
 	{
-		$this->uninstallPlugins();
-		return true;
-	}
-	
-	function uninstallPlugins()
-	{
-		$this->uninstall_plugin('payperdownloadplus');
-		$this->uninstall_plugin('content', 'payperdownloadplus', null, array('content_plugin.js'), array('en-GB.plg_payperdownloadplus_content.ini'));
-		$this->uninstall_plugin('phocadownload', 'payperdownloadplus', null, array('phoca_plugin.js'), array('en-GB.plg_payperdownloadplus_phocadownload.ini'));
-		$this->uninstall_plugin('kunena', 'payperdownloadplus', null, array('kunena.jpg'), array('en-GB.plg_payperdownloadplus_kunena.ini'));
-		$this->uninstall_plugin('jdownload', 'payperdownloadplus', null, array('jdownload_plugin.js'), array('en-GB.plg_payperdownloadplus_jdownload.ini'));
-		$this->uninstall_plugin('referer', 'user');
-		$this->uninstall_plugin('paytoreadmore', 'content', null, null, array('en-GB.plg_content_paytoreadmore.ini'));
-		$this->uninstall_plugin('paytoreadmore', 'editors-xtd', null, null, array('en-GB.plg_editors_xtd_paytoreadmore.ini'));
-	}
-	
-	function install_plugin($component, $element, $folder = 'system', $extra_folders = null, $extra_files = null, $language_files = null)
-	{
-		$this->uninstall_plugin($element, $folder, $extra_folders);
-		$db = JFactory::getDBO();
-		$name = $folder . ' - ' . $element;
-		$e_name = $db->escape($name);
-		$e_element = $db->escape($element);
-		$e_folder = $db->escape($folder);
-		$version = new JVersion;
-		if($version->RELEASE >= "1.6")
-		{
-			$result = true;
-		
-			$dest_folder = JPATH_SITE.'/'.'plugins'.'/'.$folder.'/'.$element;
-			$dest_file_php = JPATH_SITE.'/'.'plugins'.'/'.$folder.'/'.$element.'/'.$element.'.php';
-			$dest_file_xml = JPATH_SITE.'/'.'plugins'.'/'.$folder.'/'.$element.'/'.$element.'.xml';
+	    //$manifest = $parent->get("manifest");
+	    //$parent = $parent->getParent();
 
-			if(!JFolder::exists($dest_folder))
-			{
-				JFolder::create($dest_folder);
-			}
-			
-			if(is_array($extra_folders))
-			{
-				foreach($extra_folders as $extra_folder)
-				{
-					$new_folder = JPATH_ADMINISTRATOR.'/components/'.$component.'/extensions/plugins/'.$folder.'/'.$element.'/'.$extra_folder;
-					if(!JFolder::move($new_folder, $dest_folder))
-					{
-						echo "Error copying folder ($new_folder) to ($dest_folder) folder<br/>";
-						$result = false;
-					}
-				}
-			}
-			
-			$file_php = JPATH_ADMINISTRATOR.'/components/'.$component.'/extensions/plugins/'.$folder.'/'.$element.'/'.$element.'.php';
-			if(!JFile::exists($file_php) || !JFile::copy($file_php, $dest_file_php))
-			{
-				echo "Error copying file ($file_php) to ($dest_file_php)<br/>";
-				$result = false;
-			}
-			$file_xml = JPATH_ADMINISTRATOR.'/components/'.$component.'/extensions/plugins/'.$folder.'/'.$element.'/'.$element.'.xml';
-			if(!JFile::exists($file_xml) || !JFile::copy($file_xml, $dest_file_xml))
-			{
-				echo "Error copying file ($file_xml) to ($dest_file_xml)<br/>";
-				$result = false;
-			}
-			
-			if($extra_files)
-			{
-				foreach($extra_files as $extra_file)
-				{
-					$source_file = JPATH_ADMINISTRATOR.'/components/'.$component.'/extensions/plugins/'.$folder.'/'.$element.'/'.$extra_file;
-					$dest_file = JPATH_SITE.'/plugins/'.$folder.'/'.$element.'/'.$extra_file;
-					if(!JFile::exists($source_file) || !JFile::copy($source_file, $dest_file))
-					{
-						echo "Error copying file ($source_file) to ($dest_file)<br/>";
-						$result = false;
-					}
-				}
-			}
-			
-			if($language_files)
-			{
-				foreach($language_files as $language_file)
-				{
-					$dot_pos = strpos($language_file, ".");
-					if($dot_pos !== false)
-					{
-						$language = substr($language_file, 0, $dot_pos);
-						$source_file = JPATH_ADMINISTRATOR.'/components/'.$component.'/extensions/plugins/'.$folder.'/'.$element.'/'.$language_file;
-						$dest_file = JPATH_ADMINISTRATOR.'/language/'.$language.'/'.$language_file;
-						if(JFile::exists($source_file) && JFolder::exists(JPATH_ADMINISTRATOR.'/language/'.$language))
-						{
-							JFile::copy($source_file, $dest_file);
-						}
-					}
-				}
-			}
-			
-			$query = "INSERT INTO #__extensions(name, type, element, folder, enabled, access) 
-				VALUES('$e_name', 'plugin', '$e_element', '$e_folder', 1, 1)";
-			$db->setQuery($query);
-			if(!$db->query())
-			{
-				echo "Error inserting plugin record<br/>";
-				$result = false;
-			}
-			if(!$result)
-				$this->uninstall_plugin($element, $folder );
-			return false;
-		}
-	}
-	
-	function uninstall_plugin($element, $folder = 'system', $extra_folders = null, $extra_files = null, $language_files = null)
-	{
-		$db = JFactory::getDBO();
-		$e_element = $db->escape($element);
-		$e_folder = $db->escape($folder);
-		$version = new JVersion;
-		if($version->RELEASE >= "1.6")
-		{
-			$db = JFactory::getDBO();
-			$db->setQuery("DELETE FROM #__extensions WHERE element='$e_element' AND folder='$e_folder' AND type='plugin'");
-			$db->query();
-			$dest_folder = JPATH_SITE.'/plugins/'.$folder.'/'.$element;
-			if(JFolder::exists($dest_folder))
-			{
-				JFolder::delete($dest_folder);
-			}
-			if($language_files)
-			{
-				foreach($language_files as $language_file)
-				{
-					$dot_pos = strpos($language_file, ".");
-					if($dot_pos !== false)
-					{
-						$language = substr($language_file, 0, $dot_pos);
-						$dest_file = JPATH_ADMINISTRATOR.'/language/'.$language.'/'.$language_file;
-						if(JFile::exists($dest_file))
-						{
-							JFile::delete($dest_file);
-						}
-					}
-				}
-			}
-		}
-	}
-	
-	function updatePlugins()
-	{
-		$this->uninstall_plugin('payperdownloadplus');
-		$this->uninstall_plugin('content', 'payperdownloadplus', null, array('content_plugin.js'), array('en-GB.plg_payperdownloadplus_content.ini'));
-		$this->uninstall_plugin('phocadownload', 'payperdownloadplus', null, array('phoca_plugin.js'), array('en-GB.plg_payperdownloadplus_phocadownload.ini'));
-		$this->uninstall_plugin('kunena', 'payperdownloadplus', null, array('kunena.jpg'), array('en-GB.plg_payperdownloadplus_kunena.ini'));
-		$this->uninstall_plugin('jdownload', 'payperdownloadplus', null, array('jdownload_plugin.js'), array('en-GB.plg_payperdownloadplus_jdownload.ini'));
-		$this->uninstall_plugin('referer', 'user');
-		$this->uninstall_plugin('paytoreadmore', 'content', null, null, array('en-GB.plg_content_paytoreadmore.ini'));
-		$this->uninstall_plugin('paytoreadmore', 'editors-xtd', null, array('paytoreadmore.css', 'paytoreadmore.png'), array('en-GB.plg_editor-xtd_paytoreadmore.ini'));
-		$this->install_plugin('com_payperdownload', 'payperdownloadplus', 'system', null, null, array('en-GB.plg_system_payperdownloadplus.ini', 'es-ES.plg_system_payperdownloadplus.ini'));
-		$this->install_plugin('com_payperdownload', 'content', 'payperdownloadplus', null, array('content_plugin.js'), array('en-GB.plg_payperdownloadplus_content.ini'));
-		$this->install_plugin('com_payperdownload', 'phocadownload', 'payperdownloadplus', null, array('phoca_plugin.js'), array('en-GB.plg_payperdownloadplus_phocadownload.ini'));
-		$this->install_plugin('com_payperdownload', 'kunena', 'payperdownloadplus', null, array('kunena.jpg'), array('en-GB.plg_payperdownloadplus_kunena.ini'));
-		$this->install_plugin('com_payperdownload', 'jdownload', 'payperdownloadplus', null, array('jdownload_plugin.js'), array('en-GB.plg_payperdownloadplus_jdownload.ini'));
-		$this->install_plugin('com_payperdownload', 'referer', 'user');
-		$this->install_plugin('com_payperdownload', 'paytoreadmore', 'content', null, null, array('en-GB.plg_content_paytoreadmore.ini'));
-		$this->install_plugin('com_payperdownload', 'paytoreadmore', 'editors-xtd', null, array('paytoreadmore.css', 'paytoreadmore.png'), array('en-GB.plg_editors_xtd_paytoreadmore.ini'));
+	    $db = JFactory::getDBO();
+
+	    // Uninstall plugins
+// 	    foreach($manifest->plugins->plugin as $plugin) {
+// 	        $attributes = $plugin->attributes();
+
+// 	        $plugin_name = JText::_($attributes['name']);
+
+// 	        $query = 'SELECT extension_id FROM #__extensions WHERE type=\'plugin\' AND folder=\''.$attributes['group'].'\' AND element=\''.$attributes['plugin'].'\'';
+// 	        $db->setQuery($query);
+// 	        $pluginid = $db->loadResult();
+// 	        if ($pluginid) {
+// 	            $installer = new JInstaller();
+// 	            if ($installer->uninstall('plugin', $pluginid)) {
+// 	                JFactory::getApplication()->enqueueMessage(JText::sprintf('COM_PAYPERDOWNLOAD_UNINSTALLED', 'plg_'.$attributes['group'].'_'.$attributes['plugin']), 'message');
+// 	            } else {
+// 	                JFactory::getApplication()->enqueueMessage(JText::sprintf('COM_PAYPERDOWNLOAD_ERRORUNINSTALLING', 'plg_'.$attributes['group'].'_'.$attributes['plugin']), 'error');
+// 	            }
+// 	        } else {
+// 	            JFactory::getApplication()->enqueueMessage(JText::sprintf('COM_PAYPERDOWNLOAD_COULDNOTFIND', 'plg_'.$attributes['group'].'_'.$attributes['plugin']), 'error');
+// 	        }
+// 	    }
+
+	    //JFactory::getApplication()->enqueueMessage('Pay Per Download uninstall', 'message');
+
+	    $groupedplugins = array('system' => array('payperdownloadplus'));
+	    $groupedplugins['content'] = array('paytoreadmore');
+	    $groupedplugins['editors-xtd'] = array('paytoreadmore');
+	    $groupedplugins['payperdownloadplus'] = array('content', 'phocadownload', 'k2', 'kunena', 'jdownload', 'menuitem');
+	    $groupedplugins['user'] = array('referer');
+
+	    // Uninstall plugins
+	    foreach($groupedplugins as $group => $plugins) {
+	        foreach($plugins as $plugin) {
+	            //$query = 'SELECT extension_id FROM #__extensions WHERE type=\'plugin\' AND folder=\''.$group.'\' AND element=\''.$plugin.'\'';
+
+	            $query = $db->getQuery(true);
+
+	            $query->select($db->quoteName('extension_id'));
+	            $query->from('#__extensions');
+	            $query->where($db->quoteName('element') . ' = ' . $db->quote($plugin));
+	            $query->where($db->quoteName('type') . ' = ' . $db->quote('plugin'));
+	            $query->where($db->quoteName('folder') . ' = ' . $db->quote($group));
+
+	            $db->setQuery($query);
+
+	            try {
+	                $pluginid = $db->loadResult();
+	                if ($pluginid) {
+	                    $installer = new JInstaller();
+	                    if ($installer->uninstall('plugin', $pluginid)) {
+	                        JFactory::getApplication()->enqueueMessage(JText::sprintf('COM_PAYPERDOWNLOAD_UNINSTALLED', 'plg_'.$group.'_'.$plugin), 'message');
+	                    } else {
+	                        JFactory::getApplication()->enqueueMessage(JText::sprintf('COM_PAYPERDOWNLOAD_ERRORUNINSTALLING', 'plg_'.$group.'_'.$plugin), 'error');
+	                    }
+	                } else {
+	                    JFactory::getApplication()->enqueueMessage(JText::sprintf('COM_PAYPERDOWNLOAD_COULDNOTFIND', 'plg_'.$group.'_'.$plugin), 'error');
+	                }
+	            } catch (RuntimeException $e) {
+	                JFactory::getApplication()->enqueueMessage(JText::sprintf('COM_PAYPERDOWNLOAD_ERRORUNINSTALLING', 'plg_'.$group.'_'.$plugin), 'error');
+	            }
+	        }
+	    }
 	}
 
+	private function enableExtension($type, $element, $folder = '', $enable = true)
+	{
+	    $db = JFactory::getDBO();
+
+	    $query = $db->getQuery(true);
+
+	    $query->update($db->quoteName('#__extensions'));
+	    if ($enable) {
+	        $query->set($db->quoteName('enabled').' = 1');
+	    } else {
+	        $query->set($db->quoteName('enabled').' = 0');
+	    }
+	    $query->where($db->quoteName('type').' = '.$db->quote($type));
+	    $query->where($db->quoteName('element').' = '.$db->quote($element));
+	    if ($folder) {
+	        $query->where($db->quoteName('folder').' = '.$db->quote($folder));
+	    }
+
+	    $db->setQuery($query);
+
+	    try {
+	        $db->execute();
+	    } catch (RuntimeException $e) {
+	        JFactory::getApplication()->enqueueMessage(JText::_('JERROR_AN_ERROR_HAS_OCCURRED'), 'error');
+	        return false;
+	    }
+
+	    return true;
+	}
 }
 ?>

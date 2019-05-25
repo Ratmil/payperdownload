@@ -5,7 +5,7 @@
  */
 
 // no direct access
-defined( '_JEXEC' ) or die( 'Restricted access' );
+defined('_JEXEC') or die;
 
 jimport( 'joomla.plugin.plugin' );
 
@@ -30,7 +30,7 @@ class plgContentPayToReadmore extends JPlugin
 		$lang = JFactory::getLanguage();
 		$lang->load('plg_content_paytoreadmore', JPATH_SITE.'/administrator');
 	}
-	
+
 	function onPrepareContent( &$article, &$params, $limitstart )
 	{
 		$article_id = null;
@@ -38,7 +38,7 @@ class plgContentPayToReadmore extends JPlugin
 			$article_id = $article->id;
 		$article->text = $this->_processText($article->text, $article_id);
 	}
-	
+
 	function onContentPrepare($context, &$article, &$params, $page = 0)
 	{
 		$article_id = null;
@@ -46,14 +46,14 @@ class plgContentPayToReadmore extends JPlugin
 			$article_id = $article->id;
 		$article->text = $this->_processText($article->text, $article_id);
 	}
-	
+
 	function cleanHtml($text)
 	{
 		$text = preg_replace("/<\/?[a-zA-Z0-9]+[^>]*>/", "", $text);
 		$text = preg_replace("/&[a-zA-Z]{1,6};/", "", $text);
 		return $text;
 	}
-	
+
 	function _processText($text, $id, $context = "")
 	{
 		if(!preg_match("/\[PPD_PAYTOREADMORE\]/", $text) && !preg_match("/<hr\s+id=\"ppd-paytoreadmore\"\s+style=\".*\"\s*\/>/", $text))
@@ -98,7 +98,7 @@ class plgContentPayToReadmore extends JPlugin
 					list($text1, $text2) = preg_split( "/\[PPD_PAYTOREADMORE\]/", $cleanText, 2 );
 					$text = $text1;
 					$link = $this->_getPaymentViewForArticle($id);
-					$readmorelink = "<a href=\"" . $link . "\" title=\"" . htmlspecialchars(JText::_("PAYTOREADMORE_PAY_LINK_TEXT")) . "\" class=\"readon\">" . 
+					$readmorelink = "<a href=\"" . $link . "\" title=\"" . htmlspecialchars(JText::_("PAYTOREADMORE_PAY_LINK_TEXT")) . "\" class=\"readon\">" .
 					  htmlspecialchars(JText::_("PAYTOREADMORE_PAY_LINK_TEXT"))	. "</a>";
 					$text = $text1 . $readmorelink;
 				}
@@ -107,7 +107,7 @@ class plgContentPayToReadmore extends JPlugin
 					list($text1, $text2) = preg_split( "/<hr\s+id=\"ppd-paytoreadmore\"\s+style=\".*\"\s*\/>/", $text, 2 );
 					$text = $text1;
 					$link = $this->_getPaymentViewForArticle($id);
-					$readmorelink = "<a href=\"" . $link . "\" title=\"" . htmlspecialchars(JText::_("PAYTOREADMORE_PAY_LINK_TEXT")) . "\" class=\"readon\">" . 
+					$readmorelink = "<a href=\"" . $link . "\" title=\"" . htmlspecialchars(JText::_("PAYTOREADMORE_PAY_LINK_TEXT")) . "\" class=\"readon\">" .
 					  htmlspecialchars(JText::_("PAYTOREADMORE_PAY_LINK_TEXT"))	. "</a>";
 					$text = $text1 . $readmorelink;
 				}
@@ -115,7 +115,7 @@ class plgContentPayToReadmore extends JPlugin
 			return $text;
 		}
 	}
-	
+
 	function _hasAccessToArticle($article_id)
 	{
 		$user = JFactory::getUser();
@@ -123,30 +123,30 @@ class plgContentPayToReadmore extends JPlugin
 		if($ppd->isPrivilegedUser($user))
 			return true;
 		$article_id = (int) $article_id;
-		$option = JRequest::getVar('option');
+		$option = JFactory::getApplication()->input->get('option');
 		$db = JFactory::getDBO();
 		if($option == "com_content")
 			$db->setQuery("SELECT catid FROM #__content WHERE id = " . $article_id);
 		else if($option == "com_k2")
 			$db->setQuery("SELECT catid FROM #__k2_items WHERE id = " . $article_id);
-		else 
+		else
 			return true;
 		$content_category = (int)$db->loadResult();
 		$option = $db->escape($option);
 		$match1 = $content_category . "-%";
 		$match2 = $content_category . "_%";
-		$query = "SELECT * FROM #__payperdownloadplus_resource_licenses 
-			WHERE 
+		$query = "SELECT * FROM #__payperdownloadplus_resource_licenses
+			WHERE
 			(resource_option_parameter = '$option')
-			AND (resource_id = $article_id OR (resource_id < 0 AND 
+			AND (resource_id = $article_id OR (resource_id < 0 AND
 				(resource_params LIKE '$match1' OR resource_params LIKE '$match2')
-				) OR 
+				) OR
 				(resource_id < 0 AND (resource_params LIKE '0-%' OR resource_params LIKE '0_%'))
-				) 
+				)
 			AND #__payperdownloadplus_resource_licenses.enabled = 1";
 		$db->setQuery( $query );
 		$resources = $db->loadObjectList();
-		
+
 		if($resources && count($resources) > 0)
 		{
 			return $ppd->isThereAvailableResource($resources, $article_id);
@@ -154,7 +154,7 @@ class plgContentPayToReadmore extends JPlugin
 		else
 			return true; // the resource (article) is not protected
 	}
-	
+
 	/**
 	Returns the url of a payment view to pay for an article
 	*/
@@ -162,24 +162,24 @@ class plgContentPayToReadmore extends JPlugin
 	{
 		$article_id = (int) $article_id;
 		$db = JFactory::getDBO();
-		$option = JRequest::getVar('option');
+		$option = JFactory::getApplication()->input->get('option');
 		if($option == "com_content")
 			$db->setQuery("SELECT catid FROM #__content WHERE id = " . $article_id);
 		else if($option == "com_k2")
 			$db->setQuery("SELECT catid FROM #__k2_items WHERE id = " . $article_id);
-		else 
+		else
 			return true;
 		$content_category = (int)$db->loadResult();
 		$option = $db->escape($option);
 		$match1 = $content_category . "-%";
 		$match2 = $content_category . "_%";
-		$query = "SELECT * FROM #__payperdownloadplus_resource_licenses WHERE resource_option_parameter = '$option' 
-			AND (resource_id = $article_id OR 
-			(resource_id < 0 AND 
+		$query = "SELECT * FROM #__payperdownloadplus_resource_licenses WHERE resource_option_parameter = '$option'
+			AND (resource_id = $article_id OR
+			(resource_id < 0 AND
 				(resource_params LIKE '$match1' OR resource_params LIKE '$match2')
-			) OR 
+			) OR
 			(resource_id < 0 AND (resource_params LIKE '0-%' OR resource_params LIKE '0_%'))
-			) 
+			)
 			AND #__payperdownloadplus_resource_licenses.enabled = 1";
 		$db->setQuery( $query );
 		$resources = $db->loadObjectList();
@@ -212,13 +212,13 @@ class plgContentPayToReadmore extends JPlugin
 			$link .= "&Itemid=" . (int)$menuitems->payment_page_menuitem;
 		return $link;
 	}
-	
+
 	function _getLinkForArticle($id)
 	{
 		$db = JFactory::getDBO();
 		$db->setQuery("SELECT catid FROM #__content WHERE id = " . (int)$id);
 		$catid = (int)$db->loadResult();
-		$contentRouterHelperFile = 
+		$contentRouterHelperFile =
 				JPATH_SITE . "/components/com_content/helpers/route.php";
 		if(file_exists($contentRouterHelperFile))
 		{
@@ -226,8 +226,8 @@ class plgContentPayToReadmore extends JPlugin
 			if(class_exists("ContentHelperRoute"))
 			{
 				$link = JRoute::_(ContentHelperRoute::getArticleRoute($id, $catid));
-				
-				// should always work according to PHP.net 
+
+				// should always work according to PHP.net
 				// http://www.php.net/manual/en/reserved.variables.server.php
 				// 1 - Set to a non-empty value if the script was queried through the HTTPS protocol.
 				// 2 - Note that when using ISAPI with IIS, the value will be "off" if the request was not made through the HTTPS protocol
@@ -246,18 +246,18 @@ class plgContentPayToReadmore extends JPlugin
 		}
 		return JURI::base() . "index.php?option=com_content&view=article&id=" . $id;
 	}
-	
+
 	function _getMenuItems()
 	{
 		$db = JFactory::getDBO();
 		$db->setQuery("SELECT config_id, payment_page_menuitem, thankyou_page_menuitem FROM #__payperdownloadplus_config", 0, 1);
 		return $db->loadObject();
 	}
-	
+
 	function _isResourceShared($resource_id)
 	{
 		$db = JFactory::getDBO();
-		$query = "SELECT shared FROM #__payperdownloadplus_resource_licenses 
+		$query = "SELECT shared FROM #__payperdownloadplus_resource_licenses
 			WHERE resource_license_id = " . (int)$resource_id;
 		$db->setQuery( $query );
 		$shared = $db->loadResult();

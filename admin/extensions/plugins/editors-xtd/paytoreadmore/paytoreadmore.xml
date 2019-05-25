@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<install version="1.5" type="plugin" group="editors-xtd" method="upgrade">
+<extension version="3.1" type="plugin" group="editors-xtd" method="upgrade">
 	<name>Button - Paytoreadmore</name>
 	<author>Ratmil</author>
-	<creationDate>November 2011</creationDate>
-	<license>http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL</license>
 	<authorUrl>www.ratmilwebsolutions.com</authorUrl>
-	<version>1.0</version>
+	<creationDate>November 2011</creationDate>
+	<copyright>(c) 2009 Ratmil Torres</copyright>
+	<license>GNU General Public License version 2 or later; see LICENSE.txt</license>
+	<version>6.0.0</version>
+	<description>Adds an editor button to restrict content to paid subscribers</description>
 	<languages>
-		<language tag="en-GB">en-GB.plg_editors_xtd_paytoreadmore.ini</language>
+		<language tag="en-GB">en-GB.plg_editors-xtd_paytoreadmore.ini</language>
 	</languages>
 	<files>
 		<filename plugin="paytoreadmore">paytoreadmore.php</filename>
-		<filename plugin="paytoreadmore">paytoreadmore.png</filename>
-		<filename plugin="paytoreadmore">paytoreadmore.css</filename>
+		<filename>index.html</filename>
 	</files>
-	<params />
-</install>
+</extension>

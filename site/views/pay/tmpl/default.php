@@ -5,7 +5,8 @@
  * @copyright (C) Ratmil Torres
  * @license GNU/GPL http://www.gnu.org/copyleft/gpl.html
 **/
-defined( '_JEXEC' ) or die( 'Restricted access' );
+defined('_JEXEC') or die;
+
 $root = JURI::root();
 ?>
 <script type="text/javascript">
@@ -53,25 +54,25 @@ if($this->resourceObj)
 	?>
 	<span class="front_price_label"><?php echo htmlspecialchars(JText::_("PAYPERDOWNLOADPLUS_DOWNLOADS_COUNT"));?></span>
 	<span class="front_price_data">
-	<?php 
+	<?php
 		if($this->resourceObj->max_download > 0)
 			echo htmlspecialchars($this->resourceObj->max_download);
 		else
 			echo htmlspecialchars(JText::_("PAYPERDOWNLOADPLUS_UNLIMITED_DOWNLOADS"));
 	?></span>
 	<br/>
-	
+
 	<span class="front_price_label"><?php echo htmlspecialchars(JText::_("PAYPERDOWNLOADPLUS_LICENSE_EXPIRATION_TIME"));?></span>
-	<span class="front_price_data"><?php 
+	<span class="front_price_data"><?php
 		if($this->resourceObj->download_expiration > 0)
-			echo htmlspecialchars(JText::sprintf("PAYPERDOWNLOADPLUS_LICENSE_EXPIRATION_TIME_VALUE", $this->resourceObj->download_expiration)); 
+			echo htmlspecialchars(JText::sprintf("PAYPERDOWNLOADPLUS_LICENSE_EXPIRATION_TIME_VALUE", $this->resourceObj->download_expiration));
 		else
 			echo htmlspecialchars(JText::_("PAYPERDOWNLOADPLUS_LICENSE_EXPIRATION_LIFE_TIME"));
 	?></span>
 	<br/>
-	
+
 	<br/><br/>
-	
+
 	<?php
 	{
 		if($this->usePaypal)
@@ -115,7 +116,7 @@ if($this->resourceObj)
 		$params = "&r=" . base64_encode($this->returnUrl);
 		?>
 		<input type="hidden" name="notify_url" value="<?php echo htmlspecialchars($root . "index.php?option=com_payperdownload&task=confirmres" . $params);?>"/>
-		<?php 
+		<?php
 			if($this->thankyouUrl){
 			?>
 			<input type="hidden" name="return" value="<?php echo htmlspecialchars($this->thankyouUrl);?>"/>
@@ -123,7 +124,7 @@ if($this->resourceObj)
 			<input type="hidden" name="no_note" value="1"/>
 			<input type="hidden" name="no_shipping" value="1"/>
 			<input type="hidden" name="rm" value="2"/>
-			<input type="image" src="http://www.paypal.com/<?php echo $paypal_button_lang_folder;?>/i/btn/btn_paynowCC_LG.gif" name="submit" alt="<?php echo JText::_("PAYPERDOWNLOADPLUS_PAYPAL_BUTTON_ALTERNATE_TEXT");?>"/>
+			<input type="image" src="https://www.paypal.com/<?php echo $paypal_button_lang_folder;?>/i/btn/btn_paynowCC_LG.gif" name="submit" alt="<?php echo JText::_("PAYPERDOWNLOADPLUS_PAYPAL_BUTTON_ALTERNATE_TEXT");?>"/>
 			<img alt="" src="https://www.paypal.com/<?php echo $paypal_button_lang_folder;?>/i/scr/pixel.gif" width="1" height="1"/>
 			</form>
 			<br/>
@@ -185,7 +186,7 @@ foreach($this->licenses as $license)
 	<span class="front_price_label"><?php echo htmlspecialchars(JText::_("PAYPERDOWNLOADPLUS_PRICE___4"));?></span>
 	<span class="front_price_data"><?php echo htmlspecialchars($license->price) . "&nbsp;" . htmlspecialchars($license->currency_code);?></span>
 	<br/>
-	<?php 
+	<?php
 	if($this->alpha_integration == 2 && $license->aup > 0)
 	{
 	?>
@@ -195,14 +196,14 @@ foreach($this->licenses as $license)
 	<?php
 	}
 	?>
-	
+
 	<?php
 	if($this->applyDiscount && $license->price - $license->discount_price > 0.01)
 	{
 	?>
 	<span class="front_price_label"><?php echo htmlspecialchars(JText::_("PAYPERDOWNLOADPLUS_DISCOUNT_PRICE"));?></span>
 	<span class="front_price_data">
-	<?php 
+	<?php
 		if($license->discount_price > 0)
 		{
 			echo htmlspecialchars($license->discount_price) . "&nbsp;" . htmlspecialchars($license->currency_code);
@@ -214,7 +215,7 @@ foreach($this->licenses as $license)
 		$license->price = $license->discount_price;
    ?></span>
 	<br/>
-	<?php 
+	<?php
 	}
 	?>
 	<?php
@@ -228,17 +229,17 @@ foreach($this->licenses as $license)
 	}
 	?>
 	<span class="front_price_label"><?php echo htmlspecialchars(JText::_("PAYPERDOWNLOADPLUS_LICENSE_EXPIRATION_TIME"));?></span>
-	<span class="front_price_data"><?php 
+	<span class="front_price_data"><?php
 		if($license->expiration > 0)
-			echo htmlspecialchars(JText::sprintf("PAYPERDOWNLOADPLUS_LICENSE_EXPIRATION_TIME_VALUE", $license->expiration)); 
+			echo htmlspecialchars(JText::sprintf("PAYPERDOWNLOADPLUS_LICENSE_EXPIRATION_TIME_VALUE", $license->expiration));
 		else
 			echo htmlspecialchars(JText::_("PAYPERDOWNLOADPLUS_LICENSE_EXPIRATION_LIFE_TIME"));
 	?></span>
 	<br/>
 	<span class="front_price_label"><?php echo htmlspecialchars(JText::_("PAYPERDOWNLOADPLUS_DOWNLOADS_COUNT"));?></span>
-	<span class="front_price_data"><?php 
+	<span class="front_price_data"><?php
 		if($license->max_download > 0)
-			echo htmlspecialchars($license->max_download); 
+			echo htmlspecialchars($license->max_download);
 		else
 			echo htmlspecialchars(JText::_("PAYPERDOWNLOADPLUS_UNLIMITED_DOWNLOADS"));
 	?></span>
@@ -252,7 +253,7 @@ foreach($this->licenses as $license)
 	<?php
 	}
 	?>
-	
+
 	<?php
 	if($this->showResources)
 	{
@@ -263,11 +264,11 @@ foreach($this->licenses as $license)
 		{
 		?>
 		<li>
-		<?php 
+		<?php
 			if($resource->alternate_resource_description)
 				echo htmlspecialchars($resource->alternate_resource_description);
 			else
-				echo htmlspecialchars($resource->resource_description) . " : " . 
+				echo htmlspecialchars($resource->resource_description) . " : " .
 					htmlspecialchars($resource->resource_name);?>
 		</li>
 		<?php
@@ -277,7 +278,7 @@ foreach($this->licenses as $license)
 		<?php
 	}
 	?>
-	
+
 	<?php
 		echo $license->description;
 	?>
@@ -339,7 +340,7 @@ foreach($this->licenses as $license)
 		$params = "";
 		?>
 		<input type="hidden" name="notify_url" value="<?php echo htmlspecialchars($root . "index.php?option=com_payperdownload&task=confirm" . $params);?>"/>
-		<?php 
+		<?php
 		$returnParams = "";
 		if($this->thankyouUrl){
 			if(strstr($this->thankyouUrl, "?") === false)
@@ -352,7 +353,7 @@ foreach($this->licenses as $license)
 			<input type="hidden" name="no_note" value="1"/>
 			<input type="hidden" name="no_shipping" value="1"/>
 			<input type="hidden" name="rm" value="2"/>
-			<input type="image" src="http://www.paypal.com/<?php echo $paypal_button_lang_folder;?>/i/btn/btn_paynowCC_LG.gif" name="submit" alt="<?php echo JText::_("PAYPERDOWNLOADPLUS_PAYPAL_BUTTON_ALTERNATE_TEXT");?>"/>
+			<input type="image" src="https://www.paypal.com/<?php echo $paypal_button_lang_folder;?>/i/btn/btn_paynowCC_LG.gif" name="submit" alt="<?php echo JText::_("PAYPERDOWNLOADPLUS_PAYPAL_BUTTON_ALTERNATE_TEXT");?>"/>
 			<img alt="" src="https://www.paypal.com/<?php echo $paypal_button_lang_folder;?>/i/scr/pixel.gif" width="1" height="1"/>
 			</form>
 			<br/>
@@ -367,7 +368,7 @@ foreach($this->licenses as $license)
 			?>
 			<br/>
 			<?php
-			$link = "index.php?option=com_payperdownload&task=buywithaup&lid=" . 
+			$link = "index.php?option=com_payperdownload&task=buywithaup&lid=" .
 				(int)$license->license_id . "&return=" . base64_encode($this->returnUrl);
 			?>
 			<a href="<?php echo $link;?>"><?php echo htmlspecialchars(JText::_("PAYPERDOWNLOADPLUS_BUY_WITH_AUP"));?></a><br/>

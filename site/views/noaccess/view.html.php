@@ -5,14 +5,15 @@
  * @copyright (C) Ratmil Torres
  * @license GNU/GPL http://www.gnu.org/copyleft/gpl.html
 **/
-defined( '_JEXEC' ) or die( 'Restricted access' );
+defined('_JEXEC') or die;
+
 jimport('joomla.application.component.view');
 
 class PayPerDownloadViewNoAccess extends JViewLegacy
 {
 	function display($tpl = null)
 	{
-		$option = JRequest::getVar('option');
+	    $option = JFactory::getApplication()->input->get('option');
 		JHTML::_('stylesheet', 'components/'. $option . '/css/frontend.css');
 		$model = $this->getModel();
 		if($model)

@@ -5,21 +5,16 @@
  * @copyright (C) Ratmil Torres
  * @license GNU/GPL http://www.gnu.org/copyleft/gpl.html
 **/
-defined( '_JEXEC' ) or
-die( 'Direct Access to this location is not allowed.' );
+
+// no direct access
+defined ( '_JEXEC' ) or die;
 
 // import the JPlugin class
 jimport('joomla.event.plugin');
 
 class plgPayperDownloadPlusPhocadownload extends JPlugin
 {
-	public function __construct(&$subject, $config = array())
-    {
-        parent::__construct($subject);
-		// load the language file
-		$lang = JFactory::getLanguage();
-		$lang->load('plg_payperdownloadplus_phocadownload', JPATH_SITE . '/administrator');
-	}
+    protected $autoloadLanguage = true;
 
 	function onIsActive(&$plugins)
 	{
@@ -29,15 +24,10 @@ class plgPayperDownloadPlusPhocadownload extends JPlugin
 		$component = JComponentHelper::getComponent('com_phocadownload', true);
 		if($component->enabled)
 		{
-			jimport('joomla.filesystem.file');
-			$image = "";
-			if(JFile::exists(JPATH_ROOT . '/administrator/components/com_payperdownload/images/icon-48-phocadownload.png'))
-				$image = "administrator/components/com_payperdownload/images/icon-48-phocadownload.png";
-			$plugins[] = array("name" => "Phoca Download", "description" => JText::_("PAYPERDOWNLOADPLUS_PHOCA_DOWNLOAD_FILE_68"), 
-				"image" => $image);
+		    $plugins[] = array("name" => "Phoca Download", "description" => JText::_("PAYPERDOWNLOADPLUS_PHOCADOWNLOAD_PLUGIN_PHOCADOWNLOADFILE"), "image" => "plugins/payperdownloadplus/phocadownload/phocadownload.png");
 		}
 	}
-	
+
 	function reorderCats(&$cats_ordered, $cats, $parent_id, $depth)
 	{
 		$count = count($cats);
@@ -53,29 +43,61 @@ class plgPayperDownloadPlusPhocadownload extends JPlugin
 			}
 		}
 	}
-	
+
 	function getCategories()
 	{
-		$version = new JVersion;
 		$db = JFactory::getDBO();
-		$db->setQuery("SELECT id, title, parent_id FROM #__phocadownload_categories WHERE published=1");
-		$cats = $db->loadObjectList();
+
+		$query = $db->getQuery(true);
+
+		$query->select($db->quoteName(array('id', 'title', 'parent_id')));
+		$query->from($db->quoteName('#__phocadownload_categories'));
+		$query->where($db->quoteName('published') . ' = 1');
+
+		$db->setQuery($query);
+
 		$cats_ordered = array();
-		$this->reorderCats($cats_ordered, $cats, 0, 0);
+
+		try {
+		    $cats = $db->loadObjectList();
+		    $this->reorderCats($cats_ordered, $cats, 0, 0);
+		} catch (RuntimeException $e) {
+		    JFactory::getApplication()->enqueueMessage(JText::_('JERROR_AN_ERROR_HAS_OCCURRED'), 'error');
+		}
+
 		return $cats_ordered;
 	}
-	
+
 	function getDownloads($category)
 	{
 		$db = JFactory::getDBO();
-		$db->setQuery('SELECT id, title FROM #__phocadownload WHERE catid = ' . (int)$category);
-		return $db->loadObjectList();
+
+		$query = $db->getQuery(true);
+
+		$query->select($db->quoteName(array('id', 'title')));
+		$query->from($db->quoteName('#__phocadownload'));
+		$query->where($db->quoteName('catid') . ' = ' . (int)$category);
+
+		$db->setQuery($query);
+
+		$downloads = array();
+
+		try {
+		    $downloads = $db->loadObjectList();
+		} catch (RuntimeException $e) {
+		    JFactory::getApplication()->enqueueMessage(JText::_('JERROR_AN_ERROR_HAS_OCCURRED'), 'error');
+		}
+
+		return $downloads;
 	}
-	
+
 	function onRenderConfig($pluginName, $resource)
 	{
 		if($pluginName == "Phoca Download")
 		{
+		    $content_id = '';
+		    $category_id = '';
+		    $files = array();
 			if($resource)
 			{
 				$content_id = $resource->resource_id;
@@ -86,11 +108,9 @@ class plgPayperDownloadPlusPhocadownload extends JPlugin
 			$uri = JURI::root();
 			$scriptPath = "administrator/components/com_payperdownload/js/";
 			JHTML::script($scriptPath . 'ajax_source.js', false);
-			$version = new JVersion;
-			if($version->RELEASE >= "1.6")
-				$plugin_path = "plugins/payperdownloadplus/phocadownload/";
-			else
-				$plugin_path = "plugins/payperdownloadplus/";
+
+			$plugin_path = "plugins/payperdownloadplus/phocadownload/";
+
 			$scriptPath = $uri . $plugin_path;
 			JHTML::script($scriptPath . 'phoca_plugin.js', false);
 			$cats = $this->getCategories();
@@ -134,188 +154,270 @@ class plgPayperDownloadPlusPhocadownload extends JPlugin
 			<script type="text/javascript">
 			var cancel_text = '<?php echo JText::_("PAYPERDOWNLOADPLUS_PHOCADOWNLOAD_PLUGIN_CANCEL", true)?>';
 			</script>
-			<div id="search_result" style="position:absolute;visibility:hidden;border-width:1px;border-style:solid;background-color:#ffffff;"></div>
+			<div id="search_result" style="position:absolute;visibility:hidden;z-index:1000;border-width:1px;border-style:solid;background-color:#ffffff;"></div>
 			</td>
 			</tr>
 			<?php
 		}
 	}
-	
-	function onGetSaveData(&$resourceId, 
+
+	function onGetSaveData(&$resourceId,
 		$pluginName, &$resourceName, &$resourceParams, &$optionParameter,
 		&$resourceDesc)
 	{
 		if($pluginName == "Phoca Download")
 		{
+		    $jinput = JFactory::getApplication()->input;
+
 			$optionParameter = "com_phocadownload";
-			$resourceId = JRequest::getInt('phocadownload_file');
-			$categoryId = JRequest::getInt('phocadownload_category');
-			$db = JFactory::getDBO();
-			$query = "";
+			$resourceId = $jinput->getInt('phocadownload_file');
+			$categoryId = $jinput->getInt('phocadownload_category');
+
 			$resourceDesc = JText::_("PAYPERDOWNLOADPLUS_PHOCADOWNLOAD_PLUGIN_ALL_DOWNLOADS");
 			if($resourceId)
 			{
-				$query = "SELECT id, title FROM #__phocadownload WHERE id = " . $resourceId;
+			    $db = JFactory::getDBO();
+
+			    $query = $db->getQuery(true);
+
+			    $query->select($db->quoteName(array('id', 'title')));
+			    $query->from($db->quoteName('#__phocadownload'));
+			    $query->where($db->quoteName('id') . ' = ' . $resourceId);
+
+			    $db->setQuery($query);
+
+			    try {
+			        $resource = $db->loadObject();
+			        if($resource)
+			            $resourceName = $resource->title;
+			    } catch (RuntimeException $e) {
+			        JFactory::getApplication()->enqueueMessage(JText::_('JERROR_AN_ERROR_HAS_OCCURRED'), 'error');
+			    }
+
 				$resourceDesc = JText::_("PAYPERDOWNLOADPLUS_PHOCADOWNLOAD_PLUGIN_CONTENT_ARTICLE");
 			}
 			else if($categoryId)
 			{
 				$resourceId = -1;
-				$query = "SELECT id, title FROM #__phocadownload_categories WHERE id = " . $categoryId;
+
+				$db = JFactory::getDBO();
+
+				$query = $db->getQuery(true);
+
+				$query->select($db->quoteName(array('id', 'title')));
+				$query->from($db->quoteName('#__phocadownload_categories'));
+				$query->where($db->quoteName('id') . ' = ' . $categoryId);
+
+				$db->setQuery($query);
+
+				try {
+				    $resource = $db->loadObject();
+				    if($resource)
+				        $resourceName = $resource->title;
+				} catch (RuntimeException $e) {
+				    JFactory::getApplication()->enqueueMessage(JText::_('JERROR_AN_ERROR_HAS_OCCURRED'), 'error');
+				}
+
 				$resourceDesc = JText::_("PAYPERDOWNLOADPLUS_PHOCADOWNLOAD_PLUGIN_CONTENT_CATEGORY");
 			}
 			else
 				$resourceId = -1;
 			$resourceName = JText::_("PAYPERDOWNLOADPLUS_PHOCADOWNLOAD_PLUGIN_ALL_DOWNLOADS");
-			if($query)
-			{
-				$db->setQuery( $query );
-				$resource = $db->loadObject();
-				if($resource)
-					$resourceName = $resource->title;
-			}
-			
+
 			$resourceParams = $categoryId;
 		}
 	}
-	
+
 	function getParentCategories($id)
 	{
 		$db = JFactory::getDBO();
-		$db->setQuery("SELECT catid FROM #__phocadownload WHERE id = " . (int)$id);
-		$category = $db->loadResult();
+
+		$query = $db->getQuery(true);
+
+		$query->select($db->quoteName('catid'));
+		$query->from($db->quoteName('#__phocadownload'));
+		$query->where($db->quoteName('id') . ' = ' . (int)$id);
+
+		$db->setQuery($query);
+
 		$parentCategories = array();
-		while($category)
-		{
-			$parentCategories []= $category;
-			$db->setQuery("SELECT parent_id FROM #__phocadownload_categories WHERE id = " . (int)$category);
-			$category = (int)$db->loadResult();
+
+		try {
+		    $category = $db->loadResult();
+
+		    while($category)
+		    {
+		        $parentCategories[] = $category;
+
+		        $query->clear();
+
+		        $query->select($db->quoteName('parent_id'));
+		        $query->from($db->quoteName('#__phocadownload_categories'));
+		        $query->where($db->quoteName('id') . ' = ' . (int)$category);
+
+		        $db->setQuery($query);
+
+		        $category = $db->loadResult();
+		    }
+
+		} catch (RuntimeException $e) {
+		    JFactory::getApplication()->enqueueMessage(JText::_('JERROR_AN_ERROR_HAS_OCCURRED'), 'error');
 		}
+
 		return $parentCategories;
 	}
-	
+
 	function onValidateAccess($option, $resources, &$allowAccess, &$requiredLicenses, &$resourcesId)
 	{
 		if($option == 'com_phocadownload')
 		{
+		    $jinput = JFactory::getApplication()->input;
+
 			$requiredLicenses = array();
-			$download = JRequest::getInt('download', 0);
+			$download = $jinput->getInt('download', 0);
 			$resourcesId = array();
 			if($download == 0)
 				return;
-			$view = JRequest::getVar('view');
+			$view = $jinput->get('view');
 			if($view != 'file' && $view != 'category')
 				return;
 			//Check download licenses
 			foreach($resources as $resource)
 			{
-				if($resource->resource_id == $download)
-				{
-					if($resource->license_id)
-					{
-						if(array_search($resource->license_id, $requiredLicenses) === false)
-							$requiredLicenses[] = $resource->license_id;
-					}
-					else
-					{
-						if(array_search($resource->resource_license_id, $resourcesId) === false)
-							$resourcesId[] = $resource->resource_license_id;
-					}
-					$allowAccess = false;
-				}
-				
+			    if ($resource->resource_type === 'Phoca Download') {
+    				if($resource->resource_id == $download)
+    				{
+    					if($resource->license_id)
+    					{
+    						if(array_search($resource->license_id, $requiredLicenses) === false)
+    							$requiredLicenses[] = $resource->license_id;
+    					}
+    					else
+    					{
+    						if(array_search($resource->resource_license_id, $resourcesId) === false)
+    							$resourcesId[] = $resource->resource_license_id;
+    					}
+    					$allowAccess = false;
+    				}
+			    }
 			}
-			
-			
-			
+
 			$download_categories = $this->getParentCategories($download);
 			//Check category licenses
 			foreach($resources as $resource)
 			{
-				if($resource->resource_id < 0)
-				{
-					$categoryId = $resource->resource_params;
-					if(array_search($categoryId, $download_categories) !== false)
-					{
-						if($resource->license_id)
-						{
-							if(array_search($resource->license_id, $requiredLicenses) === false)
-								$requiredLicenses[] = $resource->license_id;
-						}
-						else
-						{
-							if(array_search($resource->resource_license_id, $resourcesId) === false)
-								$resourcesId[] = $resource->resource_license_id;
-						}	
-						$allowAccess = false;
-					}
-				}
+			    if ($resource->resource_type === 'Phoca Download') {
+    				if($resource->resource_id < 0)
+    				{
+    					$categoryId = $resource->resource_params;
+    					if(array_search($categoryId, $download_categories) !== false)
+    					{
+    						if($resource->license_id)
+    						{
+    							if(array_search($resource->license_id, $requiredLicenses) === false)
+    								$requiredLicenses[] = $resource->license_id;
+    						}
+    						else
+    						{
+    							if(array_search($resource->resource_license_id, $resourcesId) === false)
+    								$resourcesId[] = $resource->resource_license_id;
+    						}
+    						$allowAccess = false;
+    					}
+    				}
+			    }
 			}
-			
+
 			//Check all downloads license
 			foreach($resources as $resource)
 			{
-				if($resource->resource_id < 0)
-				{
-					$categoryId = $resource->resource_params;
-					if($categoryId == 0)
-					{
-						if($resource->license_id)
-						{
-							if(array_search($resource->license_id, $requiredLicenses) === false)
-								$requiredLicenses[] = $resource->license_id;
-						}
-						else
-						{
-							if(array_search($resource->resource_license_id, $resourcesId) === false)
-								$resourcesId[] = $resource->resource_license_id;
-						}
-						$allowAccess = false;
-					}
-				}
+			    if ($resource->resource_type === 'Phoca Download') {
+    				if($resource->resource_id < 0)
+    				{
+    					$categoryId = $resource->resource_params;
+    					if($categoryId == 0)
+    					{
+    						if($resource->license_id)
+    						{
+    							if(array_search($resource->license_id, $requiredLicenses) === false)
+    								$requiredLicenses[] = $resource->license_id;
+    						}
+    						else
+    						{
+    							if(array_search($resource->resource_license_id, $resourcesId) === false)
+    								$resourcesId[] = $resource->resource_license_id;
+    						}
+    						$allowAccess = false;
+    					}
+    				}
+			    }
 			}
 		}
 	}
-	
+
 	function onAjaxCall($plugin, &$output)
 	{
 		if($plugin == "phocadownload")
 		{
-			$t = JRequest::getVar('t');
-			$x = JRequest::getVar('x');
+		    $jinput = JFactory::getApplication()->input;
+
+		    $t = $jinput->getRaw('t');
+		    $x = $jinput->getRaw('x');
+
+		    $db = JFactory::getDBO();
+		    $query = $db->getQuery(true);
+
 			if($t == 's')
 			{
-				$db = JFactory::getDBO();
-				$db->setQuery("SELECT id, title, catid FROM #__phocadownload WHERE title LIKE '%" . $db->escape($x) . "%'");
-				$files = $db->loadObjectList();
-				$output = '<<' . count($files);
-				foreach($files as $file)
-				{
-					$output .= '>' . htmlspecialchars($file->id) . "<" . htmlspecialchars($file->title) . "<" . htmlspecialchars($file->catid);
-				}
-				$output .= '>>';
+			    $query->select($db->quoteName(array('id', 'title', 'catid')));
+			    $query->from($db->quoteName('#__phocadownload'));
+			    $query->where($db->quoteName('title') . ' LIKE ' . $db->quote('%' . $x . '%'));
+			    $query->setLimit('10');
+
+			    $db->setQuery($query);
+
+			    $output = '';
+			    try {
+			        $files = $db->loadObjectList();
+			        $output = '<<' . count($files);
+			        foreach($files as $file)
+			        {
+			            $output .= '>' . htmlspecialchars($file->id) . "<" . htmlspecialchars($file->title) . "<" . htmlspecialchars($file->catid);
+			        }
+			        $output .= '>>';
+			    } catch (RuntimeException $e) {
+			        JFactory::getApplication()->enqueueMessage(JText::_('JERROR_AN_ERROR_HAS_OCCURRED'), 'error');
+			    }
 			}
-			else
-			if($t == 'a')
+			else if($t == 'a')
 			{
-				$db = JFactory::getDBO();
-				$db->setQuery('SELECT id, title FROM #__phocadownload WHERE catid = ' . (int)$x);
-				$files = $db->loadObjectList();
-				$output = '<<' . count($files);
-				foreach($files as $file)
-				{
-					$output .= '>' . htmlspecialchars($file->id) . "<" . htmlspecialchars($file->title);
-				}
-				$output .= '>>';
+			    $query->select($db->quoteName(array('id', 'title')));
+			    $query->from($db->quoteName('#__phocadownload'));
+			    $query->where($db->quoteName('catid') . ' = ' . (int)$x);
+
+			    $db->setQuery($query);
+
+			    $output = '';
+			    try {
+			        $files = $db->loadObjectList();
+			        $output = '<<' . count($files);
+			        foreach($files as $file)
+			        {
+			            $output .= '>' . htmlspecialchars($file->id) . "<" . htmlspecialchars($file->title);
+			        }
+			        $output .= '>>';
+			    } catch (RuntimeException $e) {
+			        JFactory::getApplication()->enqueueMessage(JText::_('JERROR_AN_ERROR_HAS_OCCURRED'), 'error');
+			    }
 			}
 		}
 	}
-	
+
 	/*function getReturnPage($option, &$returnPage)
 	{
 		if($option == "com_phocadownload")
 		{
-			$download = JRequest::getInt('download', 0);
+			$download = JFactory::getApplication()->input->getInt('download', 0);
 			if(!$download)
 			{
 				return;
@@ -323,7 +425,7 @@ class plgPayperDownloadPlusPhocadownload extends JPlugin
 			$db = JFactory::getDBO();
 			$db->setQuery("SELECT catid FROM #__phocadownload WHERE id = " . $download);
 			$download_category = (int)$db->loadResult();
-			$phoceRouterHelperFile = 
+			$phoceRouterHelperFile =
 				JPATH_SITE . "/components/com_phocadownload/helpers/route.php";
 			if(file_exists($phoceRouterHelperFile))
 			{
@@ -336,8 +438,13 @@ class plgPayperDownloadPlusPhocadownload extends JPlugin
 				if(class_exists("PhocaDownloadHelperRoute"))
 				{
 					$uri = JRoute::_(PhocaDownloadHelperRoute::getCategoryRoute($download_category, $alias));
-					$protocol = $_SERVER['SERVER_PROTOCOL'];
-					if(strtolower(substr($protocol, 0, 5)) == 'https')
+
+					// should always work according to PHP.net
+					// http://www.php.net/manual/en/reserved.variables.server.php
+					// 1 - Set to a non-empty value if the script was queried through the HTTPS protocol.
+					// 2 - Note that when using ISAPI with IIS, the value will be "off" if the request was not made through the HTTPS protocol
+					$is_protocol_https = (isset($_SERVER['HTTPS']) && !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== "off") ? true : false;
+					if ($is_protocol_https)
 						$prefix = "https://";
 					else
 						$prefix = "http://";
@@ -350,11 +457,11 @@ class plgPayperDownloadPlusPhocadownload extends JPlugin
 					return;
 				}
 			}
-			$returnPage = "index.php?option=com_phocadownload&view=category&id=" . 
+			$returnPage = "index.php?option=com_phocadownload&view=category&id=" .
 					urlencode($download_category);
 		}
 	}*/
-	
+
 	function onCheckDecreaseDownloadCount($option, $resources, $requiredLicenses, $resourcesId, &$decreaseDownloadCount)
 	{
 		if($option == 'com_phocadownload')
@@ -362,18 +469,18 @@ class plgPayperDownloadPlusPhocadownload extends JPlugin
 			$decreaseDownloadCount = true;
 		}
 	}
-	
+
 	/*
-	Returns item id for current download. In the case of Phocadownload it is the id of 
+	Returns item id for current download. In the case of Phocadownload it is the id of
 		the download
 	*/
 	function onGetItemId($option, &$itemId)
 	{
 		if($option == 'com_phocadownload')
 		{
-			$itemId = JRequest::getInt('download', 0);
+		    $itemId = JFactory::getApplication()->input->getInt('download', 0);
 		}
 	}
-	
+
 }
 ?>

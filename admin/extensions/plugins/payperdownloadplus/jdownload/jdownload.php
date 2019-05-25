@@ -13,33 +13,20 @@ jimport('joomla.event.plugin');
 
 class plgPayperDownloadPlusJDownload extends JPlugin
 {
-	public function __construct(&$subject, $config = array())
-    {
-        parent::__construct($subject);
-		// load the language file
-		$lang = JFactory::getLanguage();
-		$lang->load('plg_payperdownloadplus_jdownload', JPATH_SITE.'/administrator');
-	}
+    protected $autoloadLanguage = true;
 
 	function onIsActive(&$plugins)
 	{
 		jimport('joomla.filesystem.folder');
-		$version = new JVersion;
 		if(!JFolder::exists(JPATH_ROOT . '/administrator/components/com_jdownloads'))
 			return false;
 		$component = JComponentHelper::getComponent('com_jdownloads', true);
 		if($component->enabled)
 		{
-			jimport('joomla.filesystem.file');
-			$image = "";
-			if(JFile::exists(JPATH_ROOT . '/administrator/components/com_payperdownload/images/jd.png'))
-				$image = "administrator/components/com_payperdownload/images/jd.png";
-				
-			$plugins[] = array("name" => "JDownloads", "description" => JText::_("JDownloads file"), 
-				"image" => $image);
+		    $plugins[] = array("name" => "JDownloads", "description" => JText::_("PAYPERDOWNLOADPLUS_JDOWNLOAD_PLUGIN_JDOWNLOADSFILE"), "image" => "plugins/payperdownloadplus/jdownload/jdownload.png");
 		}
 	}
-	
+
 	function reorderCats(&$cats_ordered, $cats, $parent_id, $depth)
 	{
 		$count = count($cats);
@@ -54,28 +41,62 @@ class plgPayperDownloadPlusJDownload extends JPlugin
 			}
 		}
 	}
-	
+
 	function getJDownloadCategories()
 	{
 		$db = JFactory::getDBO();
-		$db->setQuery('SELECT id as cat_id, title as cat_title, parent_id FROM #__jdownloads_categories');
-		$cats = $db->loadObjectList();
+
+		$query = $db->getQuery(true);
+
+		$query->select($db->quoteName('id', 'cat_id'));
+		$query->select($db->quoteName('title', 'cat_title'));
+		$query->select($db->quoteName('parent_id'));
+		$query->from($db->quoteName('#__jdownloads_categories'));
+
+		$db->setQuery($query);
+
 		$cats_ordered = array();
-		$this->reorderCats($cats_ordered, $cats, 0, 0);
+
+		try {
+		    $cats = $db->loadObjectList();
+		    $this->reorderCats($cats_ordered, $cats, 0, 0);
+		} catch (RuntimeException $e) {
+		    JFactory::getApplication()->enqueueMessage(JText::_('JERROR_AN_ERROR_HAS_OCCURRED'), 'error');
+		}
+
 		return $cats_ordered;
 	}
-	
+
 	function getFiles($cat_id)
 	{
 		$db = JFactory::getDBO();
-		$db->setQuery('SELECT file_id as id, file_title as title FROM #__jdownloads_files WHERE cat_id = ' . (int)$cat_id);
-		return $db->loadObjectList();
+
+		$query = $db->getQuery(true);
+
+		$query->select($db->quoteName('file_id', 'id'));
+		$query->select($db->quoteName('file_title', 'title'));
+		$query->from($db->quoteName('#__jdownloads_files'));
+		$query->where($db->quoteName('cat_id') . ' = ' . (int)$cat_id);
+
+		$db->setQuery($query);
+
+		$files = array();
+
+		try {
+		    $files = $db->loadObjectList();
+		} catch (RuntimeException $e) {
+		    JFactory::getApplication()->enqueueMessage(JText::_('JERROR_AN_ERROR_HAS_OCCURRED'), 'error');
+		}
+
+		return $files;
 	}
-	
+
 	function onRenderConfig($pluginName, $resource)
 	{
 		if($pluginName == "JDownloads")
 		{
+		    $category_id = '';
+		    $files = array();
 			if($resource)
 			{
 				$file_id = $resource->resource_id;
@@ -86,11 +107,9 @@ class plgPayperDownloadPlusJDownload extends JPlugin
 			$uri = JURI::root();
 			$scriptPath = "administrator/components/com_payperdownload/js/";
 			JHTML::script($scriptPath . 'ajax_source.js', false);
-			$version = new JVersion;
-			if($version->RELEASE >= "1.6")
-				$plugin_path = "plugins/payperdownloadplus/jdownload/";
-			else
-				$plugin_path = "plugins/payperdownloadplus/";
+
+			$plugin_path = "plugins/payperdownloadplus/jdownload/";
+
 			$scriptPath = $uri . $plugin_path;
 			JHTML::script($scriptPath . 'jdownload_plugin.js', false);
 			$cats = $this->getJDownloadCategories();
@@ -132,28 +151,64 @@ class plgPayperDownloadPlusJDownload extends JPlugin
 			<?php
 		}
 	}
-	
-	function onGetSaveData(&$resourceId, 
-		$pluginName, &$resourceName, &$resourceParams, &$optionParameter,
-		&$resourceDesc)
+
+	function onGetSaveData(&$resourceId, $pluginName, &$resourceName, &$resourceParams, &$optionParameter, &$resourceDesc)
 	{
 		if($pluginName == "JDownloads")
 		{
+		    $jinput = JFactory::getApplication()->input;
+
 			$optionParameter = "com_jdownloads";
-			$resourceId = JRequest::getInt('jdownload_file');
-			$categoryId = JRequest::getInt('jdownload_category');
-			$db = JFactory::getDBO();
-			$query = "";
+			$resourceId = $jinput->getInt('jdownload_file');
+			$categoryId = $jinput->getInt('jdownload_category');
+
 			$resourceDesc = JText::_("PAYPERDOWNLOADPLUS_JDOWNLOAD_PLUGIN_ALL_DOWNLOADS");
 			if($resourceId)
 			{
-				$query = "SELECT file_id, file_title as title FROM #__jdownloads_files WHERE file_id = " . $resourceId;
+			    $db = JFactory::getDBO();
+
+			    $query = $db->getQuery(true);
+
+			    $query->select($db->quoteName('file_id'));
+			    $query->select($db->quoteName('file_title', 'title'));
+			    $query->from($db->quoteName('#__jdownloads_files'));
+			    $query->where($db->quoteName('file_id') . ' = ' . $resourceId);
+
+			    $db->setQuery($query);
+
+			    try {
+			        $resource = $db->loadObject();
+			        if($resource)
+			            $resourceName = $resource->title;
+			    } catch (RuntimeException $e) {
+			        JFactory::getApplication()->enqueueMessage(JText::_('JERROR_AN_ERROR_HAS_OCCURRED'), 'error');
+			    }
+
 				$resourceDesc = JText::_("PAYPERDOWNLOADPLUS_JDOWNLOAD_PLUGIN_DOWNLOAD");
 			}
 			else if($categoryId)
 			{
 				$resourceId = -1;
-				$query = "SELECT id as cat_id, title as cat_title as title FROM #__jdownloads_categories WHERE id = " . $categoryId;
+
+				$db = JFactory::getDBO();
+
+				$query = $db->getQuery(true);
+
+				$query->select($db->quoteName('id', 'cat_id'));
+				$query->select($db->quoteName('title', 'cat_title'));
+				$query->from($db->quoteName('#__jdownloads_categories'));
+				$query->where($db->quoteName('id') . ' = ' . $categoryId);
+
+				$db->setQuery($query);
+
+				try {
+				    $resource = $db->loadObject();
+				    if($resource)
+				        $resourceName = $resource->title;
+				} catch (RuntimeException $e) {
+				    JFactory::getApplication()->enqueueMessage(JText::_('JERROR_AN_ERROR_HAS_OCCURRED'), 'error');
+				}
+
 				$resourceDesc = JText::_("PAYPERDOWNLOADPLUS_JDOWNLOAD_PLUGIN_CATEGORY");
 			}
 			else
@@ -161,44 +216,64 @@ class plgPayperDownloadPlusJDownload extends JPlugin
 				$resourceId = -1;
 			}
 			$resourceName = JText::_("PAYPERDOWNLOADPLUS_JDOWNLOAD_PLUGIN_ALL_DOWNLOADS");
-			if($query)
-			{
-				$db->setQuery($query);
-				$resource = $db->loadObject();
-				if($resource)
-					$resourceName = $resource->title;
-			}
+
 			$resourceParams = $categoryId;
 		}
 	}
-	
+
 	function getParentCategories($id)
 	{
 		$db = JFactory::getDBO();
-		$db->setQuery("SELECT cat_id FROM #__jdownloads_files WHERE file_id = " . (int)$id);
-		$category = $db->loadResult();
+
+		$query = $db->getQuery(true);
+
+		$query->select($db->quoteName('cat_id'));
+		$query->from($db->quoteName('#__jdownloads_files'));
+		$query->where($db->quoteName('file_id') . ' = ' . (int)$id);
+
+		$db->setQuery($query);
+
 		$parentCategories = array();
-		while($category)
-		{
-			$parentCategories []= $category;
-			$db->setQuery("SELECT parent_id FROM #__jdownloads_categories WHERE id = " . (int)$category);
-			$category = (int)$db->loadResult();
+
+		try {
+		    $category = $db->loadResult();
+
+		    while($category)
+		    {
+		        $parentCategories[] = $category;
+
+		        $query->clear();
+
+		        $query->select($db->quoteName('parent_id'));
+		        $query->from($db->quoteName('#__jdownloads_categories'));
+		        $query->where($db->quoteName('id') . ' = ' . (int)$category);
+
+		        $db->setQuery($query);
+
+		        $category = $db->loadResult();
+		    }
+
+		} catch (RuntimeException $e) {
+		    JFactory::getApplication()->enqueueMessage(JText::_('JERROR_AN_ERROR_HAS_OCCURRED'), 'error');
 		}
+
 		return $parentCategories;
 	}
-	
+
 	function onValidateAccess($option, $resources, &$allowAccess, &$requiredLicenses, &$resourcesId)
 	{
 		if($option == 'com_jdownloads')
 		{
-			$task = JRequest::getVar('task');
-			$view = JRequest::getVar('view');
+		    $jinput = JFactory::getApplication()->input;
+
+		    $task = $jinput->get('task');
+		    $view = $jinput->get('view');
 			if($task == 'finish' || $view == 'finish' || $task == 'download.send')
 			{
 				$requiredLicenses = array();
 				$resourcesId = array();
 				$downloads = array();
-				$download = JRequest::getInt('id', 0);
+				$download = $jinput->getInt('id', 0);
 				$multiple_downloads = false;
 				if($download)
 				{
@@ -207,77 +282,83 @@ class plgPayperDownloadPlusJDownload extends JPlugin
 				else
 				{
 					$multiple_downloads = true;
-					$downloads = split(',', JRequest::getVar('list'));
+					$downloads = explode(',', $jinput->getRaw('list'));
 				}
 				if(count($downloads) == 0)
 					return;
-				
+
 				foreach($resources as $resource)
 				{
-					if(array_search($resource->resource_id, $downloads) !== false)
-					{
-						if($resource->license_id)
-						{
-							if(array_search($resource->license_id, $requiredLicenses) === false)
-								$requiredLicenses[] = $resource->license_id;
-						}
-						else
-						{
-							if(array_search($resource->resource_license_id, $resourcesId) === false)
-								$resourcesId[] = $resource->resource_license_id;
-						}
-						$allowAccess = false;
-					}
+				    if ($resource->resource_type === 'JDownloads') {
+    					if(array_search($resource->resource_id, $downloads) !== false)
+    					{
+    						if($resource->license_id)
+    						{
+    							if(array_search($resource->license_id, $requiredLicenses) === false)
+    								$requiredLicenses[] = $resource->license_id;
+    						}
+    						else
+    						{
+    							if(array_search($resource->resource_license_id, $resourcesId) === false)
+    								$resourcesId[] = $resource->resource_license_id;
+    						}
+    						$allowAccess = false;
+    					}
+				    }
 				}
-				
+
 				if(count($requiredLicenses) == 0 && count($resourcesId) == 0)
 				{
 					$allParentCategories = array();
 					foreach($downloads as $d)
-					{	
+					{
 						$parentCategories = $this->getParentCategories($d);
 						$allParentCategories = array_merge($allParentCategories, $parentCategories);
 					}
 					foreach($resources as $resource)
 					{
-						if($resource->resource_id == -1 && array_search($resource->resource_params, $allParentCategories) !== false)
-						{
-							if($resource->license_id)
-							{
-								if(array_search($resource->license_id, $requiredLicenses) === false)
-									$requiredLicenses[] = $resource->license_id;
-							}
-							else
-							{
-								if(array_search($resource->resource_license_id, $resourcesId) === false)
-									$resourcesId[] = $resource->resource_license_id;
-							}
-							$allowAccess = false;
-						}
+					    if ($resource->resource_type === 'JDownloads') {
+    						if($resource->resource_id == -1 && array_search($resource->resource_params, $allParentCategories) !== false)
+    						{
+    							if($resource->license_id)
+    							{
+    								if(array_search($resource->license_id, $requiredLicenses) === false)
+    									$requiredLicenses[] = $resource->license_id;
+    							}
+    							else
+    							{
+    								if(array_search($resource->resource_license_id, $resourcesId) === false)
+    									$resourcesId[] = $resource->resource_license_id;
+    							}
+    							$allowAccess = false;
+    						}
+					    }
 					}
 				}
-				
+
 				if(count($requiredLicenses) == 0 && count($resourcesId) == 0)
 				{
 					foreach($resources as $resource)
 					{
-						if($resource->resource_id == -1 && $resource->resource_params == 0)
-						{
-							if($resource->license_id)
-							{
-								if(array_search($resource->license_id, $requiredLicenses) === false)
-									$requiredLicenses[] = $resource->license_id;
-							}
-							else
-							{
-								if(array_search($resource->resource_license_id, $resourcesId) === false)
-									$resourcesId[] = $resource->resource_license_id;
-							}
-							$allowAccess = false;
-						}
+					    if ($resource->resource_type === 'JDownloads') {
+    						if($resource->resource_id == -1 && $resource->resource_params == 0)
+    						{
+    							if($resource->license_id)
+    							{
+    								if(array_search($resource->license_id, $requiredLicenses) === false)
+    									$requiredLicenses[] = $resource->license_id;
+    							}
+    							else
+    							{
+    								if(array_search($resource->resource_license_id, $resourcesId) === false)
+    									$resourcesId[] = $resource->resource_license_id;
+    							}
+    							$allowAccess = false;
+    						}
+					    }
 					}
 				}
-				
+
 				if($multiple_downloads && !$allowAccess)
 				{
 					//multiple licenses for multiple downloads is not allowed
@@ -293,75 +374,116 @@ class plgPayperDownloadPlusJDownload extends JPlugin
 			}
 		}
 	}
-	
+
 	function addMenuItemParameter(&$url)
 	{
 		if(strpos($url, "Itemid=") !== false)
 			return;
+
 		$db = JFactory::getDBO();
-		$query = "SELECT id FROM #__menu WHERE link = '" . $db->escape($url) . "'";
+
+		$query = $db->getQuery(true);
+
+		$query->select($db->quoteName('id'));
+		$query->from($db->quoteName('#__menu'));
+		$query->where($db->quoteName('link') . ' = ' . $db->quote($url));
+
 		$db->setQuery($query);
-		$itemId = $db->loadResult();
-		if(!$itemId)
-			$itemId = JRequest::getVar('Itemid');
-		if($itemId)
-			$url .= "&Itemid=" . urlencode($itemId);
+
+		try {
+		    $itemId = $db->loadResult();
+		    if(!$itemId)
+		        $itemId = JFactory::getApplication()->input->getInt('Itemid');
+	        if($itemId)
+	            $url .= "&Itemid=" . urlencode($itemId);
+		} catch (RuntimeException $e) {
+		    JFactory::getApplication()->enqueueMessage(JText::_('JERROR_AN_ERROR_HAS_OCCURRED'), 'error');
+		}
 	}
-	
+
 	function onAjaxCall($plugin, &$output)
 	{
 		if($plugin == "jdownload")
 		{
-			$x = JRequest::getInt('x', 0);
-			$db = JFactory::getDBO();
-			$db->setQuery('SELECT file_id, file_title as title FROM #__jdownloads_files WHERE cat_id = ' . $x);
-			$files = $db->loadObjectList();
-			$output = '<<' . count($files);
-			foreach($files as $file)
-			{
-				$output .= '>' . htmlspecialchars($file->file_id) . "<" . htmlspecialchars($file->title);
-			}
-			$output .= '>>';
+		    $x = JFactory::getApplication()->input->getInt('x', 0);
+
+		    $db = JFactory::getDBO();
+
+		    $query = $db->getQuery(true);
+
+		    $query->select($db->quoteName('file_id'));
+		    $query->select($db->quoteName('file_title', 'title'));
+		    $query->from($db->quoteName('#__jdownloads_files'));
+		    $query->where($db->quoteName('cat_id') . ' = ' . $x);
+
+		    $db->setQuery($query);
+
+		    $output = '';
+		    try {
+		        $files = $db->loadObjectList();
+		        $output = '<<' . count($files);
+		        foreach($files as $file)
+		        {
+		            $output .= '>' . htmlspecialchars($file->file_id) . "<" . htmlspecialchars($file->title);
+		        }
+		        $output .= '>>';
+		    } catch (RuntimeException $e) {
+		        JFactory::getApplication()->enqueueMessage(JText::_('JERROR_AN_ERROR_HAS_OCCURRED'), 'error');
+		    }
 		}
 	}
-	
+
 	function _innerGetReturnPage()
 	{
+	    $jinput = JFactory::getApplication()->input;
+
 		$downloads = array();
-		$download = JRequest::getInt('cid', 0);
+		$download = $jinput->getInt('cid', 0);
 		if($download)
 		{
 			$downloads[] = $download;
 		}
 		else
 		{
-			$download = JRequest::getInt('id', 0);
+		    $download = $jinput->getInt('id', 0);
 			if($download)
 			{
 				$downloads[] = $download;
 			}
 			else
 			{
-				$downloads = split(',', JRequest::getVar('list'));
+			    $downloads = explode(',', $jinput->getRaw('list'));
 			}
 		}
 		if(count($downloads) == 0)
 			return;
-		$ds = (int)$downloads[0];
+
 		$db = JFactory::getDBO();
-		$db->setQuery("SELECT cat_id FROM #__jdownloads_files WHERE file_id = $ds");
-		$cat = $db->loadResult();
+
+		$query = $db->getQuery(true);
+
+		$query->select($db->quoteName('cat_id'));
+		$query->from($db->quoteName('#__jdownloads_files'));
+		$query->where($db->quoteName('file_id') . ' = ' . (int)$downloads[0]);
+
+		$db->setQuery($query);
+
+		$cat = '';
+		try {
+		    $cat = $db->loadResult();
+		} catch (RuntimeException $e) {
+		    JFactory::getApplication()->enqueueMessage(JText::_('JERROR_AN_ERROR_HAS_OCCURRED'), 'error');
+		}
+
 		if(!$cat)
 			return;
 		if(count($downloads) > 1)
-			$returnPage = "index.php?option=com_jdownloads&view=viewcategory&catid=" . 
-				urlencode($cat);
+			$returnPage = "index.php?option=com_jdownloads&view=viewcategory&catid=" . urlencode($cat);
 		else
-			$returnPage = "index.php?option=com_jdownloads&view=summary&catid=" . 
-				urlencode($cat). "&id=" . urlencode($downloads[0]);
+			$returnPage = "index.php?option=com_jdownloads&view=summary&catid=" . urlencode($cat). "&id=" . urlencode($downloads[0]);
 		return $returnPage;
 	}
-	
+
 	function getReturnPage($option, &$returnPage)
 	{
 		if($option == "com_jdownloads")
@@ -369,7 +491,7 @@ class plgPayperDownloadPlusJDownload extends JPlugin
 			$returnPage = $this->_innerGetReturnPage();
 		}
 	}
-	
+
 	function onCheckDecreaseDownloadCount($option, $resources, $requiredLicenses, $resourcesId, &$decreaseDownloadCount)
 	{
 		if($option == 'com_jdownloads')
@@ -377,17 +499,17 @@ class plgPayperDownloadPlusJDownload extends JPlugin
 			$decreaseDownloadCount = true;
 		}
 	}
-	
+
 	/*
-	Returns item id for current article. 
+	Returns item id for current article.
 	*/
 	function onGetItemId($option, &$itemId)
 	{
 		if($option == 'com_jdownloads')
 		{
-			$itemId = JRequest::getInt('id', 0);
+		    $itemId = JFactory::getApplication()->input->getInt('id', 0);
 		}
 	}
-	
+
 }
 ?>

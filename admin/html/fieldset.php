@@ -6,11 +6,8 @@
  * @license GNU/GPL http://www.gnu.org/copyleft/gpl.html
 **/
 
-/** ensure this file is being included by a parent file */
-defined( '_JEXEC' ) or
-die( 'Direct Access to this location is not allowed.' );
-
-
+// no direct access
+defined ( '_JEXEC' ) or die;
 
 /**
 	Class to handle fieldsets
@@ -29,7 +26,7 @@ class Fieldset
 		$this->name = $name;
 		$this->caption = $caption;
 	}
-	
+
 	/**
 	Adds a data bind element to the collection
 	*/

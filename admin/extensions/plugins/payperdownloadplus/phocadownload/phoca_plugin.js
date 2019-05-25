@@ -100,6 +100,7 @@ function phocadownload_plugin_category_change()
 	
 	myAjaxTrigger.async_call(site_root + 'administrator/index.php', 'option=' + 
 		encodeURIComponent(site_option) + '&adminpage=' + 
+		encodeURIComponent(site_adminpage) + '&view=' +  
 		encodeURIComponent(site_adminpage) + '&task=ajaxCall&format=raw' +
 		'&plugin=phocadownload&t=a&x=' + encodeURIComponent(phocadownload_category.value), 
 			phocadownload_plugin_category_change_result, phocadownload_plugin_error);
@@ -167,6 +168,7 @@ function phocadownload_plugin_search()
 	
 	myAjaxTrigger.async_call(site_root + '/administrator/index.php', 'option=' + 
 		encodeURIComponent(site_option) + '&adminpage=' + 
+		encodeURIComponent(site_adminpage) + '&view=' + 
 		encodeURIComponent(site_adminpage) + '&task=ajaxCall&format=raw' +
 		'&plugin=phocadownload&t=s&x=' + encodeURIComponent(search_text.value), phocadownload_plugin_search_result, phocadownload_plugin_error);
 }

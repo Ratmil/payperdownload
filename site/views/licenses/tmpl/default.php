@@ -5,7 +5,8 @@
  * @copyright (C) Ratmil Torres
  * @license GNU/GPL http://www.gnu.org/copyleft/gpl.html
 **/
-defined( '_JEXEC' ) or die( 'Restricted access' );
+defined('_JEXEC') or die;
+
 $root = JURI::root();
 ?>
 <div class="front_title">
@@ -26,7 +27,7 @@ if($this->licenses)
 {
 	foreach($this->licenses as $license)
 	{
-		
+
 		if($last_license != $license->license_id)
 		{
 			echo "<li>";
@@ -50,11 +51,11 @@ if($this->licenses)
 			{
 				echo ",&nbsp;&nbsp;" . JText::_("PAYPERDOWNLOADPLUS_EXPIRES") . ":&nbsp;&nbsp;" . JText::_("PAYPERDOWNLOADPLUS_EXPIRES_NEVER");
 			}
-			
-			echo "</li>";	
+
+			echo "</li>";
 		}
 		?>
-		
+
 	<?php
 	$last_license = $license->license_id;
 	}

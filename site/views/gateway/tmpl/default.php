@@ -6,7 +6,8 @@
  * @license GNU/GPL http://www.gnu.org/copyleft/gpl.html
 **/
 
-defined( '_JEXEC' ) or die( 'Restricted access' );
+defined('_JEXEC') or die;
+
 $root = JURI::root();
 JPluginHelper::importPlugin("payperdownloadplus");
 $dispatcher	= JDispatcher::getInstance();

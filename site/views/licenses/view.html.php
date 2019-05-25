@@ -5,20 +5,23 @@
  * @copyright (C) Ratmil Torres
  * @license GNU/GPL http://www.gnu.org/copyleft/gpl.html
 **/
-defined( '_JEXEC' ) or die( 'Restricted access' );
+defined('_JEXEC') or die;
+
 jimport('joomla.application.component.view');
 
 class PayPerDownloadViewLicenses extends JViewLegacy
 {
 	function display($tpl = null)
 	{
-		$option = JRequest::getVar('option');
+	    $jinput = JFactory::getApplication()->input;
+
+	    $option = $jinput->get('option');
 		JHTML::_('stylesheet', 'components/'. $option . '/css/frontend.css');
 		$model = $this->getModel();
 		if($model)
 		{
-			$limit = JRequest::getVar( 'limit', 20 );
-			$start = JRequest::getVar( 'limitstart', 0 );
+		    $limit = $jinput->getInt('limit', 20);
+		    $start = $jinput->getInt('limitstart', 0);
 			$licenses = $model->getUserLicenses($start, $limit);
 			$total = $model->getTotalLicenses();
 			jimport( 'joomla.html.pagination' );

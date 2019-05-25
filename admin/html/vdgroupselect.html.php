@@ -5,10 +5,9 @@
  * @copyright (C) Ratmil Torres
  * @license GNU/GPL http://www.gnu.org/copyleft/gpl.html
 **/
-/** ensure this file is being included by a parent file */
 
-defined( '_JEXEC' ) or
-die( 'Direct Access to this location is not allowed.' );
+// no direct access
+defined ( '_JEXEC' ) or die;
 
 class JoomlaGroupSelect extends VisualDataBind
 {
@@ -16,49 +15,44 @@ class JoomlaGroupSelect extends VisualDataBind
 	{
 		parent::__construct($dataField, $displayName);
 	}
-	
+
 	function renderNew()
 	{
 		$html = "<tr>" . $this->renderFieldLabel() . "<td>";
 		$dataField = $this->dataField;
 		$groups = $this->getGroups();
 		$i = 0;
-		$version = new JVersion();
 		$disabled = "";
 		if($this->disabled)
 		{
 			$disabled = " disabled=\"true\" ";
 			$html .= "<input type=\"hidden\" name=\"$dataField\" id=\"$dataField" . "_hidden\" value=\"" . htmlspecialchars($this->defaultValue) . "\" />";
 		}
-		$html .= "<select class=\"inputbox\" name=\"$dataField\" id=\"$dataField\" $disabled ".$this->renderHtmlProperties().">";  
+		$html .= "<select class=\"inputbox\" name=\"$dataField\" id=\"$dataField\" $disabled ".$this->renderHtmlProperties().">";
 		if($this->firstItem)
 			$html .= "<option value=\"\">".htmlspecialchars($this->firstItem)."</option>";
 		foreach($groups as $group)
 		{
-			if($version->RELEASE >= "1.6" || ($group->id != 17 && $group->id != 28 && $group->id != 29 && $group->id != 30))
-			{
-				$selected = "";
-				if($this->defaultValue == $group->id)
-					$selected = "selected";
-				$space = "";
-				for($s = 0; $s < $group->depth; $s++)
-					$space .= "&nbsp;&nbsp;&nbsp;&nbsp;";
-				$html .= "<option value=\"".htmlspecialchars($group->id)."\" $selected>".$space.htmlspecialchars($group->title)."</option>";
-			}
+			$selected = "";
+			if($this->defaultValue == $group->id)
+				$selected = "selected";
+			$space = "";
+			for($s = 0; $s < $group->depth; $s++)
+				$space .= "&nbsp;&nbsp;&nbsp;&nbsp;";
+			$html .= "<option value=\"".htmlspecialchars($group->id)."\" $selected>".$space.htmlspecialchars($group->title)."</option>";
 		}
-		
+
 		$html .= "</select>";
 		$html .= "</td></tr>";
 		return $html;
 	}
-	
+
 	function renderEdit(&$row)
 	{
 		$html = "<tr>" . $this->renderFieldLabel() . "<td>";
 		$dataField = $this->dataField;
 		$groups = $this->getGroups();
 		$i = 0;
-		$version = new JVersion();
 		$disabled = "";
 		$data = $row->$dataField ;
 		if($this->disabled)
@@ -66,28 +60,25 @@ class JoomlaGroupSelect extends VisualDataBind
 			$disabled = " disabled=\"true\" ";
 			$html .= "<input type=\"hidden\" name=\"$dataField\" id=\"$dataField" . "_hidden\" value=\"" . htmlspecialchars($this->defaultValue) . "\" />";
 		}
-		$html .= "<select class=\"inputbox\" name=\"$dataField\" id=\"$dataField\" $disabled ".$this->renderHtmlProperties().">";  
+		$html .= "<select class=\"inputbox\" name=\"$dataField\" id=\"$dataField\" $disabled ".$this->renderHtmlProperties().">";
 		if($this->firstItem)
 			$html .= "<option value=\"\">".htmlspecialchars($this->firstItem)."</option>";
 		foreach($groups as $group)
 		{
-			if($version->RELEASE >= "1.6" || ($group->id != 17 && $group->id != 28 && $group->id != 29 && $group->id != 30))
-			{
-				$selected = "";
-				if($data == $group->id)
-					$selected = "selected";
-				$space = "";
-				for($s = 0; $s < $group->depth; $s++)
-					$space .= "&nbsp;&nbsp;&nbsp;&nbsp;";
-				$html .= "<option value=\"".htmlspecialchars($group->id)."\" $selected>".$space.htmlspecialchars($group->title)."</option>";
-			}
+			$selected = "";
+			if($data == $group->id)
+				$selected = "selected";
+			$space = "";
+			for($s = 0; $s < $group->depth; $s++)
+				$space .= "&nbsp;&nbsp;&nbsp;&nbsp;";
+			$html .= "<option value=\"".htmlspecialchars($group->id)."\" $selected>".$space.htmlspecialchars($group->title)."</option>";
 		}
-		
+
 		$html .= "</select>";
 		$html .= "</td></tr>";
 		return $html;
 	}
-	
+
 	function reorder(&$items_ordered, $items, $parent_id, $depth)
 	{
 		$count = count($items);
@@ -102,18 +93,10 @@ class JoomlaGroupSelect extends VisualDataBind
 			}
 		}
 	}
-	
+
 	function getGroups()
 	{
-		$version = new JVersion();
-		if($version->RELEASE >= "1.6")
-		{
-			$query = "SELECT id, parent_id, title FROM #__usergroups";
-		}
-		else
-		{
-			$query = "SELECT id, parent_id, value as title FROM #__core_acl_aro_groups";
-		}
+		$query = "SELECT id, parent_id, title FROM #__usergroups";
 		$db = JFactory::getDBO();
 		$db->setQuery( $query );
 		$groups = $db->loadObjectList();
@@ -121,7 +104,7 @@ class JoomlaGroupSelect extends VisualDataBind
 		$this->reorder($groups_ordered, $groups, 2, 0);
 		return $groups_ordered;
 	}
-	
+
 	function renderValidateJavascript()
 	{
 		return "";

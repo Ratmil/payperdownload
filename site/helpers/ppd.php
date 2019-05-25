@@ -6,11 +6,11 @@
  * @license GNU/GPL http://www.gnu.org/copyleft/gpl.html
 **/
 // no direct access
-defined( '_JEXEC' ) or die( 'Restricted access' );
+defined('_JEXEC') or die;
 
 class PPDAccess
 {
-	
+
 	function isThereAvailableResource($resources, $article_id, $decreaseDownloadCount = true, $user_id = 0)
 	{
 		if($user_id == 0)
@@ -37,7 +37,7 @@ class PPDAccess
 		}
 		return false; //If there is no valid license and not valid download link then user has no access
 	}
-	
+
 	function isResourceAccessInSession($req_resource, $article_id, $decreaseDownloadCount = true)
 	{
 		$session = JFactory::getSession();
@@ -46,7 +46,7 @@ class PPDAccess
 		{
 			foreach($resources as $resource)
 			{
-				if($req_resource == $resource->resource_id && 
+				if($req_resource == $resource->resource_id &&
 				  (is_null($resource->item) || $resource->item == $article_id)	&&
 					$this->isDownloadCountValid($resource, $article_id, $decreaseDownloadCount))
 				{
@@ -56,7 +56,7 @@ class PPDAccess
 		}
 		return false;
 	}
-	
+
 	function increaseDownloadCount($download_id, $article_id, $checkSession = true)
 	{
 		$increaseCount = true;
@@ -81,21 +81,21 @@ class PPDAccess
 			$db->query();
 		}
 	}
-	
+
 	function isDownloadCountValid($resource, $article_id, $decreaseDownloadCount = true)
 	{
 		if($decreaseDownloadCount)
 			$this->increaseDownloadCount($resource->download_link, $article_id);
 		$resource_id = (int)$resource->resource_id;
 		$db = JFactory::getDBO();
-		$query = "SELECT download_id FROM #__payperdownloadplus_download_links 
+		$query = "SELECT download_id FROM #__payperdownloadplus_download_links
 			WHERE (link_max_downloads = 0 || download_hits <= link_max_downloads) AND download_id = " . (int)$resource->download_link;
 		$db->setQuery( $query );
 		$download_id = (int)$db->loadResult();
 		return $download_id > 0;
 	}
-	
-	
+
+
 	/*
 	* If license is valid for the specified user
 	*/
@@ -109,12 +109,12 @@ class PPDAccess
 		$sqlHiherLevelCondition = "";
 		if($level > 0) //If license level is zero then don't search for higher licenses
 			$sqlHiherLevelCondition = "#__payperdownloadplus_licenses.level > $level OR";
-		$query = "SELECT user_license_id 
+		$query = "SELECT user_license_id
 			FROM #__payperdownloadplus_users_licenses
 			INNER JOIN #__payperdownloadplus_licenses
 			ON #__payperdownloadplus_users_licenses.license_id = #__payperdownloadplus_licenses.license_id
-			WHERE #__payperdownloadplus_users_licenses.user_id = $user_id AND 
-				(#__payperdownloadplus_users_licenses.expiration_date >= NOW() OR 
+			WHERE #__payperdownloadplus_users_licenses.user_id = $user_id AND
+				(#__payperdownloadplus_users_licenses.expiration_date >= NOW() OR
 				#__payperdownloadplus_users_licenses.expiration_date IS NULL) AND
 				($sqlHiherLevelCondition
 				#__payperdownloadplus_users_licenses.license_id = $license_id
@@ -132,7 +132,7 @@ class PPDAccess
 				$licensesHits = $session->get('licenses_hits', array());
 				foreach($licensesHits as $licenseHit)
 				{
-					if($licenseHit->user_license_id == $user_license_id && 
+					if($licenseHit->user_license_id == $user_license_id &&
 						$licenseHit->item == $article_id)
 					{
 						$decreaseDownloadCount = false;
@@ -156,7 +156,7 @@ class PPDAccess
 		else
 			return false;
 	}
-	
+
 	/*
 	* If user is a member of one of privileged user groups who don't need to pay for any resource
 	*/
@@ -169,20 +169,15 @@ class PPDAccess
 		$db->setQuery( $query, 0, 1 );
 		$privileged_groups = $db->loadResult();
 		$groups = explode(',', $privileged_groups);
-		$version = new JVersion();
-		if($version->RELEASE == "1.5")
-			return array_search($user->gid, $groups) !== false;
-		else
+
+		foreach($user->groups as $group)
 		{
-			foreach($user->groups as $group)
-			{
-				if(array_search($group, $groups) !== false)
-					return true;
-			}
-			return false;
+			if(array_search($group, $groups) !== false)
+				return true;
 		}
+		return false;
 	}
-	
+
 	function getMenuItems()
 	{
 		$db = JFactory::getDBO();

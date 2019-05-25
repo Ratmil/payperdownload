@@ -5,9 +5,9 @@
  * @copyright (C) Ratmil Torres
  * @license GNU/GPL http://www.gnu.org/copyleft/gpl.html
 **/
-/** ensure this file is being included by a parent file */
-defined( '_JEXEC' ) or
-die( 'Direct Access to this location is not allowed.' );
+
+// no direct access
+defined ( '_JEXEC' ) or die;
 
 /**
 This class represents an element on the admin form.
@@ -47,7 +47,7 @@ class VisualDataBind extends JObject
 	var $requiredMark;
 	var $linkTask;
 	var $extraValidateScript;
-	
+
 	/**
 	Class constructor
 	$dataField      : The field of the table that will edited
@@ -87,7 +87,7 @@ class VisualDataBind extends JObject
 		$this->requiredWord = JText::_('PAYPERDOWNLOADPLUS_REQUIRED_32');
 		$this->requiredMark = "&nbsp;&nbsp;<font color=\"#ff0000\" size=\"2\">*</font>";
 	}
-	
+
 	/**
 	Returns the table field this elements gets its data from
 	*/
@@ -95,7 +95,7 @@ class VisualDataBind extends JObject
 	{
 		return $this->dataField;
 	}
-	
+
 	/**
 	Returns if this element is an aggregate, a sum or something like it.
 	*/
@@ -103,7 +103,7 @@ class VisualDataBind extends JObject
 	{
 		return false;
 	}
-	
+
 	/**
 	Returns the piece of query that will be included in the select to load all elements
 	*/
@@ -111,7 +111,7 @@ class VisualDataBind extends JObject
 	{
 		return $this->sourceTable . "." . $this->dataField;
 	}
-	
+
 	/**
 	Returns an extra table required for the query
 	*/
@@ -119,7 +119,7 @@ class VisualDataBind extends JObject
 	{
 		return "";
 	}
-	
+
 	/**
 	Returns a piece of query that will go to the where clause to filter the elements base on the text entered on the search input
 	*/
@@ -128,7 +128,7 @@ class VisualDataBind extends JObject
 		$db = JFactory::getDBO();
 		return $this->sourceTable . "." . $this->dataField . " LIKE '%" . $db->escape($text) . "%'";
 	}
-	
+
 	/**
 	Returns a piece of query that will go to the where clause to filter the elements base on the value of the filter controls
 	*/
@@ -136,7 +136,7 @@ class VisualDataBind extends JObject
 	{
 		return "";
 	}
-	
+
 	/**
 	Sets the width of the column (in percent units) for this element
 	*/
@@ -144,7 +144,7 @@ class VisualDataBind extends JObject
 	{
 		$this->columnWidth = $columnWidth;
 	}
-	
+
 	/**
 	Sets if this element will have an 'a' tag (link)
 	*/
@@ -152,7 +152,7 @@ class VisualDataBind extends JObject
 	{
 		$this->isEditLink = $isEditLink;
 	}
-	
+
 	/**
 	Sets the max length for the input control
 	*/
@@ -160,7 +160,7 @@ class VisualDataBind extends JObject
 	{
 		$this->maxLength = $maxLength;
 	}
-	
+
 	/**
 	Sets the min length for the input control
 	*/
@@ -168,7 +168,7 @@ class VisualDataBind extends JObject
 	{
 		$this->minLength = $minLength;
 	}
-	
+
 	/**
 	Sets regular expression that will be used to validate the data supplied, in javascript (client side) and PHP (server side)
 	*/
@@ -176,15 +176,15 @@ class VisualDataBind extends JObject
 	{
 		$this->regExp = $regExp;
 	}
-	
+
 	/**
-	If the value supplied is greater that one the input control will be multiline (textarea). 
+	If the value supplied is greater that one the input control will be multiline (textarea).
 	*/
 	function setLineCount($lines)
 	{
 		$this->lines = $lines;
 	}
-	
+
 	/**
 	Sets the table where data will be read from
 	*/
@@ -192,7 +192,7 @@ class VisualDataBind extends JObject
 	{
 		$this->sourceTable = $sourceTable;
 	}
-	
+
 	/**
 	Returns the source table
 	*/
@@ -200,21 +200,21 @@ class VisualDataBind extends JObject
 	{
 		return $this->sourceTable;
 	}
-	
+
 	/**
 	Executed after data has been loaded
 	*/
 	function onAfterLoad(&$row)
 	{
 	}
-	
+
 	/**
 	Executed after the property on the JTable object has been created
 	*/
 	function onAfterCreateProperty(&$row)
 	{
 	}
-	
+
 	/**
 	Executed before storing data
 	*/
@@ -222,7 +222,7 @@ class VisualDataBind extends JObject
 	{
 		return true;
 	}
-	
+
 	/**
 	Executed after storing data
 	*/
@@ -230,7 +230,7 @@ class VisualDataBind extends JObject
 	{
 		return true;
 	}
-	
+
 	/**
 	Executed before deleting data
 	*/
@@ -238,7 +238,7 @@ class VisualDataBind extends JObject
 	{
 		return true;
 	}
-	
+
 	/**
 	Executed after deleting data
 	*/
@@ -246,7 +246,7 @@ class VisualDataBind extends JObject
 	{
 		return true;
 	}
-	
+
 	/**
 	Executed after binding
 	*/
@@ -254,7 +254,7 @@ class VisualDataBind extends JObject
 	{
 		return true;
 	}
-	
+
 	/**
 	Returns field use for ordering
 	*/
@@ -265,7 +265,7 @@ class VisualDataBind extends JObject
 		$field->display = $this->displayName;
 		return $field;
 	}
-	
+
 	/**
 	Renders the heading on the table for the column assigned to this element
 	*/
@@ -277,7 +277,7 @@ class VisualDataBind extends JObject
 		</th>
 	<?php
 	}
-	
+
 	/**
 	Returns the data for the current row of this element
 	*/
@@ -285,7 +285,7 @@ class VisualDataBind extends JObject
 	{
 		return $row->{$this->dataField};
 	}
-	
+
 	/**
 	Renders the cell of the table for this element
 	*/
@@ -302,16 +302,16 @@ class VisualDataBind extends JObject
 				$gridToolTip = JText::_("PAYPERDOWNLOADPLUS_CLICK_TO_EDIT_33") . "::" . $data;
 			echo "<span class=\"editlinktip hasTip\" title=\"".htmlspecialchars($gridToolTip)."\">";
 			echo "<a href=\"javascript:void(0);\" onclick=\"return listItemTask('cb$rowNumber','{$this->linkTask}')\">";
-			echo htmlspecialchars($data); 
+			echo htmlspecialchars($data);
 			echo "</a>";
 			echo "</span>";
 		}
 		else
 		{
-			echo htmlspecialchars($data); 
+			echo htmlspecialchars($data);
 		}
 	}
-	
+
 	/**
 	Renders extra html properties in edit or insert mode
 	*/
@@ -327,7 +327,7 @@ class VisualDataBind extends JObject
 		}
 		return $html;
 	}
-	
+
 	/**
 	Renders the label when editing this field
 	*/
@@ -339,10 +339,10 @@ class VisualDataBind extends JObject
 		if($this->editToolTip)
 		{
 			$html .= "<span class=\"editlinktip hasTip\"
-				title=\"" . 
+				title=\"" .
 					htmlspecialchars($this->displayName) . "::" .
-					htmlspecialchars($this->editToolTip) . 
-					((!$this->allowBlank)?("<br/><font color=#ff0000>".htmlspecialchars($this->requiredWord)."</font>"):""). 
+					htmlspecialchars($this->editToolTip) .
+					((!$this->allowBlank)?("<br/><font color=#ff0000>".htmlspecialchars($this->requiredWord)."</font>"):"").
 					(($this->editRemarkToolTip)?("<br/><font color=#0000ff>".htmlspecialchars($this->editRemarkToolTip)."</font>"):"").
 					"\">";
 		}
@@ -358,7 +358,7 @@ class VisualDataBind extends JObject
 		$html .= "</td>";
 		return $html;
 	}
-	
+
 	/**
 	Renders controls for this element when inserting a new record on the table
 	*/
@@ -379,15 +379,15 @@ class VisualDataBind extends JObject
 			$html .=  "<input type=\"hidden\" name=\"$dataField\" id=\"$dataField" . "_hidden\" value=\"" . htmlspecialchars($this->defaultValue) . "\" />";
 		}
 		if($this->lines <= 1)
-			$html .= "<input class=\"text_area\" type=\"text\" name=\"$dataField\" id=\"$dataField\" size=\"$size\" maxlength=\"$maxLength\" value=\"" . 
+			$html .= "<input class=\"text_area\" type=\"text\" name=\"$dataField\" id=\"$dataField\" size=\"$size\" maxlength=\"$maxLength\" value=\"" .
 				htmlspecialchars($this->defaultValue) . "\" ".$this->renderHtmlProperties()." $disabled/>";
 		else
 			$html .= "<textarea name=\"$dataField\" id=\"$dataField\" rows=\"".$this->lines."\" cols=\"$size\" ".$this->renderHtmlProperties()." $disabled>" .
-				htmlspecialchars($this->defaultValue). "</textarea>";		
+				htmlspecialchars($this->defaultValue). "</textarea>";
 		$html .= "</td></tr>";
 		return $html;
 	}
-	
+
 	/**
 	Renders controls for this element when editing a record on the table
 	*/
@@ -415,7 +415,7 @@ class VisualDataBind extends JObject
 		$html .= "</td></tr>";
 		return $html;
 	}
-	
+
 	/**
 	Renders filter controls for this element in list mode
 	*/
@@ -423,7 +423,7 @@ class VisualDataBind extends JObject
 	{
 		return "";
 	}
-	
+
 	/**
 	Renders javascript code to reset the filter controls
 	*/
@@ -431,7 +431,7 @@ class VisualDataBind extends JObject
 	{
 		return "";
 	}
-	
+
 	/**
 	Returns a name for a filter control
 	*/
@@ -439,7 +439,7 @@ class VisualDataBind extends JObject
 	{
 		return $this->dataField . '_search_control';
 	}
-	
+
 	/**
 	Validates the data supplied before storing in the database
 	*/
@@ -467,7 +467,7 @@ class VisualDataBind extends JObject
 		}
 		return true;
 	}
-	
+
 	/**
 	Renders javascript code to validate this control before submitting
 	*/
@@ -523,7 +523,7 @@ class VisualDataBind extends JObject
 			$javascript .= $this->extraValidateScript;
 		return $javascript;
 	}
-	
+
 	/**
 	Sets the tooltip to show in list mode
 	*/
@@ -531,7 +531,7 @@ class VisualDataBind extends JObject
 	{
 		$this->gridToolTip = $gridToolTip;
 	}
-	
+
 	/**
 	Sets the tooltip to show in edit or insert mode
 	*/
@@ -539,7 +539,7 @@ class VisualDataBind extends JObject
 	{
 		$this->editToolTip = $editToolTip;
 	}
-	
+
 	/**
 	Handles an ajax call
 	*/
@@ -547,12 +547,12 @@ class VisualDataBind extends JObject
 	{
 		return "";
 	}
-	
-	
+
+
 	function renderEditHeading()
 	{
 	}
-	
+
 	function renderAddNewHeading()
 	{
 	}
@@ -570,14 +570,14 @@ class ComboVisualDataBind extends VisualDataBind
 	var $displayField;
 	var $tableName;
 	var $keyField;
-	
+
 	/**
 	Class constructor
 	$dataField      : The field of the table that will edited
 	$displayName  : Text that will show for this element
 	$tableName    :  The name of the table where the elements to choose from will be read
 	$keyField	   :   The key field on this table
-         $displayField   :   The field that will be shown for the list of elements	
+         $displayField   :   The field that will be shown for the list of elements
 	*/
 	function __construct($dataField, $displayName, $tableName, $keyField, $displayField)
 	{
@@ -593,7 +593,7 @@ class ComboVisualDataBind extends VisualDataBind
 			$this->itemsQuery = "";
 		$this->items = array();
 	}
-	
+
 	/**
 	Returns the piece of query that will be included in the select to load all elements
 	*/
@@ -604,7 +604,7 @@ class ComboVisualDataBind extends VisualDataBind
 		else
 			return parent::getSelectField();
 	}
-	
+
 	/**
 	Returns a piece of query that will go to the where clause to filter the elements base on the text entered on the search input
 	*/
@@ -618,7 +618,7 @@ class ComboVisualDataBind extends VisualDataBind
 		else
 			return parent::getSearchCondition($text);
 	}
-	
+
 	/**
 	Returns a piece of query that will go to the where clause to filter the elements base on the value of the filter controls
 	*/
@@ -627,12 +627,12 @@ class ComboVisualDataBind extends VisualDataBind
 		if($filters[$this->dataField . '_search_control'])
 		{
 			$db = JFactory::getDBO();
-			return $this->sourceTable . "." . $this->dataField . " = '" . 
+			return $this->sourceTable . "." . $this->dataField . " = '" .
 				$db->escape($filters[$this->dataField . '_search_control']) . "'";
 		}
 		return "";
 	}
-	
+
 	/**
 	Executed before storing data
 	*/
@@ -645,19 +645,19 @@ class ComboVisualDataBind extends VisualDataBind
 			$row->$dataField = null;
 		return parent::onBeforeStore($row);
 	}
-	
+
 	/**
 	Returns an extra table required for the query
 	*/
 	function getExtraSelectTable()
 	{
 		if($this->tableName != "")
-			return "LEFT JOIN " . $this->tableName . " ON " . $this->sourceTable . "." . $this->dataField . " = " . 
+			return "LEFT JOIN " . $this->tableName . " ON " . $this->sourceTable . "." . $this->dataField . " = " .
 				$this->tableName . "." . $this->keyField;
 		else
 			return "";
 	}
-	
+
 	/**
 	Sets the first item for the select tag. If not set it will be '--Select--'
 	*/
@@ -665,7 +665,7 @@ class ComboVisualDataBind extends VisualDataBind
 	{
 		$this->firstItem = $firstItem;
 	}
-	
+
 	/**
 	Sets a query for the elements to show, the parameters tablename, keyfield and displayname are ignored.
 	The query must returns fields with names 'value' and 'data'
@@ -674,7 +674,7 @@ class ComboVisualDataBind extends VisualDataBind
 	{
 		$this->itemsQuery = $itemsQuery;
 	}
-	
+
 	/**
 	Adds an item to the list of elements to show. They don't necessarily need to be loaded from a table.
 	*/
@@ -685,7 +685,7 @@ class ComboVisualDataBind extends VisualDataBind
 		$item->display = $itemDisplay;
 		$this->items[] = $item;
 	}
-	
+
 	/**
 	Renders the heading on the table for the column assigned to this element
 	*/
@@ -701,7 +701,7 @@ class ComboVisualDataBind extends VisualDataBind
 		</th>
 	<?php
 	}
-	
+
 	/**
 	Returns field use for ordering
 	*/
@@ -716,7 +716,7 @@ class ComboVisualDataBind extends VisualDataBind
 		$field->display = $this->displayName;
 		return $field;
 	}
-	
+
 	/**
 	Returns the list of items to show
 	*/
@@ -732,7 +732,7 @@ class ComboVisualDataBind extends VisualDataBind
 		else
 			return $this->items;
 	}
-	
+
 	/**
 	Returns the data for the current row of this element
 	*/
@@ -753,7 +753,7 @@ class ComboVisualDataBind extends VisualDataBind
 		}
 		return $data;
 	}
-	
+
 	/**
 	Returns the data for the current row of this element
 	*/
@@ -764,7 +764,7 @@ class ComboVisualDataBind extends VisualDataBind
 		else
 			return $this->getGridData($row, null);
 	}
-	
+
 	/**
 	Renders filter controls for this element in list mode
 	*/
@@ -773,10 +773,10 @@ class ComboVisualDataBind extends VisualDataBind
 		$dataField = $this->dataField . '_search_control';
 		$data = $filters[$dataField];
 		$items = $this->getItems();
-		$html = "<select class=\"inputbox\" name=\"$dataField\" id=\"$dataField\" onchange=\"this.form.submit();\">";  
+		$html = "<select class=\"inputbox\" name=\"$dataField\" id=\"$dataField\" onchange=\"this.form.submit();\">";
 		$html .= "<option value=\"\">--&nbsp;&nbsp;".htmlspecialchars($this->displayName)."&nbsp;&nbsp;--</option>";
 		foreach($items as $item)
-		{	
+		{
 			$selected = "";
 			if($data == $item->value)
 				$selected = "selected";
@@ -785,7 +785,7 @@ class ComboVisualDataBind extends VisualDataBind
 		$html .= "</select>";
 		return $html;
 	}
-	
+
 	/**
 	Renders javascript code to reset the filter controls
 	*/
@@ -793,7 +793,7 @@ class ComboVisualDataBind extends VisualDataBind
 	{
 		return "document.getElementById('" . $this->dataField . '_search_control' . "').value = '';";
 	}
-	
+
 	/**
 	Renders controls for this element when inserting a new record on the table
 	*/
@@ -808,10 +808,10 @@ class ComboVisualDataBind extends VisualDataBind
 			$disabled = " disabled=\"true\" ";
 			$html .= "<input type=\"hidden\" name=\"$dataField\" id=\"$dataField" . "_hidden\" value=\"" . htmlspecialchars($this->defaultValue) . "\" />";
 		}
-		$html .= "<select class=\"inputbox\" name=\"$dataField\" id=\"$dataField\" $disabled ".$this->renderHtmlProperties().">";  
+		$html .= "<select class=\"inputbox\" name=\"$dataField\" id=\"$dataField\" $disabled ".$this->renderHtmlProperties().">";
 		$html .= "<option value=\"\">".htmlspecialchars($this->firstItem)."</option>";
 		foreach($items as $item)
-		{	
+		{
 			$selected = "";
 			if($this->defaultValue == $item->value)
 				$selected = "selected";
@@ -821,7 +821,7 @@ class ComboVisualDataBind extends VisualDataBind
 		$html .= "</td></tr>";
 		return $html;
 	}
-	
+
 	/**
 	Renders controls for this element when editing a record on the table
 	*/
@@ -837,10 +837,10 @@ class ComboVisualDataBind extends VisualDataBind
 			$disabled = " disabled=\"true\" ";
 			$html .=  "<input type=\"hidden\" name=\"$dataField\" id=\"$dataField" . "_hidden\" value=\"" . htmlspecialchars($data) . "\" />";
 		}
-		$html .= "<select class=\"inputbox\" name=\"$dataField\" id=\"$dataField\" $disabled ".$this->renderHtmlProperties().">";   
+		$html .= "<select class=\"inputbox\" name=\"$dataField\" id=\"$dataField\" $disabled ".$this->renderHtmlProperties().">";
 		$html .= "<option value=\"\">".htmlspecialchars($this->firstItem)."</option>";
 		foreach($items as $item)
-		{	
+		{
 			$selected = "";
 			if($data == $item->value)
 				$selected = "selected";
@@ -850,7 +850,7 @@ class ComboVisualDataBind extends VisualDataBind
 		$html .= "</td></tr>";
 		return $html;
 	}
-	
+
 	/**
 	Validates the data supplied before storing in the database
 	*/
@@ -864,7 +864,7 @@ class ComboVisualDataBind extends VisualDataBind
 		}
 		return true;
 	}
-	
+
 	/**
 	Renders javascript code to validate this control before submitting
 	*/
@@ -899,7 +899,7 @@ class RadioVisualDataBind extends VisualDataBind
 	var $no_image;
 	var $yes_task;
 	var $no_task;
-	
+
 	/**
 	Class constructor
 	$dataField      : The field of the table that will edited
@@ -915,7 +915,7 @@ class RadioVisualDataBind extends VisualDataBind
 		$this->yes_task="";
 		$this->no_task="";
 	}
-	
+
 	/**
 	Returns the table field this elements gets its data from
 	*/
@@ -923,7 +923,7 @@ class RadioVisualDataBind extends VisualDataBind
 	{
 		return ($row->{$this->dataField}== 0) ? JText::_("PAYPERDOWNLOADPLUS_NO_43") : JText::_("PAYPERDOWNLOADPLUS_YES_44");
 	}
-	
+
 	/**
 	Renders the cell of the table for this element
 	*/
@@ -936,7 +936,7 @@ class RadioVisualDataBind extends VisualDataBind
 				if($this->yes_image)
 				{
 					if($this->yes_task)
-						echo "<a href=\"javascript:void(0);\" 
+						echo "<a href=\"javascript:void(0);\"
 							onclick=\"return listItemTask('cb$rowNumber','{$this->yes_task}')\">";
 					echo JHTML::image( $this->yes_image, "" );
 					if($this->yes_task)
@@ -948,7 +948,7 @@ class RadioVisualDataBind extends VisualDataBind
 				if($this->no_image)
 				{
 					if($this->no_task)
-						echo "<a href=\"javascript:void(0);\" 
+						echo "<a href=\"javascript:void(0);\"
 							onclick=\"return listItemTask('cb$rowNumber','{$this->no_task}')\">";
 					echo JHTML::image( $this->no_image, "" );
 					if($this->no_task)
@@ -961,7 +961,7 @@ class RadioVisualDataBind extends VisualDataBind
 			parent::renderGridCell($row, $rowNumber, $columnNumber, $columnCount);
 		}
 	}
-	
+
 	/**
 	Renders controls for this element when inserting a new record on the table
 	*/
@@ -989,7 +989,7 @@ class RadioVisualDataBind extends VisualDataBind
 		$html .= "</td></tr>";
 		return $html;
 	}
-	
+
 	/**
 	Renders controls for this element when editing a new record on the table
 	*/
@@ -1021,7 +1021,7 @@ class RadioVisualDataBind extends VisualDataBind
 		$html .= "</td></tr>";
 		return $html;
 	}
-	
+
 	/**
 	Renders javascript code to validate this control before submitting
 	*/
@@ -1038,7 +1038,7 @@ only show a link on a table cell that will execute a certaing task.
 class LinkVisualDataBind extends VisualDataBind
 {
 	var $task;
-	
+
 	/**
 	Class constructor
 	$dataField      : The field of the table that will edited
@@ -1056,7 +1056,7 @@ class LinkVisualDataBind extends VisualDataBind
 		$this->ignoreToBind = true;
 		$this->sourceTable = "";
 	}
-	
+
 	/**
 	Renders the heading on the table for the column assigned to this element
 	*/
@@ -1068,7 +1068,7 @@ class LinkVisualDataBind extends VisualDataBind
 		</th>
 	<?php
 	}
-	
+
 	/**
 	Returns field use for ordering
 	*/
@@ -1076,7 +1076,7 @@ class LinkVisualDataBind extends VisualDataBind
 	{
 		return null;
 	}
-	
+
 	/**
 	Renders the cell of the table for this element
 	*/
@@ -1086,7 +1086,7 @@ class LinkVisualDataBind extends VisualDataBind
 		echo htmlspecialchars($this->displayName);
 		echo "</a>";
 	}
-	
+
 	/**
 	Renders javascript code to validate this control before submitting
 	*/
@@ -1114,7 +1114,7 @@ class OrderVisualDataBind extends VisualDataBind
 		$this->showInEditForm = false;
 		$this->showInInsertForm = false;
 	}
-	
+
 	/**
 	Renders the heading on the table for the column assigned to this element
 	*/
@@ -1127,7 +1127,7 @@ class OrderVisualDataBind extends VisualDataBind
 		</th>
 	<?php
 	}
-	
+
 	/**
 	Renders the cell of the table for this element
 	*/
@@ -1152,7 +1152,7 @@ class OrderVisualDataBind extends VisualDataBind
 	<a href="#reorder" onclick="return listItemTask('cb<?php echo $rowNumber?>', 'orderdown');" alt="<?php echo JText::_("PAYPERDOWNLOADPLUS_MOVER_ABAJO_51");?>">
 	<img src="<?php echo $root;?>administrator/images/downarrow.png" width="16" height="16" border="0" alt="<?php echo JText::_("PAYPERDOWNLOADPLUS_MOVER_ABAJO_52");?>"/>
 	</a></span>
-	
+
 	<?php
 	}
 }
@@ -1173,7 +1173,7 @@ class HiddenVisualDataBind extends VisualDataBind
 		$this->showInGrid = false;
 		$this->useForTextSearch = false;
 	}
-	
+
 	/**
 	Renders the hidden input control with the default value
 	*/
@@ -1184,7 +1184,7 @@ class HiddenVisualDataBind extends VisualDataBind
 		$html .= "value=\"" . htmlspecialchars($this->defaultValue) . "\" />";
 		return $html;
 	}
-	
+
 	/**
 	Renders the hidden input control with the current value
 	*/
@@ -1197,7 +1197,7 @@ class HiddenVisualDataBind extends VisualDataBind
 		$html .= "value=\"$data\" />";
 		return $html;
 	}
-	
+
 	/**
 	Renders javascript code to validate this control before submitting
 	*/
@@ -1213,7 +1213,7 @@ class AggregateVisualDataBind extends VisualDataBind
 	var $keyField;
 	var $foreignKeyField;
 	var $aggregateFunction;
-	
+
 	function __construct($dataField, $displayName, $tableName, $keyField, $foreignKeyField, $aggregateFunction)
 	{
 		parent::__construct($dataField, $displayName);
@@ -1226,18 +1226,18 @@ class AggregateVisualDataBind extends VisualDataBind
 		$this->foreignKeyField = $foreignKeyField;
 		$this->aggregateFunction = $aggregateFunction;
 	}
-	
+
 	function isAggregate()
 	{
 		return true;
 	}
-	
+
 	function getData($row)
 	{
 		$field = $this->aggregateFunction . "_" . $this->dataField;
 		return $row->$field;
 	}
-	
+
 	function getSelectField()
 	{
 		if($this->tableName && $this->aggregateFunction)
@@ -1246,16 +1246,16 @@ class AggregateVisualDataBind extends VisualDataBind
 		else
 			return parent::getSelectField();
 	}
-	
+
 	function getExtraSelectTable()
 	{
 		if($this->tableName != "")
-			return "LEFT JOIN " . $this->tableName . " ON " . $this->sourceTable . "." . $this->keyField . " = " . 
+			return "LEFT JOIN " . $this->tableName . " ON " . $this->sourceTable . "." . $this->keyField . " = " .
 				$this->tableName . "." . $this->foreignKeyField;
 		else
 			return "";
 	}
-	
+
 	/**
 	Returns field use for ordering
 	*/
@@ -1266,7 +1266,7 @@ class AggregateVisualDataBind extends VisualDataBind
 		$field->display = $this->displayName;
 		return $field;
 	}
-	
+
 	function renderColumnHeading($filters, $rows)
 	{
 	?>
@@ -1286,19 +1286,19 @@ class WYSIWYGEditotVisualDataBind extends VisualDataBind
 		parent::__construct($dataField, $displayName);
 		$this->extraDescription = "";
 	}
-	
+
 	function setExtraDescription($extraDescription)
 	{
 		$this->extraDescription = $extraDescription;
 	}
-	
+
 	function cleanHtml($text)
 	{
 		$text = preg_replace("/<\/?[a-zA-Z0-9]+[^>]*>/", "", $text);
 		$text = preg_replace("/&[a-zA-Z]{1,6};/", "", $text);
 		return $text;
 	}
-	
+
 	function renderGridCell(&$row, $rowNumber, $columnNumber, $columnCount)
 	{
 		$field = $this->dataField;
@@ -1312,16 +1312,16 @@ class WYSIWYGEditotVisualDataBind extends VisualDataBind
 				$gridToolTip = JText::_("PAYPERDOWNLOADPLUS_HAGA_CLICK_PARA_EDITAR_53") . "::" . $data;
 			echo "<span class=\"editlinktip hasTip\" title=\"".htmlspecialchars($gridToolTip)."\">";
 			echo "<a href=\"javascript:void(0);\" onclick=\"return listItemTask('cb$rowNumber','{$this->linkTask}')\">";
-			echo htmlspecialchars($data); 
+			echo htmlspecialchars($data);
 			echo "</a>";
 			echo "</span>";
 		}
 		else
 		{
-			echo htmlspecialchars($data); 
+			echo htmlspecialchars($data);
 		}
 	}
-	
+
 	function renderNew()
 	{
 		$html = "<tr>" . $this->renderFieldLabel() . "<td>";
@@ -1335,13 +1335,13 @@ class WYSIWYGEditotVisualDataBind extends VisualDataBind
 		$editor = JFactory::getConfig()->get('editor');
 		$editor = JEditor::getInstance($editor);
 		$html .= "<div style=\"float: left;\">";
-		$html .= $editor->display($dataField, '', '100%', '200', '20', '20');	
+		$html .= $editor->display($dataField, '', '100%', '200', '20', '20');
 		$html .= "</div>";
 		$html .= "<div style=\"float: left; margin: 10px; width: 300px;\">" . htmlspecialchars($this->extraDescription) . "</div>";
 		$html .= "</td></tr>";
 		return $html;
 	}
-	
+
 	function renderEdit(&$row)
 	{
 		$html = "<tr>" . $this->renderFieldLabel() . "<td>";
@@ -1362,15 +1362,16 @@ class WYSIWYGEditotVisualDataBind extends VisualDataBind
 		$html .= "</td></tr>";
 		return $html;
 	}
-	
+
 	function onBeforeStore( &$row )
 	{
 		if($this->ignoreToBind)
 			return true;
-		$row->{$this->dataField} = JRequest::getVar( $this->dataField, '', 'post','string', JREQUEST_ALLOWRAW );
+		//$row->{$this->dataField} = JRequest::getVar( $this->dataField, '', 'post','string', JREQUEST_ALLOWRAW );
+			$row->{$this->dataField} = JFactory::getApplication()->input->getRaw($this->dataField, '');
 		return true;
 	}
-	
+
 	function renderValidateJavascript()
 	{
 		return "";

@@ -1,15 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<install version="1.5" method="upgrade" type="plugin" group="payperdownloadplus">
+<extension version="3.1" type="plugin" group="payperdownloadplus" method="upgrade">
 	<name>PayperDownloadPlus - JDownload</name>
-	<version>2.5</version>
-	<creationDate>March 2012</creationDate>
 	<author>Ratmil</author>
 	<authorUrl>www.ratmilwebsolutions.com</authorUrl>
+	<creationDate>March 2012</creationDate>
+	<copyright>(c) 2009 Ratmil Torres</copyright>
+	<license>GNU General Public License version 2 or later; see LICENSE.txt</license>
+	<version>6.0.3</version>
+	<description>Plugin for Pay per download Plus component to integrate with jDownload elements</description>
 	<languages>
+		<language tag="de-DE">de-DE.plg_payperdownloadplus_jdownload.ini</language>
 		<language tag="en-GB">en-GB.plg_payperdownloadplus_jdownload.ini</language>
 	</languages>
 	<files>
 		<filename plugin="jdownload">jdownload.php</filename>
 		<filename>jdownload_plugin.js</filename>
+		<filename>jdownload.png</filename>
+		<filename>index.html</filename>
 	</files>
-</install>
+</extension>

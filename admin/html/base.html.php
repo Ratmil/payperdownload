@@ -6,9 +6,8 @@
  * @license GNU/GPL http://www.gnu.org/copyleft/gpl.html
 **/
 
-/** ensure this file is being included by a parent file */
-defined( '_JEXEC' ) or
-die( 'Direct Access to this location is not allowed.' );
+// no direct access
+defined ( '_JEXEC' ) or die;
 
 /*** Class to generate HTML code ***/
 class BaseHtmlForm
@@ -16,7 +15,7 @@ class BaseHtmlForm
 	var $extraValidateScript = null;
 	var $enctype = "";
 	var $showId = false;
-	
+
 	function __construct()
 	{
 	}
@@ -24,9 +23,11 @@ class BaseHtmlForm
 	/*** Generate code for admin form beginning***/
 	function startForm($task, $option, $dataBindModel)
 	{
+	    $jinput = JFactory::getApplication()->input;
+
 		JHTML::_('behavior.tooltip');
-		$format = JRequest::getVar('format');
-		$mode = JRequest::getVar('mode');
+		$format = $jinput->get('format');
+		$mode = $jinput->get('mode');
 		if($format != 'raw' || $mode != 'noform')
 		{
 		$this->renderScripts($dataBindModel, $option, $task);
@@ -36,7 +37,7 @@ class BaseHtmlForm
 	<?php
 		}
 	}
-	
+
 	function renderVars($option)
 	{
 		$url = JURI::root();
@@ -44,11 +45,11 @@ class BaseHtmlForm
 		<script language="Javascript">
 		var site_root = '<?php echo addslashes($url); ?>';
 		var site_option = '<?php echo addslashes($option); ?>';
-		var site_adminpage = '<?php echo addslashes(JRequest::getVar("adminpage")); ?>';
+		var site_adminpage = '<?php echo addslashes(JFactory::getApplication()->input->getString("adminpage")); ?>';
 		</script>
 		<?php
 	}
-	
+
 	/**
 	Renders the table of elements
 	*/
@@ -68,10 +69,10 @@ class BaseHtmlForm
 				Joomla.tableOrdering(order, dirn, '');
 			}
 		</script>
-	<!--<div id="j-sidebar-container" class="span2">
-		<?php $this->renderSideBar($dataBindModel);?>
-	</div>-->
-	<div id="j-main-container">
+	<div id="j-sidebar-container" class="span2">
+		<?php /*$this->renderSideBar($dataBindModel, null);*/ echo JHtmlSidebar::render(); ?>
+	</div>
+	<div id="j-main-container" class="span10">
 		<div id="filter-bar" class="btn-toolbar">
 		<?php $this->renderFilterBar($dataBindModel, $filters, $pageNav);?>
 		</div>
@@ -145,7 +146,7 @@ class BaseHtmlForm
 	</div>
 	<?php
 	}
-	
+
 	function renderFilterBar($dataBindModel, $filters, $pageNav)
 	{
 		$dataBinds = $dataBindModel->dataBinds;
@@ -189,11 +190,11 @@ class BaseHtmlForm
 		</div>
 	<?php
 	}
-	
+
 	function renderSideBar($dataBindModel, $filters)
 	{
 	}
-	
+
 	function renderFieldsetsHeaders($fieldsets)
 	{
 		if(!(count($fieldsets) == 1 && $fieldsets[0]->name == ""))
@@ -220,7 +221,7 @@ class BaseHtmlForm
 		else
 			return false;
 	}
-	
+
 	/**
 	Renders the form to add a new record to a table
 	*/
@@ -229,6 +230,10 @@ class BaseHtmlForm
 		$fieldsets = $dataBindModel->getFieldSets();
 		$key = $dataBindModel->keyField;
 	?>
+	<div id="j-sidebar-container" class="span2">
+		<?php echo JHtmlSidebar::render(); ?>
+	</div>
+	<div id="j-main-container" class="span10">
 		<fieldset class="adminform">
 		<legend><?php echo htmlspecialchars($title);?></legend>
 		<script language="JavaScript">
@@ -283,10 +288,11 @@ class BaseHtmlForm
 		}
 		?>
 		</fieldset>
+		</div>
 		<input type="hidden" id="<?php echo $key?>" name="<?php echo $key?>" value=""/>
 	<?php
 	}
-	
+
 	/**
 	Renders the form to edit a record from a table
 	*/
@@ -295,6 +301,10 @@ class BaseHtmlForm
 		$fieldsets = $dataBindModel->getFieldSets();
 		$key = $dataBindModel->keyField;
 	?>
+	<div id="j-sidebar-container" class="span2">
+		<?php echo JHtmlSidebar::render(); ?>
+	</div>
+	<div id="j-main-container" class="span10">
 		<fieldset class="adminform">
 		<legend><?php echo htmlspecialchars($title);?></legend>
 		<?php
@@ -349,22 +359,25 @@ class BaseHtmlForm
 		}
 		?>
 		</fieldset>
+		</div>
 		<input type="hidden" id="<?php echo $key?>" name="<?php echo $key?>" value="<?php echo htmlspecialchars($row->$key);?>"/>
 	<?php
 	}
-	
+
 	/*** Generates admin form end ***/
 	function endForm($task, $option)
 	{
-		$format = JRequest::getVar('format');
+	    $jinput = JFactory::getApplication()->input;
+
+	    $format = $jinput->get('format');
 		if($format != 'raw')
 		{
 	?>
 		<input type="hidden" name="option" value="<?php echo $option;?>" />
 		<input type="hidden" name="task" value="<?php echo $task;?>" />
-		<input type="hidden" name="adminpage" value="<?php echo JRequest::getVar( 'adminpage', '' );?>" />
-		<?php 
-		$itemId = JRequest::getVar("Itemid", "");
+		<input type="hidden" name="adminpage" value="<?php echo $jinput->getString('adminpage', '');?>" />
+		<?php
+		$itemId = $jinput->get("Itemid", "");
 		if($itemId != "")
 		{
 		?>
@@ -372,8 +385,8 @@ class BaseHtmlForm
 		<?php
 		}
 		?>
-		<?php 
-		$view = JRequest::getVar("view", "");
+		<?php
+		$view = $jinput->get("view", "");
 		if($view != "")
 		{
 		?>
@@ -387,7 +400,7 @@ class BaseHtmlForm
 	<?php
 		}
 	}
-	
+
 	/**
 	Renders javascript validation code
 	*/
@@ -406,18 +419,18 @@ class BaseHtmlForm
 					function validateFormControls()
 					{
 					<?php
-					
+
 						for ($i=0, $n=count( $dataBinds ); $i < $n; $i++)
 						{
 							$databind = $dataBinds[$i];
 							if(!$databind->disabled && (
-								(($task == "edit" || $task == "apply") && $databind->showInEditForm) ||	
+								(($task == "edit" || $task == "apply") && $databind->showInEditForm) ||
 								($task == "add" && $databind->showInInsertForm) ))
 								echo $databind->renderValidateJavascript();
 						}
 						if($this->extraValidateScript)
 							echo $this->extraValidateScript;
-					
+
 					?>
 					return true;
 					}
@@ -461,7 +474,7 @@ class BaseHtmlForm
 				}
 				submitform(pressbutton);
 			}
-			
+
 			</script>
 			<?php
 		}

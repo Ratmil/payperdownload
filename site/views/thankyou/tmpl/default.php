@@ -5,21 +5,28 @@
  * @copyright (C) Ratmil Torres
  * @license GNU/GPL http://www.gnu.org/copyleft/gpl.html
 **/
-defined( '_JEXEC' ) or die( 'Restricted access' );
+defined('_JEXEC') or die;
+
 $root = JURI::root();
 ?>
-
+<?php if ($this->refresh) : ?>
+<script type="text/javascript">
+   setTimeout(function(){
+       location.reload();
+   },10000);
+</script>
+<?php endif; ?>
 <?php
 if($this->askEmail)
 {
 ?>
 
 <script type="text/javascript">
-var myAjaxTrigger = new createAJAX(); 
+var myAjaxTrigger = new createAJAX();
 function sendLink()
 {
 	var site_root = '<?php echo addslashes($root);?>';
-	var site_option = '<?php echo addslashes(JRequest::getCmd('option'));?>';
+	var site_option = '<?php echo addslashes(JFactory::getApplication()->input->get('option'));?>';
 	var access = '<?php echo addslashes($this->accessCode);?>';
 	var email = document.getElementById('email');
 	if(validateEmailToPay(email.value))
@@ -27,9 +34,9 @@ function sendLink()
 		var sendlinkbutton = document.getElementById('sendlinkbutton');
 		sendlinkbutton.disabled = true;
 		email.disabled = true;
-		myAjaxTrigger.async_call(site_root + '/index.php', 'option=' + 
+		myAjaxTrigger.async_call(site_root + '/index.php', 'option=' +
 			encodeURIComponent(site_option) + '&task=sendLink&format=raw' +
-			'&access=' + encodeURIComponent(access) + 
+			'&access=' + encodeURIComponent(access) +
 			'&m=' + encodeURIComponent(email.value), sendLinkOK, sendLinkError);
 	}
 	return false;

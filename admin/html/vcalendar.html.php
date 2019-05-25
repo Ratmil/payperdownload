@@ -5,9 +5,9 @@
  * @copyright (C) Ratmil Torres
  * @license GNU/GPL http://www.gnu.org/copyleft/gpl.html
 **/
-/** ensure this file is being included by a parent file */
-defined( '_JEXEC' ) or
-die( 'Direct Access to this location is not allowed.' );
+
+// no direct access
+defined ( '_JEXEC' ) or die;
 
 define("DATE_FORMAT_YMD", 1);
 define("DATE_FORMAT_DMY", 2);
@@ -17,7 +17,7 @@ class CalendarVisualDataBind extends VisualDataBind
 {
 
 	var $format_str;
-	
+
 	function __construct($dataField, $displayName, $format=DATE_FORMAT_YMD)
 	{
 		parent::__construct($dataField, $displayName);
@@ -38,7 +38,7 @@ class CalendarVisualDataBind extends VisualDataBind
 			break;
 		}
 	}
-	
+
 	function renderNew()
 	{
 		JHTML::_('behavior.calendar');
@@ -56,17 +56,17 @@ class CalendarVisualDataBind extends VisualDataBind
 			$html .=  "<input type=\"text\" name=\"$dataField\" id=\"$dataField" . "\" value=\"" . htmlspecialchars($this->defaultValue) . "\" disabled=\"true\"/>";
 		}
 		else
-			$html .= JHTML::_('calendar', "", $this->dataField, $this->dataField, $this->format_str, array('class'=>'inputbox', 'size'=>'25',  'maxlength'=>'19')); 
+			$html .= JHTML::_('calendar', "", $this->dataField, $this->dataField, $this->format_str, array('class'=>'inputbox', 'size'=>'25',  'maxlength'=>'19'));
 		$html .= "</td></tr>";
 		return $html;
 	}
 
-	
+
 	function getData($row)
 	{
 		return $this->getDateString($row, true);
 	}
-	
+
 	function getDateString($row, $include_time)
 	{
 		if($row->{$this->dataField})
@@ -87,7 +87,7 @@ class CalendarVisualDataBind extends VisualDataBind
 		else
 			return "--";
 	}
-	
+
 	function renderEdit(&$row)
 	{
 		JHTML::_('behavior.calendar');
@@ -106,12 +106,12 @@ class CalendarVisualDataBind extends VisualDataBind
 			$html .=  "<input type=\"text\" name=\"$dataField\" id=\"$dataField" . "\" value=\"$data\" disabled=\"true\"/>";
 		}
 		else
-			$html .= JHTML::_('calendar', $data, $this->dataField, $this->dataField, $this->format_str, 
-				array('class'=>'inputbox', 'size'=>'25',  'maxlength'=>'19')); 
+			$html .= JHTML::_('calendar', $data, $this->dataField, $this->dataField, $this->format_str,
+				array('class'=>'inputbox', 'size'=>'25',  'maxlength'=>'19'));
 		$html .= "</td></tr>";
 		return $html;
 	}
-	
+
 	function onBeforeStore(&$row)
 	{
 		if($this->ignoreToBind)

@@ -5,21 +5,26 @@
  * @copyright (C) Ratmil Torres
  * @license GNU/GPL http://www.gnu.org/copyleft/gpl.html
 **/
-defined( '_JEXEC' ) or die( 'Restricted access' );
+defined('_JEXEC') or die;
+
 jimport('joomla.application.component.view');
 
 class PayPerDownloadViewThankyou extends JViewLegacy
 {
 	function display($tpl = null)
 	{
-		$option = JRequest::getVar('option');
+	    $jinput = JFactory::getApplication()->input;
+
+	    $option = $jinput->get('option');
 		JHTML::_('stylesheet', 'components/'. $option . '/css/frontend.css');
 		$model = $this->getModel();
 		if($model)
 		{
 			$askEmail = false;
 			$accessCode = '';
-			$lid = JRequest::getInt('lid', 0);
+			$refresh = false;
+			$thank_you = '';
+			$lid = $jinput->getInt('lid', 0);
 			if($lid)
 			{
 				$thank_you = $model->getLicenseThankyouText($lid);
@@ -29,7 +34,7 @@ class PayPerDownloadViewThankyou extends JViewLegacy
 			}
 			else
 			{
-				$accesscode = JRequest::getVar('accesscode');
+			    $accesscode = $jinput->getRaw('accesscode');
 				list($download_id, $hash, $random) = explode("-", $accesscode);
 				if($model->validateAccessCode($download_id, $hash, $random))
 				{
@@ -45,12 +50,17 @@ class PayPerDownloadViewThankyou extends JViewLegacy
 						}
 					}
 					else
-						$thank_you = JText::_("PAYPERDOWNLOADPLUS_DOWNLOADLINK_NOT_PAID");
+					{
+						//$thank_you = JText::_("PAYPERDOWNLOADPLUS_DOWNLOADLINK_NOT_PAID");
+						$thank_you = JText::_("PAYPERDOWNLOADPLUS_DOWNLOADLINK_NOT_FINALIZED");
+						$refresh = true;
+					}
 				}
 				else
 					$thank_you = "Unauthorized access";
 			}
 			$this->assignRef("thank_you", $thank_you);
+			$this->assignRef("refresh", $refresh);
 			$this->assignRef("askEmail", $askEmail);
 			$this->assignRef("accessCode", $accessCode);
 			parent::display($tpl);

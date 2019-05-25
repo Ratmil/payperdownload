@@ -5,14 +5,14 @@
  * @copyright (C) Ratmil Torres
  * @license GNU/GPL http://www.gnu.org/copyleft/gpl.html
 **/
-/** ensure this file is being included by a parent file */
-defined( '_JEXEC' ) or
-die( 'Direct Access to this location is not allowed.' );
+
+// no direct access
+defined ( '_JEXEC' ) or die;
 
 class PriceCurrencyVisualDataBind extends VisualDataBind
 {
 	var $currency_field;
-	
+
 	function __construct($dataField, $displayName, $currency_field)
 	{
 		parent::__construct($dataField, $displayName);
@@ -20,7 +20,7 @@ class PriceCurrencyVisualDataBind extends VisualDataBind
 		$this->regExp = '\s*\d+(\.\d+)?\s*';
 		$this->size = 10;
 	}
-	
+
 	/**
 	Executed after the property on the JTable object has been created
 	*/
@@ -28,7 +28,7 @@ class PriceCurrencyVisualDataBind extends VisualDataBind
 	{
 		$this->{$this->currency_field} = null;
 	}
-	
+
 	/**
 	Executed after binding
 	*/
@@ -38,7 +38,7 @@ class PriceCurrencyVisualDataBind extends VisualDataBind
 			$row->{$this->currency_field} = $from[$this->currency_field];
 		return true;
 	}
-	
+
 	/**
 	Returns the piece of query that will be included in the select to load all elements
 	*/
@@ -46,7 +46,7 @@ class PriceCurrencyVisualDataBind extends VisualDataBind
 	{
 		return $this->sourceTable . "." . $this->dataField . ", " . $this->sourceTable . "." . $this->currency_field;
 	}
-	
+
 	/**
 	Renders the cell of the table for this element
 	*/
@@ -64,21 +64,21 @@ class PriceCurrencyVisualDataBind extends VisualDataBind
 				$gridToolTip = JText::_("PAYPERDOWNLOADPLUS_CLICK_TO_EDIT_33") . "::" . $data;
 			echo "<span class=\"editlinktip hasTip\" title=\"".htmlspecialchars($gridToolTip)."\">";
 			echo "<a href=\"javascript:void(0);\" onclick=\"return listItemTask('cb$rowNumber','{$this->linkTask}')\">";
-			echo htmlspecialchars($data); 
+			echo htmlspecialchars($data);
 			echo "</a>";
 			echo "</span>";
 		}
 		else
 		{
-			echo htmlspecialchars($data); 
+			echo htmlspecialchars($data);
 		}
 	}
-	
+
 	function renderCurrenciesCombo($value = "USD")
 	{
 		$dataField = $this->currency_field;
-		$currencies = array("USD", 
-			"AUD", "BRL", "CAD", "CZK", "DKK", 
+		$currencies = array("USD",
+			"AUD", "BRL", "CAD", "CZK", "DKK",
 			"EUR", "HKD", "HUF", "ILS", "JPY", "MYR", "MXN", "NOK", "PHP", "PLN",
 			"GBP", "SGD", "SEK", "CHF", "TWD", "THB", "RUB");
 		$html = "<select name=\"$dataField\" id=\"$dataField\">";
@@ -94,7 +94,7 @@ class PriceCurrencyVisualDataBind extends VisualDataBind
 		$html .= "</select>";
 		return $html;
 	}
-	
+
 	/**
 	Renders controls for this element when inserting a new record on the table
 	*/
@@ -113,14 +113,14 @@ class PriceCurrencyVisualDataBind extends VisualDataBind
 		{
 			$disabled = " disabled=\"true\" ";
 		}
-		$html .= "<input class=\"text_area\" type=\"text\" name=\"$dataField\" id=\"$dataField\" size=\"$size\" maxlength=\"$maxLength\" value=\"" . 
+		$html .= "<input class=\"text_area\" type=\"text\" name=\"$dataField\" id=\"$dataField\" size=\"$size\" maxlength=\"$maxLength\" value=\"" .
 			htmlspecialchars($this->defaultValue) . "\" ".$this->renderHtmlProperties()." $disabled/>";
 		$html .= "&nbsp;&nbsp;&nbsp;";
 		$html .= $this->renderCurrenciesCombo();
 		$html .= "</td></tr>";
 		return $html;
 	}
-	
+
 	/**
 	Renders controls for this element when editing a record on the table
 	*/
