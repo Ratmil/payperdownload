@@ -732,19 +732,15 @@ class PayPerDownloadModelPay extends JModelLegacy
 		}
 	}
 
-	function getRandom($seed)
+	function getRandom()
 	{
-		$config = JFactory::getConfig();
-		$secret = "";
-		if($config)
-			$secret .= $config->get( 'config.secret' ) . $config->get( 'config.password' );
-		$rand = $seed;
-		for($i = 0; $i < 100; $i++)
-		{
-			$rand .= microtime() . $secret;
-			$rand = sha1($rand);
+		$characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'; 
+		$randomString = ''; 
+		for($i = 0; $i < 30; $i++){
+			$index = rand(0, strlen($characters) - 1); 
+        	$randomString .= $characters[$index]; 
 		}
-		return $rand;
+		return $randomString;
 	}
 
 	function validateLicense($license_id, $payed_price, $currency_code, $user_id)
@@ -1562,8 +1558,8 @@ class PayPerDownloadModelPay extends JModelLegacy
 		    PayPerDownloadPlusDebug::debug("Failed database query - createDownloadLink");
 		}
 
-		$secret_word = $this->getRandom($resource_id . $resource_id);
-		$random_value = $this->getRandom($resource_id);
+		$secret_word = $this->getRandom();
+		$random_value = $this->getRandom();
 
 		if($itemId)
 			$dbItemId = $db->quote($itemId);
