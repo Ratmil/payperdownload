@@ -6,7 +6,7 @@
 	<license>GNU General Public License version 2 or later; see	LICENSE.txt</license>
 	<authorEmail>ratmil_torres@yahoo.com</authorEmail>
 	<authorUrl>www.ratmilwebsolutions.com</authorUrl>
-	<version>6.0.4</version>
+	<version>6.0.6</version>
 	<description>Payperdownload component to sell online content</description>
 	<scriptfile>install.payperdownload.php</scriptfile>
 	<media destination="com_payperdownload" folder="media">

@@ -883,17 +883,13 @@ class PayPerDownloadModelPayResource extends JModelLegacy
 
 	function getRandom($seed)
 	{
-		$config = JFactory::getConfig();
-		$secret = "";
-		if($config)
-			$secret .= $config->get( 'config.secret' ) . $config->get( 'config.password' );
-		$rand = $seed;
-		for($i = 0; $i < 100; $i++)
-		{
-			$rand .= microtime() . $secret . mt_rand();
-			$rand = sha1($rand);
+		$characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'; 
+		$randomString = ''; 
+		for($i = 0; $i < 30; $i++){
+			$index = mt_rand(0, strlen($characters) - 1); 
+        	$randomString .= $characters[$index]; 
 		}
-		return $rand;
+		return $randomString;
 	}
 
 	function getPaymentData($payment_id)

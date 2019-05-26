@@ -737,7 +737,7 @@ class PayPerDownloadModelPay extends JModelLegacy
 		$characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'; 
 		$randomString = ''; 
 		for($i = 0; $i < 30; $i++){
-			$index = rand(0, strlen($characters) - 1); 
+			$index = mt_rand(0, strlen($characters) - 1); 
         	$randomString .= $characters[$index]; 
 		}
 		return $randomString;
