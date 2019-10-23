@@ -6,11 +6,14 @@
 	<creationDate>September 2015</creationDate>
 	<copyright>(c) 2009 Ratmil Torres</copyright>
 	<license>GNU General Public License version 2 or later; see LICENSE.txt</license>
-	<version>6.0.3</version>
+	<version>6.1.0</version>
 	<description>Plugin for Pay per download Plus component to integrate with K2 items</description>
 	<languages>
 		<language tag="de-DE">de-DE.plg_payperdownloadplus_k2.ini</language>
 		<language tag="en-GB">en-GB.plg_payperdownloadplus_k2.ini</language>
+		<language tag="es-ES">es-ES.plg_payperdownloadplus_k2.ini</language>
+		<language tag="fr-FR">fr-FR.plg_payperdownloadplus_k2.ini</language>
+		<language tag="nl-NL">nl-NL.plg_payperdownloadplus_k2.ini</language>
 	</languages>
 	<files>
 		<filename plugin="k2">k2.php</filename>

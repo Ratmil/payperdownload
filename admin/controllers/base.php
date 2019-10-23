@@ -193,7 +193,7 @@ class BaseForm extends JObject
 			$result = $this->onAfterDelete($row, $deleted);
 			if($result)
 			{
-				$msg = htmlspecialchars(JText::sprintf("PAYPERDOWNLOADPLUS_D_ELEMENTS_DELETED_82", $count));
+				$msg = htmlspecialchars(JText::sprintf("PAYPERDOWNLOADPLUS_D_ELEMENTS_DELETED", $count));
 				if($count < count($cid))
 				{
 					$msg .= " " . htmlspecialchars($this->deleteErrorMessage);

@@ -53,16 +53,16 @@ class UsersForm extends PPDForm
 			$this->dataBindModel->setKeyField("user_license_id");
 			$this->dataBindModel->setTableName("#__payperdownloadplus_users_licenses");
 
-			$bind = new ExComboVisualDataBind('user_id', JText::_('PAYPERDOWNLOADPLUS_USER_134'), '#__users', 'id', 'username');
-			$bind->setExtraSearchField("username");
+			$bind = new ExComboVisualDataBind('user_id', JText::_('PAYPERDOWNLOADPLUS_USERID'), '#__users', 'id', 'id');
+			$bind->setExtraSearchField("id");
 			$bind->setColumnWidth(10);
 			$bind->setEditLink(true);
 			$bind->disabledEdit = true;
 			$bind->useForFilter = false;
-			$bind->setEditToolTip(JText::_("PAYPERDOWNLOADPLUS_JOOMLA_USER_135"));
+			$bind->setEditToolTip(JText::_("PAYPERDOWNLOADPLUS_JOOMLA_USER"));
 			$this->dataBindModel->addDataBind( $bind );
 
-			$bind = new ComboVisualDataBind('license_id', JText::_('PAYPERDOWNLOADPLUS_LICENSE_136'), '#__payperdownloadplus_licenses', 'license_id', 'license_name');
+			$bind = new ComboVisualDataBind('license_id', JText::_('PAYPERDOWNLOADPLUS_LICENSE'), '#__payperdownloadplus_licenses', 'license_id', 'license_name');
 			$bind->setColumnWidth(25);
 			$bind->disabledEdit = true;
 			$bind->setEditToolTip(JText::_("PAYPERDOWNLOADPLUS_LICENSE_BUYED_BY_THE_USER_137"));
@@ -105,7 +105,7 @@ class UsersForm extends PPDForm
 			$bind->setEditToolTip(JText::_("PAYPERDOWNLOADPLUS_MAX_DOWNLOAD_HITS_DESC"));
 			$this->dataBindModel->addDataBind( $bind );
 
-			$bind = new RadioVisualDataBind('enabled', JText::_('PAYPERDOWNLOADPLUS_LICENSE_ENABLED'));
+			$bind = new RadioVisualDataBind('enabled', JText::_('JENABLED'));
 			$bind->setEditToolTip(JText::_("PAYPERDOWNLOADPLUS_LICENSE_ENABLED_DESC"));
 			$bind->setColumnWidth(5);
 			$bind->defaultValue = 1;

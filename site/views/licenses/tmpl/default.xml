@@ -1,11 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
 <metadata>
-<layout title="PAYPERDOWNLOADPLUS_USER_LICENSES_LAYOUT">
+	<layout title="PAYPERDOWNLOADPLUS_USER_LICENSES_LAYOUT">
 		<message>
 			<![CDATA[PAYPERDOWNLOADPLUS_USER_LICENSES_LAYOUT_DESC]]>
 		</message>
-	</layout>
-		<name>PAYPERDOWNLOADPLUS_USER_LICENSES_LAYOUT</name>
-		<description>PAYPERDOWNLOADPLUS_USER_LICENSES_LAYOUT_DESC</description>
-		
+	</layout>	
+	<fields name="params">
+		<fieldset name="basic">
+			<field name="include_expired" type="radio" default="0" class="btn-group" 
+				label="COM_PAYPERDOWNLOAD_FIELD_INCLUDEEXPIRED" 
+				description="COM_PAYPERDOWNLOAD_FIELD_INCLUDEEXPIRED_DESC">
+				<option value="0">JHIDE</option>
+				<option value="1">JSHOW</option>
+			</field>
+			
+			<field name="show_lic_img" type="radio" default="0" class="btn-group" 
+				label="COM_PAYPERDOWNLOAD_FIELD_SHOWLICENSEIMAGE" 
+				description="COM_PAYPERDOWNLOAD_FIELD_SHOWLICENSEIMAGE_DESC">
+				<option value="0">JHIDE</option>
+				<option value="1">JSHOW</option>
+			</field>
+			
+			<field name="show_lic_desc" type="radio" default="0" class="btn-group" 
+				label="COM_PAYPERDOWNLOAD_FIELD_SHOWLICENSEDESCRIPTION" 
+				description="COM_PAYPERDOWNLOAD_FIELD_SHOWLICENSEDESCRIPTION_DESC">
+				<option value="0">JHIDE</option>
+				<option value="1">JSHOW</option>
+			</field>
+			
+			<field name="resource_spacer" type="spacer" hr="true" />
+			
+			<field name="include_resources" type="radio" default="0" class="btn-group" 
+				label="COM_PAYPERDOWNLOAD_FIELD_INCLUDERESOURCES" 
+				description="COM_PAYPERDOWNLOAD_FIELD_INCLUDERESOURCES_DESC">
+				<option value="0">JHIDE</option>
+				<option value="1">JSHOW</option>
+			</field>
+			
+<!-- 			<field name="show_res_desc" type="list" default="0"  -->
+<!-- 				label="COM_PAYPERDOWNLOAD_FIELD_SHOWRESOURCEDESCRIPTION"  -->
+<!-- 				description="COM_PAYPERDOWNLOAD_FIELD_SHOWRESOURCEDESCRIPTION_DESC"> -->
+<!-- 				<option value="0">JHIDE</option> -->
+<!-- 				<option value="1">COM_PAYPERDOWNLOAD_VALUE_DESCRIPTION</option> -->
+<!-- 				<option value="2">COM_PAYPERDOWNLOAD_VALUE_ALTERNATEDESCRIPTION</option> -->
+<!-- 			</field> -->
+		</fieldset>
+	</fields>
 </metadata>

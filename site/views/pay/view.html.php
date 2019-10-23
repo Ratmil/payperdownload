@@ -11,19 +11,28 @@ jimport('joomla.application.component.view');
 
 class PayPerDownloadViewPay extends JViewLegacy
 {
+    protected $params;
+
 	function display($tpl = null)
 	{
+	    $app = JFactory::getApplication();
+
+	    $this->params = $app->getParams('com_payperdownload');
+
+	    $jinput = $app->input;
+
+	    $this->_prepareDocument();
+	    $this->pageclass_sfx = trim(htmlspecialchars($this->params->get('pageclass_sfx', '')));
+
 		$model = $this->getModel();
 		if($model)
 		{
-		    $jinput = JFactory::getApplication()->input;
-
 			$user = JFactory::getUser();
 			$lids = $jinput->getRaw('lid', '');
 			$resource_id = $jinput->getInt('res', 0);
-			$option = $jinput->get('option');
-			JHtml::stylesheet('components/'. $option . '/css/frontend.css');
-			$scriptPath = "components/$option/js/";
+
+			JHtml::stylesheet('components/com_payperdownload/css/frontend.css');
+			$scriptPath = 'components/com_payperdownload/js/';
 			JHtml::script($scriptPath . "pay.js", $scriptPath, false);
 
 			$returnUrl = $jinput->getBase64('returnurl', '');
@@ -31,6 +40,7 @@ class PayPerDownloadViewPay extends JViewLegacy
 				$returnUrl = base64_decode($returnUrl);
 			else
 				$returnUrl = $_SERVER['HTTP_REFERER'];
+
 			$showMessage = $jinput->getInt('m', 0);
 			$usePayPlugin = $model->getUsePayPluginConfig();
 			$usePaypal = $model->getUsePaypal();
@@ -69,8 +79,7 @@ class PayPerDownloadViewPay extends JViewLegacy
 				$resourceAccessParams .= "&accesscode=" . urlencode($downloadLink->accessCode);
 			}
 
-			$thankyou_url = JURI::base() . "index.php?option=com_payperdownload&view=thankyou&return=" .
-					urlencode(base64_encode($returnUrl)) . $resourceAccessParams;
+			$thankyou_url = JURI::base() . "index.php?option=com_payperdownload&view=thankyou&return=" . urlencode(base64_encode($returnUrl)) . $resourceAccessParams;
 
 			$menuitems = $this->getMenuItems();
 			if($menuitems && $menuitems->thankyou_page_menuitem)
@@ -88,7 +97,9 @@ class PayPerDownloadViewPay extends JViewLegacy
 				{
 					if($min_level < 0 || $license->level < $min_level)
 						$min_level = $license->level;
-					$license->resources = $model->getLicenseResources((int)$lid);
+						if ($showResources) {
+						    $license->resources = $model->getLicenseResources((int)$lid);
+						}
 					if($applyDiscount && $user->id)
 						$license->discount_price = $model->getDiscountLicense($license, $user->id);
 					else
@@ -107,7 +118,9 @@ class PayPerDownloadViewPay extends JViewLegacy
 						$license = $model->getLicense((int)$lid);
 						if($license)
 						{
-							$license->resources = $model->getLicenseResources((int)$lid);
+						    if ($showResources) {
+						        $license->resources = $model->getLicenseResources((int)$lid);
+						    }
 							if($applyDiscount && $user->id)
 								$license->discount_price = $model->getDiscountLicense($license, $user->id);
 							else
@@ -150,7 +163,7 @@ class PayPerDownloadViewPay extends JViewLegacy
 			$this->assignRef("licenses", $licenses);
 			$this->assignRef("user", $user);
 			$this->assignRef("showMessage", $showMessage);
-			$this->assignRef("showResources", $showResources);
+			$this->assignRef("showResources", $showResources); // for backward compatibility
 			$this->assignRef("returnUrl", $returnUrl);
 			$this->assignRef("thisUrl", $thisUrl);
 			$this->assignRef("thankyouUrl", $thankyou_url);
@@ -170,10 +183,11 @@ class PayPerDownloadViewPay extends JViewLegacy
 			$this->assignRef("tax_percent", $tax_percent);
 
 			$this->useDiscountCoupon = $model->getUseDiscountCoupon();
+
 			parent::display($tpl);
-		}
-		else
+		} else {
 			echo "model not found";
+		}
 	}
 
 	function getMenuItems()
@@ -183,7 +197,51 @@ class PayPerDownloadViewPay extends JViewLegacy
 		return $db->loadObject();
 	}
 
+	/**
+	 * Prepares the document
+	 *
+	 * @return void
+	 * @throws Exception
+	 */
+	protected function _prepareDocument()
+	{
+	    $app = JFactory::getApplication();
+	    $menus = $app->getMenu();
+	    $title = null;
 
+	    // Because the application sets a default page title,
+	    // we need to get it from the menu item itself
+	    $menu = $menus->getActive();
+
+	    if ($menu) {
+	        $this->params->def('page_heading', $this->params->get('page_title', $menu->title));
+	    } else {
+	        $this->params->def('page_heading', JText::_('PAYPERDOWNLOADPLUS_PAY_LICENSE'));
+	    }
+
+	    $title = $this->params->get('page_title', '');
+
+	    if (empty($title)) {
+	        $title = $app->getCfg('sitename');
+	    } elseif ($app->getCfg('sitename_pagetitles', 0) == 1) {
+	        $title = JText::sprintf('JPAGETITLE', $app->getCfg('sitename'), $title);
+	    } elseif ($app->getCfg('sitename_pagetitles', 0) == 2) {
+	        $title = JText::sprintf('JPAGETITLE', $title, $app->getCfg('sitename'));
+	    }
+
+	    $this->document->setTitle($title);
+
+	    if ($this->params->get('menu-meta_description')) {
+	        $this->document->setDescription($this->params->get('menu-meta_description'));
+	    }
+
+	    if ($this->params->get('menu-meta_keywords')) {
+	        $this->document->setMetadata('keywords', $this->params->get('menu-meta_keywords'));
+	    }
+
+	    if ($this->params->get('robots')) {
+	        $this->document->setMetadata('robots', $this->params->get('robots'));
+	    }
+	}
 }
-
 ?>

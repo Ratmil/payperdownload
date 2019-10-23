@@ -1,17 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<extension type="component" version="3.0" method="upgrade">
-	<name>Payperdownload</name>
+<extension type="component" version="3.6" method="upgrade">
+	<name>COM_PAYPERDOWNLOAD</name>
 	<author>Ratmil Torres, Olivier Buisard</author>
 	<creationDate>March 2019</creationDate>
 	<license>GNU General Public License version 2 or later; see	LICENSE.txt</license>
 	<authorEmail>ratmil_torres@yahoo.com</authorEmail>
 	<authorUrl>www.ratmilwebsolutions.com</authorUrl>
-	<version>6.0.6</version>
-	<description>Payperdownload component to sell online content</description>
+	<version>6.2.0</version>
+	<description>COM_PAYPERDOWNLOAD_DESCRIPTION</description>
 	<scriptfile>install.payperdownload.php</scriptfile>
 	<media destination="com_payperdownload" folder="media">
 		<filename>index.html</filename>
 		<folder>certificates</folder>
+		<folder>css</folder>
 	</media>
 	<install> 
 		<sql>
@@ -33,15 +34,18 @@
 		<submenu>
 			<menu link="option=com_payperdownload&amp;view=info" view="info">COM_PAYPERDOWNLOAD_INFO</menu>
 			<menu link="option=com_payperdownload&amp;adminpage=resources&amp;view=resources" view="resources">COM_PAYPERDOWNLOAD_RESOURCES</menu>
-			<menu link="option=com_payperdownload&amp;adminpage=licenses&amp;view=licenses" view="licenses">COM_PAYPERDOWNLOAD_LICENSES</menu>
+			<menu link="option=com_payperdownload&amp;view=licenses" view="licenses">COM_PAYPERDOWNLOAD_LICENSES</menu>
+<!-- 			<menu link="option=com_payperdownload&amp;adminpage=licenses&amp;view=licenses" view="licenses">COM_PAYPERDOWNLOAD_LICENSES</menu> -->
 			<menu link="option=com_payperdownload&amp;adminpage=users&amp;view=users" view="users">COM_PAYPERDOWNLOAD_USERS_LICENCES</menu>
 			<menu link="option=com_payperdownload&amp;adminpage=downloads&amp;view=downloads" view="downloads">COM_PAYPERDOWNLOAD_DOWNLOAD_LINKS</menu>
 			<menu link="option=com_payperdownload&amp;adminpage=orders&amp;view=orders" view="orders">COM_PAYPERDOWNLOAD_PAYMENTS</menu>
 			<menu link="option=com_payperdownload&amp;adminpage=coupons&amp;view=coupons" view="coupons">COM_PAYPERDOWNLOAD_COUPONS</menu>
 			<menu link="option=com_payperdownload&amp;adminpage=backup&amp;view=backup" view="backup">COM_PAYPERDOWNLOAD_BACKUP</menu>
+			<menu link="option=com_payperdownload&amp;adminpage=debug&amp;view=debug" view="debug">COM_PAYPERDOWNLOAD_DEBUG</menu>
 			<menu link="option=com_payperdownload&amp;adminpage=config&amp;view=config" view="config">COM_PAYPERDOWNLOAD_CONFIGURATION</menu>
 		</submenu>
 		<files folder="admin">
+			<filename>access.xml</filename>
 			<filename>config.xml</filename>
 			<filename>controller.php</filename>
 			<filename>export.php</filename>
@@ -58,18 +62,26 @@
 			<folder>images</folder>
 			<folder>jfields</folder>
 			<folder>js</folder>
-			<folder>language</folder>
+<!-- 			<folder>language</folder> -->
+			<folder>models</folder>
 			<folder>sql</folder>
+			<folder>tables</folder>
 			<folder>views</folder>
 		</files>
 		<languages folder="admin">
 			<language tag="de-DE">language/de-DE/de-DE.com_payperdownload.ini</language>
+			<language tag="de-DE">language/de-DE/de-DE.com_payperdownload.sys.ini</language>
 			<language tag="en-GB">language/en-GB/en-GB.com_payperdownload.ini</language>
+			<language tag="en-GB">language/en-GB/en-GB.com_payperdownload.sys.ini</language>
 			<language tag="es-ES">language/es-ES/es-ES.com_payperdownload.ini</language>
-<!-- 			<language tag="en-GB">language/en-GB/en-GB.com_payperdownload.sys.ini</language> --><!-- no longer needed because the language folder was added to files -->
-<!-- 			<language tag="es-ES">language/es-ES/es-ES.com_payperdownload.sys.ini</language> -->
+			<language tag="es-ES">language/es-ES/es-ES.com_payperdownload.sys.ini</language>
+			<language tag="fr-FR">language/fr-FR/fr-FR.com_payperdownload.ini</language>
+			<language tag="fr-FR">language/fr-FR/fr-FR.com_payperdownload.sys.ini</language>
+			<language tag="nl-NL">language/nl-NL/nl-NL.com_payperdownload.ini</language>
+			<language tag="nl-NL">language/nl-NL/nl-NL.com_payperdownload.sys.ini</language>
 		</languages>
 	</administration>
+	
 	<files folder="site">
 		<filename>controller.php</filename>
 		<filename>index.html</filename>
@@ -82,12 +94,12 @@
 	</files>
 	<languages folder="site">
 		<language tag="de-DE">language/de-DE/de-DE.com_payperdownload.ini</language>
-		<language tag="de-DE">language/de-DE/de-DE.com_payperdownload.sys.ini</language>
 		<language tag="en-GB">language/en-GB/en-GB.com_payperdownload.ini</language>
-		<language tag="en-GB">language/en-GB/en-GB.com_payperdownload.sys.ini</language>
 		<language tag="es-ES">language/es-ES/es-ES.com_payperdownload.ini</language>
-		<language tag="es-ES">language/es-ES/es-ES.com_payperdownload.sys.ini</language>
+		<language tag="fr-FR">language/fr-FR/fr-FR.com_payperdownload.ini</language>
+		<language tag="nl-NL">language/nl-NL/nl-NL.com_payperdownload.ini</language>
 	</languages>
+	
 	<plugins>
 		<plugin folder="admin/extensions/plugins/content" plugin="paytoreadmore" name="paytoreadmore" group="content" />
 		<plugin folder="admin/extensions/plugins/editors-xtd" plugin="paytoreadmore" name="paytoreadmore" group="editors-xtd" />
@@ -97,7 +109,9 @@
 		<plugin folder="admin/extensions/plugins/payperdownloadplus" plugin="kunena" name="kunena" group="payperdownloadplus" />
 		<plugin folder="admin/extensions/plugins/payperdownloadplus" plugin="jdownload" name="jdownload" group="payperdownloadplus" />
 		<plugin folder="admin/extensions/plugins/payperdownloadplus" plugin="menuitem" name="menuitem" group="payperdownloadplus" />
+<!-- 		<plugin folder="admin/extensions/plugins/payperdownloadplus" plugin="paypalpay" name="paypalpay" group="payperdownloadplus" /> -->
 		<plugin folder="admin/extensions/plugins/system" plugin="payperdownloadplus" name="payperdownloadplus" group="system" />
+		<plugin folder="admin/extensions/plugins/system" plugin="userlicenses" name="userlicenses" group="system" />
 		<plugin folder="admin/extensions/plugins/user" plugin="referer" name="referer" group="user" />
 	</plugins>
 	<updateservers>

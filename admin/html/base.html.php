@@ -162,8 +162,8 @@ class BaseHtmlForm
 		}
 	?>
 		<div class="filter-search btn-group pull-left">
-			<label for="filter_search" class="element-invisible"><?php echo JText::_('PAYPERDOWNLOADPLUS_SEARCH_56');?></label>
-			<input type="text" name="filter_search" id="filter_search" placeholder="<?php echo JText::_('PAYPERDOWNLOADPLUS_SEARCH_56'); ?>" value="<?php echo htmlspecialchars($filters['search']); ?>" title="<?php echo JText::_('PAYPERDOWNLOADPLUS_SEARCH_56'); ?>" />
+			<label for="filter_search" class="element-invisible"><?php echo JText::_('PAYPERDOWNLOADPLUS_SEARCH');?></label>
+			<input type="text" name="filter_search" id="filter_search" placeholder="<?php echo JText::_('PAYPERDOWNLOADPLUS_SEARCH'); ?>" value="<?php echo htmlspecialchars($filters['search']); ?>" title="<?php echo JText::_('PAYPERDOWNLOADPLUS_SEARCH_56'); ?>" />
 		</div>
 		<div class="btn-group pull-left">
 			<button type="submit" class="btn hasTooltip" title="<?php echo JText::_('JSEARCH_FILTER_SUBMIT'); ?>"><i class="icon-search"></i></button>

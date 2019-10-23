@@ -41,9 +41,14 @@ class PPDForm extends BaseForm
 	    JHtmlSidebar::addEntry(JText::_("COM_PAYPERDOWNLOAD_RESOURCES"),
 			"index.php?option=com_payperdownload&adminpage=resources&view=resources",
 			$adminpage == "resources");
+// 	    JHtmlSidebar::addEntry(JText::_("COM_PAYPERDOWNLOAD_LICENSES"),
+// 			"index.php?option=com_payperdownload&adminpage=licenses&view=licenses",
+// 			$adminpage == "licenses");
+
 	    JHtmlSidebar::addEntry(JText::_("COM_PAYPERDOWNLOAD_LICENSES"),
-			"index.php?option=com_payperdownload&adminpage=licenses&view=licenses",
-			$adminpage == "licenses");
+	        "index.php?option=com_payperdownload&view=licenses",
+	        $adminpage == "licenses");
+
 	    JHtmlSidebar::addEntry(JText::_("COM_PAYPERDOWNLOAD_USERS_LICENCES"),
 			"index.php?option=com_payperdownload&adminpage=users&view=users",
 			$adminpage == "users");
@@ -60,11 +65,11 @@ class PPDForm extends BaseForm
 			"index.php?option=com_payperdownload&adminpage=backup&view=backup",
 		    $adminpage == "backup");
 
-		if ($debug) {
+		//if ($debug) {
 		    JHtmlSidebar::addEntry(JText::_('COM_PAYPERDOWNLOAD_DEBUG'),
 		        "index.php?option=com_payperdownload&adminpage=debug&view=debug",
 		        $adminpage == "debug");
-		}
+		//}
 
 		JHtmlSidebar::addEntry(JText::_("COM_PAYPERDOWNLOAD_CONFIGURATION"),
 		    "index.php?option=com_payperdownload&adminpage=config&view=config",
@@ -105,59 +110,71 @@ class PPDForm extends BaseForm
 		return $db->loadResult();
 	}
 
+	/*
+	 * duplicated in helpers/html/payperdownload.php for new views
+	 */
 	function showHints()
 	{
-	    $adminpage = JFactory::getApplication()->input->getString("adminpage");
+	    $new_config = JComponentHelper::getParams('com_payperdownload');
+	    $show_hints = $new_config->get('show_hints', 1);
+
+	    if (!$show_hints) {
+	        return;
+	    }
+
 		$db = JFactory::getDBO();
-		$query = "SELECT config_id, show_hints, paypalaccount, usepaypal, usepayplugin, paymentnotificationemail, notificationsubject, alphapoints FROM #__payperdownloadplus_config";
+		$query = "SELECT config_id, paypalaccount, usepaypal, usepayplugin, paymentnotificationemail, notificationsubject, alphapoints FROM #__payperdownloadplus_config";
 		$db->setQuery( $query, 0, 1 );
-		$config = $db->loadObject();
-		if($config != null && !$config->show_hints)
-			return;
+
+		try {
+		    $config = $db->loadObject();
+		} catch (RuntimeException $e) {
+		    return;
+		}
+
+		$adminpage = JFactory::getApplication()->input->getString("view");
+
+		$header = ''; //'<strong>' . htmlspecialchars(JText::_("PAYPERDOWNLOADPLUS_HINT")) . ': </strong>';
+
 		$searchMoreHints = false;
 		if($config == null || !preg_match("/^\s*\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*\s*$/", $config->paypalaccount))
 		{
-			//echo "<strong>" . htmlspecialchars(JText::_("PAYPERDOWNLOADPLUS_HINT")) . "</strong>";
 		    $hint = htmlspecialchars(JText::_("PAYPERDOWNLOADPLUS_HINT_PAYPAL"));
 			if($adminpage != "config")
 			    $hint .= "<br/>" . htmlspecialchars(JText::_("PAYPERDOWNLOADPLUS_HINT_CLICK_CONFIGURATION"));
 
-			JFactory::getApplication()->enqueueMessage($hint, JText::_("PAYPERDOWNLOADPLUS_HINT"));
+			JFactory::getApplication()->enqueueMessage($header . $hint, JText::_("PAYPERDOWNLOADPLUS_HINT"));
 		}
 		else if(!$config->usepaypal && !$config->usepayplugin)
 		{
-			//echo "<strong>" . htmlspecialchars(JText::_("PAYPERDOWNLOADPLUS_HINT")) . "</strong>";
 		    $hint = htmlspecialchars(JText::_("PAYPERDOWNLOADPLUS_HINT_USE_PAYPAL"));
 			if($adminpage != "config")
 			    $hint .= "<br/>" . htmlspecialchars(JText::_("PAYPERDOWNLOADPLUS_HINT_CLICK_CONFIGURATION"));
 
-			JFactory::getApplication()->enqueueMessage($hint, JText::_("PAYPERDOWNLOADPLUS_HINT"));
+			JFactory::getApplication()->enqueueMessage($header . $hint, JText::_("PAYPERDOWNLOADPLUS_HINT"));
 		}
 		else if($config->alphapoints != 0)
 		{
 			if(!$this->isAlphaUserPointsInstalled())
 			{
-				//echo "<strong>" . htmlspecialchars(JText::_("PAYPERDOWNLOADPLUS_HINT")) . "</strong>";
 			    $hint = htmlspecialchars(JText::_("PAYPERDOWNLOADPLUS_HINT_AUP_SETUP"));
 			    $hint .= "<br/><a href=\"http://www.alphaplug.com/\">" . htmlspecialchars(JText::_("PAYPERDOWNLOADPLUS_HINT_AUP_DOWNLOAD")) . "</a>";
 
-				JFactory::getApplication()->enqueueMessage($hint, JText::_("PAYPERDOWNLOADPLUS_HINT"));
+				JFactory::getApplication()->enqueueMessage($header . $hint, JText::_("PAYPERDOWNLOADPLUS_HINT"));
 			}
 			else if(!$this->isAlphaRuleInstalled())
 			{
-				//echo "<strong>" . htmlspecialchars(JText::_("PAYPERDOWNLOADPLUS_HINT")) . "</strong>";
 			    $hint = htmlspecialchars(JText::_("PAYPERDOWNLOADPLUS_HINT_AUP_RULE_SETUP"));
 			    $hint .= "<br/><a href=\"components/com_payperdownload/extensions/plugins/aup/aup_ppd.zip\">" . htmlspecialchars(JText::_("PAYPERDOWNLOADPLUS_HINT_AUP_RULE_DOWNLOAD")) . "</a>";
 
-				JFactory::getApplication()->enqueueMessage($hint, JText::_("PAYPERDOWNLOADPLUS_HINT"));
+				JFactory::getApplication()->enqueueMessage($header . $hint, JText::_("PAYPERDOWNLOADPLUS_HINT"));
 			}
 			else if(!$this->isAlphaRuleEnable())
 			{
-				//echo "<strong>" . htmlspecialchars(JText::_("PAYPERDOWNLOADPLUS_HINT")) . "</strong>";
 			    $hint = htmlspecialchars(JText::_("PAYPERDOWNLOADPLUS_HINT_AUP_RULE_ENABLE"));
 			    $hint .= "<br/><a href=\"index.php?option=com_alphauserpoints&task=rules\">" . htmlspecialchars(JText::_("PAYPERDOWNLOADPLUS_HINT_AUP_ENABLE")) . "</a>";
 
-				JFactory::getApplication()->enqueueMessage($hint, JText::_("PAYPERDOWNLOADPLUS_HINT"));
+				JFactory::getApplication()->enqueueMessage($header . $hint, JText::_("PAYPERDOWNLOADPLUS_HINT"));
 			}
 			else
 			{
@@ -177,21 +194,19 @@ class PPDForm extends BaseForm
 			$licenses = (int)$db->loadResult();
 			if($licenses == 0 && $resources == 0)
 			{
-				//echo "<strong>" . htmlspecialchars(JText::_("PAYPERDOWNLOADPLUS_HINT")) . "</strong>";
 			    $hint = htmlspecialchars(JText::_("PAYPERDOWNLOADPLUS_HINT_RESOURCES_AND_LICENSES"));
 				if($adminpage != "licenses" && $adminpage != "resources" && $adminpage != "")
 				    $hint .= "<br/>" . htmlspecialchars(JText::_("PAYPERDOWNLOADPLUS_HINT_CLICK_LICENSES_OR_RESOURCES"));
 
-                JFactory::getApplication()->enqueueMessage($hint, JText::_("PAYPERDOWNLOADPLUS_HINT"));
+                JFactory::getApplication()->enqueueMessage($header . $hint, JText::_("PAYPERDOWNLOADPLUS_HINT"));
 			}
 			else if($resources == 0)
 			{
-				//echo "<strong>" . htmlspecialchars(JText::_("PAYPERDOWNLOADPLUS_HINT")) . "</strong>";
 			    $hint = htmlspecialchars(JText::_("PAYPERDOWNLOADPLUS_HINT_RESOURCES"));
 				if($adminpage != "resources" && $adminpage != "")
 				    $hint .= "<br/>" . htmlspecialchars(JText::_("PAYPERDOWNLOADPLUS_HINT_CLICK_RESOURCES"));
 
-				JFactory::getApplication()->enqueueMessage($hint, JText::_("PAYPERDOWNLOADPLUS_HINT"));
+				JFactory::getApplication()->enqueueMessage($header . $hint, JText::_("PAYPERDOWNLOADPLUS_HINT"));
 			}
 			else
 			{
@@ -201,29 +216,26 @@ class PPDForm extends BaseForm
 					if(!preg_match("/^\s*\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*\s*(;\s*\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*\s*)*$/", $config->paymentnotificationemail))
 					{
 					    $hint = $config->paymentnotificationemail;
-						//echo "<strong>" . htmlspecialchars(JText::_("PAYPERDOWNLOADPLUS_HINT")) . "</strong>";
 					    $hint .= htmlspecialchars(JText::_("PAYPERDOWNLOADPLUS_HINT_NOTIFICATION"));
 					    $hint .= "<br/>" . htmlspecialchars(JText::_("PAYPERDOWNLOADPLUS_HINT_CLICK_CONFIGURATION_NOTIFICATION"));
 
-						JFactory::getApplication()->enqueueMessage($hint, JText::_("PAYPERDOWNLOADPLUS_HINT"));
+						JFactory::getApplication()->enqueueMessage($header . $hint, JText::_("PAYPERDOWNLOADPLUS_HINT"));
 					}
 					else if($config->notificationsubject == "")
 					{
-						//echo "<strong>" . htmlspecialchars(JText::_("PAYPERDOWNLOADPLUS_HINT")) . "</strong>";
 					    $hint = htmlspecialchars(JText::_("PAYPERDOWNLOADPLUS_HINT_NOTIFICATION_SUBJECT"));
 					    $hint .= "<br/>" . htmlspecialchars(JText::_("PAYPERDOWNLOADPLUS_HINT_CLICK_CONFIGURATION_NOTIFICATION"));
 
-						JFactory::getApplication()->enqueueMessage($hint, JText::_("PAYPERDOWNLOADPLUS_HINT"));
+						JFactory::getApplication()->enqueueMessage($header . $hint, JText::_("PAYPERDOWNLOADPLUS_HINT"));
 					}
 				}
 				else
 				{
 					$text = "PAYPERDOWNLOADPLUS_RAND_HINT_" . $r;
 					$text = JText::_($text);
-					//echo "<strong>" . htmlspecialchars(JText::_("PAYPERDOWNLOADPLUS_HINT")) . "</strong>";
 					$hint = htmlspecialchars($text);
 
-					JFactory::getApplication()->enqueueMessage($hint, JText::_("PAYPERDOWNLOADPLUS_HINT"));
+					JFactory::getApplication()->enqueueMessage($header . $hint, JText::_("PAYPERDOWNLOADPLUS_HINT"));
 				}
 			}
 		}

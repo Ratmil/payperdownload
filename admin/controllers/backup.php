@@ -222,6 +222,7 @@ class BackupForm extends PPDForm
 	function createToolbar($task, $option)
 	{
 		JHTML::_('stylesheet', 'administrator/components/'. $option . '/css/backend.css');
+
 		JToolBarHelper::title( JText::_( 'COM_PAYPERDOWNLOAD_BACKUP_TITLE' ), 'database' );
 	}
 }

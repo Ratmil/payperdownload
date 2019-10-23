@@ -56,7 +56,7 @@ class ResourcesForm extends PPDForm
 			$this->dataBindModel->setKeyField("resource_license_id");
 			$this->dataBindModel->setTableName("#__payperdownloadplus_resource_licenses");
 
-			$bind = new VisualDataBind('resource_id', JText::_('PAYPERDOWNLOADPLUS_RESOURCE_120'));
+			$bind = new VisualDataBind('resource_id', JText::_('PAYPERDOWNLOADPLUS_RESOURCE'));
 			$bind->disabledEdit = true;
 			$bind->useForFilter = false;
 			$bind->showInGrid = false;
@@ -74,7 +74,7 @@ class ResourcesForm extends PPDForm
 			$bind->setColumnWidth(20);
 			$this->dataBindModel->addDataBind( $bind );
 
-			$bind = new VisualDataBind('resource_description', JText::_('PAYPERDOWNLOADPLUS_DESCRIPTION_123'));
+			$bind = new VisualDataBind('resource_description', JText::_('PAYPERDOWNLOADPLUS_DESCRIPTION'));
 			$bind->setColumnWidth(25);
 			$this->dataBindModel->addDataBind( $bind );
 
@@ -83,7 +83,7 @@ class ResourcesForm extends PPDForm
 			$bind->allowBlank = true;
 			$this->dataBindModel->addDataBind( $bind );
 
-			$bind = new ComboVisualDataBind('license_id', JText::_('PAYPERDOWNLOADPLUS_LICENSE_125'),
+			$bind = new ComboVisualDataBind('license_id', JText::_('PAYPERDOWNLOADPLUS_LICENSE'),
 				'#__payperdownloadplus_licenses', 'license_id', 'license_name');
 			$bind->setColumnWidth(25);
 			$bind->showInEditForm = false;
@@ -114,7 +114,7 @@ class ResourcesForm extends PPDForm
 			$bind->setEditToolTip(JText::_("PAYPERDOWNLOADPLUS_MAX_DOWNLOAD_COUNT_DESC"));
 			$this->dataBindModel->addDataBind( $bind );
 
-			$bind = new RadioVisualDataBind('enabled', JText::_('PAYPERDOWNLOADPLUS_RESOURCE_ENABLED'));
+			$bind = new RadioVisualDataBind('enabled', JText::_('JENABLED'));
 			$bind->setEditToolTip(JText::_("PAYPERDOWNLOADPLUS_RESOURCE_ENABLED_DESC"));
 			$bind->defaultValue = 1;
 			$bind->setColumnWidth(5);
@@ -424,7 +424,7 @@ class ResourcesForm extends PPDForm
 				JToolBarHelper::cancel();
 			break;
 			case 'newresource':
-				JToolBarHelper::custom('acceptnewresourcetype', 'forward', '', JText::_("PAYPERDOWNLOADPLUS_NEXT_130"), false);
+				JToolBarHelper::custom('acceptnewresourcetype', 'forward', '', JText::_("JNEXT"), false);
 				JToolBarHelper::cancel();
 				break;
 			case 'acceptnewresourcetype':
@@ -454,13 +454,13 @@ class ResourcesForm extends PPDForm
 				license_id, resource_id, resource_name, resource_description,
 				alternate_resource_description, resource_type, resource_option_parameter,
 				resource_params, resource_price, resource_price_currency, download_expiration,
-				max_download, shared
+				max_download, payment_header, shared, enabled
 			)
 			SELECT
 			license_id, resource_id, CONCAT(resource_name, ' - " . $db->escape($copy_suffix) . "'),
 			resource_description, alternate_resource_description, resource_type,
 			resource_option_parameter, resource_params, resource_price, resource_price_currency,
-			download_expiration, max_download, shared
+			download_expiration, max_download, payment_header, shared, 0
 			FROM #__payperdownloadplus_resource_licenses
 			WHERE resource_license_id = $id
 			");

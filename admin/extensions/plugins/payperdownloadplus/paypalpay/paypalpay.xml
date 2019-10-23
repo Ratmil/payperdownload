@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<extension version="3.1" type="plugin" group="payperdownloadplus" method="upgrade">
+	<name>PLG_PAYPERDOWNLOADPLUS_PAYPALPAY</name>
+	<author>Olivier Buisard</author>
+	<creationDate>September 2019</creationDate>
+	<copyright>Copyright (C) 2011 Simplify Your Web. All rights reserved.</copyright>
+	<license>GNU General Public License version 3 or later</license>
+	<authorEmail>olivier.buisard@simplifyyourweb.com</authorEmail>
+	<authorUrl>www.simplifyyourweb.com</authorUrl>
+	<version>1.0.0</version>
+	<description>PLG_PAYPERDOWNLOADPLUS_PAYPALPAY_XML_DESCRIPTION</description>
+	<files>
+		<filename plugin="paypalpay">paypalpay.php</filename>
+		<filename>index.html</filename>
+		<filename>license.txt</filename>
+		<folder>images</folder>
+		<folder>tmpl</folder>
+	</files>
+	<languages>
+		<language tag="en-GB">en-GB.plg_payperdownloadplus_paypalpay.ini</language>
+		<language tag="en-GB">en-GB.plg_payperdownloadplus_paypalpay.sys.ini</language>
+	</languages>
+	<config>
+		<fields name="params">
+			<fieldset name="basic">
+			
+				<field name="test_mode" type="radio" default="0" class="btn-group" 
+	            	label="PLG_PAYPERDOWNLOADPLUS_PAYPALPAY_TESTMODE" 
+	            	description="PLG_PAYPERDOWNLOADPLUS_PAYPALPAY_TESTMODE_DESC">
+	                <option value="0">JNO</option>
+	                <option value="1">JYES</option>
+	            </field>
+	            
+	            <field name="use_simulator" type="radio" default="0" class="btn-group" 
+	            	label="PLG_PAYPERDOWNLOADPLUS_PAYPALPAY_SIMULATOR" 
+	            	description="PLG_PAYPERDOWNLOADPLUS_PAYPALPAY_SIMULATOR_DESC">
+	                <option value="0">JNO</option>
+	                <option value="1">JYES</option>
+	            </field>
+					
+				<field name="paypal_account" type="text" size="80" default="" validate="email" class="input-xxlarge" 
+					label="PLG_PAYPERDOWNLOADPLUS_PAYPALPAY_PAYPALACCOUNT_EMAIL" 
+					description="PLG_PAYPERDOWNLOADPLUS_PAYPALPAY_PAYPALACCOUNT_DESC"/>
+			
+				<field name="spacer_styling" type="spacer" hr="true" />
+				
+				<field name="btn_classes" type="text" default=""
+					label="PLG_PAYPERDOWNLOADPLUS_PAYPALPAY_BUTTONCLASSES"
+					description="PLG_PAYPERDOWNLOADPLUS_PAYPALPAY_BUTTONCLASSES_DESC" />
+					
+				<field name="btn_image" type="imagelist" default="0" directory="plugins/payperdownloadplus/paypalpay/images" 
+					label="PLG_PAYPERDOWNLOADPLUS_PAYPALPAY_BUTTONIMAGE" 
+					description="PLG_PAYPERDOWNLOADPLUS_PAYPALPAY_BUTTONIMAGE_DESC" />		
+			</fieldset>
+		</fields>
+	</config>
+</extension>

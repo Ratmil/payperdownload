@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form>
+    <fields name="filter">
+        <field name="search" type="text" hint="COM_PAYPERDOWNLOAD_HINT_SEARCH" class="js-stools-search-string"
+			label="COM_PAYPERDOWNLOAD_FILTER_SEARCH" 
+		/>
+
+		<field name="state" type="list" onchange="this.form.submit();"
+			label="COM_PAYPERDOWNLOAD_FILTER_STATE">
+            <option value="">COM_PAYPERDOWNLOAD_FILTER_STATE</option>
+            <option value="0">JDISABLED</option>
+            <option value="1">JENABLED</option>
+        </field>
+    </fields>
+    <fields name="list">
+        <field name="fullordering" type="list" default="a.license_id ASC" onchange="this.form.submit();"
+               label="COM_CONTENT_LIST_FULL_ORDERING"
+               description="COM_CONTENT_LIST_FULL_ORDERING_DESC">
+            <option value="">JGLOBAL_SORT_BY</option>
+            <option value="a.license_id ASC">COM_PAYPERDOWNLOAD_FIELD_ID_ASC</option>
+            <option value="a.license_id DESC">COM_PAYPERDOWNLOAD_FIELD_ID_DESC</option>
+            <option value="a.license_name ASC">COM_PAYPERDOWNLOAD_FIELD_LICENSENAME_ASC</option>
+            <option value="a.license_name DESC">COM_PAYPERDOWNLOAD_FIELD_LICENSENAME_DESC</option>
+            <option value="a.member_title ASC">COM_PAYPERDOWNLOAD_FIELD_MEMBERTITLE_ASC</option>
+            <option value="a.member_title DESC">COM_PAYPERDOWNLOAD_FIELD_MEMBERTITLE_DESC</option>
+            <option value="a.expiration ASC">COM_PAYPERDOWNLOAD_FIELD_EXPIRATION_ASC</option>
+            <option value="a.expiration DESC">COM_PAYPERDOWNLOAD_FIELD_EXPIRATION_DESC</option>
+            <option value="a.price ASC">COM_PAYPERDOWNLOAD_FIELD_PRICE_ASC</option>
+            <option value="a.price DESC">COM_PAYPERDOWNLOAD_FIELD_PRICE_DESC</option>
+            <option value="a.currency_code ASC">COM_PAYPERDOWNLOAD_FIELD_CURRENCYCODE_ASC</option>
+            <option value="a.currency_code DESC">COM_PAYPERDOWNLOAD_FIELD_CURRENCYCODE_DESC</option>
+            <option value="a.level ASC">COM_PAYPERDOWNLOAD_FIELD_LEVEL_ASC</option>
+            <option value="a.level DESC">COM_PAYPERDOWNLOAD_FIELD_LEVEL_DESC</option>
+<!--             <option value="a.created_by ASC">Created by Ascending</option> -->
+<!--             <option value="a.created_by DESC">Created by Descending</option> -->
+			<option value="a.enabled ASC">COM_PAYPERDOWNLOAD_FIELD_ENABLED_ASC</option>
+            <option value="a.enabled DESC">COM_PAYPERDOWNLOAD_FIELD_ENABLED_DESC</option>
+            <option value="a.max_download ASC">COM_PAYPERDOWNLOAD_FIELD_MAXDOWNLOAD_ASC</option>
+            <option value="a.max_download DESC">COM_PAYPERDOWNLOAD_FIELD_MAXDOWNLOAD_DESC</option>
+        </field>
+
+        <field name="limit" type="limitbox" class="input-mini" default="25" onchange="this.form.submit();" />
+    </fields>
+</form>

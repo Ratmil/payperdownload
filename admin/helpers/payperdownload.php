@@ -13,6 +13,12 @@ jimport('joomla.filesystem.folder');
  */
 class PayParDownloadHelper
 {
+    /**
+     * @var    JObject  A cache for the available actions.
+     * @since  1.6
+     */
+    protected static $actions;
+
 	/**
 	 * Configure the Linkbar
 	 *
@@ -36,9 +42,15 @@ class PayParDownloadHelper
 		    $vName == 'resources'
 		    );
 
+// 		JHtmlSidebar::addEntry(
+// 		  JText::_ ('COM_PAYPERDOWNLOAD_LICENSES'),
+// 		    'index.php?option=com_payperdownload&amp;adminpage=licenses&amp;view=licenses', 'icon-grid',
+// 		    $vName == 'licenses'
+// 		    );
+
 		JHtmlSidebar::addEntry(
-		  JText::_ ('COM_PAYPERDOWNLOAD_LICENSES'),
-		    'index.php?option=com_payperdownload&amp;adminpage=licenses&amp;view=licenses', 'icon-grid',
+		    JText::_ ('COM_PAYPERDOWNLOAD_LICENSES'),
+		    'index.php?option=com_payperdownload&amp;view=licenses',
 		    $vName == 'licenses'
 		    );
 
@@ -72,13 +84,13 @@ class PayParDownloadHelper
             $vName == 'backup'
             );
 
-        if ($debug) {
+        //if ($debug) {
             JHtmlSidebar::addEntry(
                 JText::_('COM_PAYPERDOWNLOAD_DEBUG'),
                 'index.php?option=com_payperdownload&amp;adminpage=debug&amp;view=debug', 'icon-wrench',
                 $vName == 'debug'
                 );
-        }
+        //}
 
         JHtmlSidebar::addEntry(
             JText::_ ('COM_PAYPERDOWNLOAD_CONFIGURATION'),
@@ -94,20 +106,35 @@ class PayParDownloadHelper
 	 */
 	public static function getActions()
 	{
-		$user = JFactory::getUser();
-		$result = new JObject;
+// 		$user = JFactory::getUser();
+// 		$result = new JObject;
 
-		$assetName = 'com_payperdownload';
+// 		$assetName = 'com_payperdownload';
 
-		$actions = array(
-			'core.admin', 'core.manage'
-		);
+// 		$actions = array(
+// 			'core.admin', 'core.manage'
+// 		);
 
-		foreach ($actions as $action) {
-			$result->set($action, $user->authorise($action, $assetName));
+// 		foreach ($actions as $action) {
+// 			$result->set($action, $user->authorise($action, $assetName));
+// 		}
+
+// 		return $result;
+
+		if (empty(self::$actions))
+		{
+		    $user = JFactory::getUser();
+		    self::$actions = new JObject;
+
+		    $actions = JAccess::getActions('com_payperdownload');
+
+		    foreach ($actions as $action)
+		    {
+		        self::$actions->set($action->name, $user->authorise($action->name, 'com_payperdownload'));
+		    }
 		}
 
-		return $result;
+		return self::$actions;
 	}
 
 }

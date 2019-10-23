@@ -4,274 +4,274 @@
  * @author Ratmil Torres
  * @copyright (C) Ratmil Torres
  * @license GNU/GPL http://www.gnu.org/copyleft/gpl.html
-**/
+ **/
 
 // no direct access
 defined ( '_JEXEC' ) or die;
 
 /**
-This class represents an element on the admin form.
-An object of this class defines how a table field will be listed and edited.
-The base class will use an input control of type text to edit elements.
-*/
+ This class represents an element on the admin form.
+ An object of this class defines how a table field will be listed and edited.
+ The base class will use an input control of type text to edit elements.
+ */
 class VisualDataBind extends JObject
 {
-	var $dataField;
-	var $displayName;
-	var $size;
-	var $maxLength;
-	var $minLength;
-	var $allowBlank;
-	var $regExp;
-	var $lines;
-	var $isEditLink;
-	var $columnWidth;
-	var $maxGridCellLength;
-	var $showInGrid;
-	var $showInEditForm;
-	var $showInInsertForm;
-	var $editLinkText;
-	var $sourceTable;
-	var $ignoreToSelect;
-	var $ignoreToBind;
-	var $htmlProperties;
-	var $onRenderJavascriptRoutine;
-	var $defaultValue;
-	var $disabled;
-	var $disabledEdit;
-	var $gridToolTip;
-	var $editToolTip;
-	var $editRemarkToolTip;
-	var $useForTextSearch;
-	var $useForFilter;
-	var $requiredMark;
-	var $linkTask;
-	var $extraValidateScript;
+    var $dataField;
+    var $displayName;
+    var $size;
+    var $maxLength;
+    var $minLength;
+    var $allowBlank;
+    var $regExp;
+    var $lines;
+    var $isEditLink;
+    var $columnWidth;
+    var $maxGridCellLength;
+    var $showInGrid;
+    var $showInEditForm;
+    var $showInInsertForm;
+    var $editLinkText;
+    var $sourceTable;
+    var $ignoreToSelect;
+    var $ignoreToBind;
+    var $htmlProperties;
+    var $onRenderJavascriptRoutine;
+    var $defaultValue;
+    var $disabled;
+    var $disabledEdit;
+    var $gridToolTip;
+    var $editToolTip;
+    var $editRemarkToolTip;
+    var $useForTextSearch;
+    var $useForFilter;
+    var $requiredMark;
+    var $linkTask;
+    var $extraValidateScript;
 
-	/**
-	Class constructor
-	$dataField      : The field of the table that will edited
-	$displayName  : Text that will show for this element
-	*/
-	function __construct($dataField, $displayName)
-	{
-		$this->dataField = $dataField;
-		$this->displayName = $displayName;
-		$this->size = 40;
-		$this->maxLength = 0;
-		$this->minLength = 0;
-		$this->lines = 1;
-		$this->regExp = null;
-		$this->isEditLink = false;
-		$this->columnWidth = 30;
-		$this->maxGridCellLength = 0;
-		$this->showInGrid = true;
-		$this->editLinkText = JText::_("PAYPERDOWNLOADPLUS_EDIT_31");
-		$this->ignoreToSelect = false;
-		$this->ignoreToBind = false;
-		$this->sourceTable = "";
-		$this->allowBlank = false;
-		$this->htmlProperties = null;
-		$this->onRenderJavascriptRoutine = null;
-		$this->defaultValue = null;
-		$this->disabled = false;
-		$this->disabledEdit = false;
-		$this->showInEditForm = true;
-		$this->showInInsertForm = true;
-		$this->gridToolTip = null;
-		$this->editToolTip = null;
-		$this->useForTextSearch = true;
-		$this->useForFilter = false;
-		$this->editRemarkToolTip = "";
-		$this->linkTask = "edit";
-		$this->requiredWord = JText::_('PAYPERDOWNLOADPLUS_REQUIRED_32');
-		$this->requiredMark = "&nbsp;&nbsp;<font color=\"#ff0000\" size=\"2\">*</font>";
-	}
+    /**
+     Class constructor
+     $dataField      : The field of the table that will edited
+     $displayName  : Text that will show for this element
+     */
+    function __construct($dataField, $displayName)
+    {
+        $this->dataField = $dataField;
+        $this->displayName = $displayName;
+        $this->size = 40;
+        $this->maxLength = 0;
+        $this->minLength = 0;
+        $this->lines = 1;
+        $this->regExp = null;
+        $this->isEditLink = false;
+        $this->columnWidth = 30;
+        $this->maxGridCellLength = 0;
+        $this->showInGrid = true;
+        $this->editLinkText = JText::_("JACTION_EDIT");
+        $this->ignoreToSelect = false;
+        $this->ignoreToBind = false;
+        $this->sourceTable = "";
+        $this->allowBlank = false;
+        $this->htmlProperties = null;
+        $this->onRenderJavascriptRoutine = null;
+        $this->defaultValue = null;
+        $this->disabled = false;
+        $this->disabledEdit = false;
+        $this->showInEditForm = true;
+        $this->showInInsertForm = true;
+        $this->gridToolTip = null;
+        $this->editToolTip = null;
+        $this->useForTextSearch = true;
+        $this->useForFilter = false;
+        $this->editRemarkToolTip = "";
+        $this->linkTask = "edit";
+        $this->requiredWord = JText::_('PAYPERDOWNLOADPLUS_REQUIRED');
+        $this->requiredMark = '&nbsp;&nbsp;<span style="color: #ff0000">*</span>';
+    }
 
-	/**
-	Returns the table field this elements gets its data from
-	*/
-	function getDataField()
-	{
-		return $this->dataField;
-	}
+    /**
+     Returns the table field this elements gets its data from
+     */
+    function getDataField()
+    {
+        return $this->dataField;
+    }
 
-	/**
-	Returns if this element is an aggregate, a sum or something like it.
-	*/
-	function isAggregate()
-	{
-		return false;
-	}
+    /**
+     Returns if this element is an aggregate, a sum or something like it.
+     */
+    function isAggregate()
+    {
+        return false;
+    }
 
-	/**
-	Returns the piece of query that will be included in the select to load all elements
-	*/
-	function getSelectField()
-	{
-		return $this->sourceTable . "." . $this->dataField;
-	}
+    /**
+     Returns the piece of query that will be included in the select to load all elements
+     */
+    function getSelectField()
+    {
+        return $this->sourceTable . "." . $this->dataField;
+    }
 
-	/**
-	Returns an extra table required for the query
-	*/
-	function getExtraSelectTable()
-	{
-		return "";
-	}
+    /**
+     Returns an extra table required for the query
+     */
+    function getExtraSelectTable()
+    {
+        return "";
+    }
 
-	/**
-	Returns a piece of query that will go to the where clause to filter the elements base on the text entered on the search input
-	*/
-	function getSearchCondition($text)
-	{
-		$db = JFactory::getDBO();
-		return $this->sourceTable . "." . $this->dataField . " LIKE '%" . $db->escape($text) . "%'";
-	}
+    /**
+     Returns a piece of query that will go to the where clause to filter the elements base on the text entered on the search input
+     */
+    function getSearchCondition($text)
+    {
+        $db = JFactory::getDBO();
+        return $this->sourceTable . "." . $this->dataField . " LIKE '%" . $db->escape($text) . "%'";
+    }
 
-	/**
-	Returns a piece of query that will go to the where clause to filter the elements base on the value of the filter controls
-	*/
-	function getFilterCondition($filters)
-	{
-		return "";
-	}
+    /**
+     Returns a piece of query that will go to the where clause to filter the elements base on the value of the filter controls
+     */
+    function getFilterCondition($filters)
+    {
+        return "";
+    }
 
-	/**
-	Sets the width of the column (in percent units) for this element
-	*/
-	function setColumnWidth($columnWidth)
-	{
-		$this->columnWidth = $columnWidth;
-	}
+    /**
+     Sets the width of the column (in percent units) for this element
+     */
+    function setColumnWidth($columnWidth)
+    {
+        $this->columnWidth = $columnWidth;
+    }
 
-	/**
-	Sets if this element will have an 'a' tag (link)
-	*/
-	function setEditLink($isEditLink)
-	{
-		$this->isEditLink = $isEditLink;
-	}
+    /**
+     Sets if this element will have an 'a' tag (link)
+     */
+    function setEditLink($isEditLink)
+    {
+        $this->isEditLink = $isEditLink;
+    }
 
-	/**
-	Sets the max length for the input control
-	*/
-	function setMaxLength($maxLength)
-	{
-		$this->maxLength = $maxLength;
-	}
+    /**
+     Sets the max length for the input control
+     */
+    function setMaxLength($maxLength)
+    {
+        $this->maxLength = $maxLength;
+    }
 
-	/**
-	Sets the min length for the input control
-	*/
-	function setMinLength($minLength)
-	{
-		$this->minLength = $minLength;
-	}
+    /**
+     Sets the min length for the input control
+     */
+    function setMinLength($minLength)
+    {
+        $this->minLength = $minLength;
+    }
 
-	/**
-	Sets regular expression that will be used to validate the data supplied, in javascript (client side) and PHP (server side)
-	*/
-	function setRegExp($regExp)
-	{
-		$this->regExp = $regExp;
-	}
+    /**
+     Sets regular expression that will be used to validate the data supplied, in javascript (client side) and PHP (server side)
+     */
+    function setRegExp($regExp)
+    {
+        $this->regExp = $regExp;
+    }
 
-	/**
-	If the value supplied is greater that one the input control will be multiline (textarea).
-	*/
-	function setLineCount($lines)
-	{
-		$this->lines = $lines;
-	}
+    /**
+     If the value supplied is greater that one the input control will be multiline (textarea).
+     */
+    function setLineCount($lines)
+    {
+        $this->lines = $lines;
+    }
 
-	/**
-	Sets the table where data will be read from
-	*/
-	function setSourceTable($sourceTable)
-	{
-		$this->sourceTable = $sourceTable;
-	}
+    /**
+     Sets the table where data will be read from
+     */
+    function setSourceTable($sourceTable)
+    {
+        $this->sourceTable = $sourceTable;
+    }
 
-	/**
-	Returns the source table
-	*/
-	function getSourceTable()
-	{
-		return $this->sourceTable;
-	}
+    /**
+     Returns the source table
+     */
+    function getSourceTable()
+    {
+        return $this->sourceTable;
+    }
 
-	/**
-	Executed after data has been loaded
-	*/
-	function onAfterLoad(&$row)
-	{
-	}
+    /**
+     Executed after data has been loaded
+     */
+    function onAfterLoad(&$row)
+    {
+    }
 
-	/**
-	Executed after the property on the JTable object has been created
-	*/
-	function onAfterCreateProperty(&$row)
-	{
-	}
+    /**
+     Executed after the property on the JTable object has been created
+     */
+    function onAfterCreateProperty(&$row)
+    {
+    }
 
-	/**
-	Executed before storing data
-	*/
-	function onBeforeStore(&$row)
-	{
-		return true;
-	}
+    /**
+     Executed before storing data
+     */
+    function onBeforeStore(&$row)
+    {
+        return true;
+    }
 
-	/**
-	Executed after storing data
-	*/
-	function onAfterStore(&$row)
-	{
-		return true;
-	}
+    /**
+     Executed after storing data
+     */
+    function onAfterStore(&$row)
+    {
+        return true;
+    }
 
-	/**
-	Executed before deleting data
-	*/
-	function onBeforeDelete($row, $id)
-	{
-		return true;
-	}
+    /**
+     Executed before deleting data
+     */
+    function onBeforeDelete($row, $id)
+    {
+        return true;
+    }
 
-	/**
-	Executed after deleting data
-	*/
-	function onAfterDelete($row, $id)
-	{
-		return true;
-	}
+    /**
+     Executed after deleting data
+     */
+    function onAfterDelete($row, $id)
+    {
+        return true;
+    }
 
-	/**
-	Executed after binding
-	*/
-	function onAfterBind(&$row, $from)
-	{
-		return true;
-	}
+    /**
+     Executed after binding
+     */
+    function onAfterBind(&$row, $from)
+    {
+        return true;
+    }
 
-	/**
-	Returns field use for ordering
-	*/
-	function getOrderField()
-	{
-		$field = new stdClass();
-		$field->fieldName = $this->dataField;
-		$field->display = $this->displayName;
-		return $field;
-	}
+    /**
+     Returns field use for ordering
+     */
+    function getOrderField()
+    {
+        $field = new stdClass();
+        $field->fieldName = $this->dataField;
+        $field->display = $this->displayName;
+        return $field;
+    }
 
-	/**
-	Renders the heading on the table for the column assigned to this element
-	*/
-	function renderColumnHeading($filters, $rows)
-	{
-	?>
+    /**
+     Renders the heading on the table for the column assigned to this element
+     */
+    function renderColumnHeading($filters, $rows)
+    {
+        ?>
 		<th class="nowrap center hidden-phone" width="<?php echo htmlspecialchars($this->columnWidth); ?>%">
 		<?php echo JHTML::_('grid.sort',  htmlspecialchars($this->displayName), htmlspecialchars($this->dataField), @$filters['order_Dir'], @$filters['order'] ); ?>
 		</th>
@@ -297,10 +297,11 @@ class VisualDataBind extends JObject
 			$data = substr($data, 0, $this->maxGridCellLength) . "...";
 		if($this->isEditLink == 1)
 		{
+		    JHtml::_('bootstrap.tooltip');
 			$gridToolTip = $this->gridToolTip;
 			if(!$gridToolTip)
-				$gridToolTip = JText::_("PAYPERDOWNLOADPLUS_CLICK_TO_EDIT_33") . "::" . $data;
-			echo "<span class=\"editlinktip hasTip\" title=\"".htmlspecialchars($gridToolTip)."\">";
+				$gridToolTip = JText::_("PAYPERDOWNLOADPLUS_CLICKTOEDIT");
+			echo "<span class=\"editlinktip hasTooltip\" title=\"".htmlspecialchars($gridToolTip)."\">";
 			echo "<a href=\"javascript:void(0);\" onclick=\"return listItemTask('cb$rowNumber','{$this->linkTask}')\">";
 			echo htmlspecialchars($data);
 			echo "</a>";
@@ -333,18 +334,16 @@ class VisualDataBind extends JObject
 	*/
 	function renderFieldLabel()
 	{
-		//<li><label id="jform_name-lbl" for="jform_name" class="hasTip required" title="Name::Enter a name for the banner">Name<span class="star">&#160;*</span></label><input type="text" name="jform[name]" id="jform_name" value="Shop 1" class="inputbox required" size="40"/></li>
-
+		//<li><label id="jform_name-lbl" for="jform_name" class="hasPopover required" title="Name::Enter a name for the banner">Name<span class="star">&#160;*</span></label><input type="text" name="jform[name]" id="jform_name" value="Shop 1" class="inputbox required" size="40"/></li>
+	    JHtml::_('bootstrap.popover');
 		$html = "<td width=\"200\" align=\"left\" valign=\"top\" class=\"key\">";
 		if($this->editToolTip)
 		{
-			$html .= "<span class=\"editlinktip hasTip\"
-				title=\"" .
-					htmlspecialchars($this->displayName) . "::" .
-					htmlspecialchars($this->editToolTip) .
-					((!$this->allowBlank)?("<br/><font color=#ff0000>".htmlspecialchars($this->requiredWord)."</font>"):"").
-					(($this->editRemarkToolTip)?("<br/><font color=#0000ff>".htmlspecialchars($this->editRemarkToolTip)."</font>"):"").
-					"\">";
+			$html .= '<span class="editlinktip hasPopover"
+				title="' . htmlspecialchars($this->displayName) .
+				((!$this->allowBlank) ? htmlspecialchars(' <span style="font-size: .8em; color: #ff0000">'.$this->requiredWord.'</span>') : '').
+				(($this->editRemarkToolTip) ? htmlspecialchars(' <span style="color: #0000ff">'.$this->editRemarkToolTip.'</span>') : '').
+				'" data-content="' . htmlspecialchars($this->editToolTip) . '">';
 		}
 		$html .= htmlspecialchars($this->displayName);
 		if(!$this->allowBlank && !$this->disabled)
@@ -448,12 +447,12 @@ class VisualDataBind extends JObject
 		$data = $row->{$this->dataField};
 		if(!$this->allowBlank && $data == "")
 		{
-			$row->setError(JText::_("PAYPERDOWNLOADPLUS_FIELD_CANT_BE_LEFT_EMPTY__34") . $this->displayName);
+			$row->setError(JText::_("PAYPERDOWNLOADPLUS_FIELD_CANT_BE_LEFT_EMPTY") . $this->displayName);
 			return false;
 		}
 		if($this->minLength > 0 && strlen($data) < $this->minLength)
 		{
-			$row->setError(JText::_("PAYPERDOWNLOADPLUS_FIELD_LENGTH_IS_NO_VALID__35") . $this->displayName);
+			$row->setError(JText::_("PAYPERDOWNLOADPLUS_FIELD_LENGTH_IS_NO_VALID") . $this->displayName);
 			return false;
 		}
 		if($this->allowBlank && $data == "")
@@ -462,7 +461,7 @@ class VisualDataBind extends JObject
 		}
 		if($this->regExp != null && preg_match("/^{$this->regExp}$/", $data) == 0)
 		{
-			$row->setError(JText::_("PAYPERDOWNLOADPLUS_THE_VALUE_FOR_THIS_FIELD_IS_NOT_CORRECT__36") . $this->displayName);
+			$row->setError(JText::_("PAYPERDOWNLOADPLUS_THE_VALUE_FOR_THIS_FIELD_IS_NOT_CORRECT") . $this->displayName);
 			return false;
 		}
 		return true;
@@ -479,7 +478,7 @@ class VisualDataBind extends JObject
 		$javascript .= "var var_$dataField = document.getElementById('$dataField');\n";
 		if($this->minLength > 0 || $this->regExp != null || !$this->allowBlank)
 		{
-			$errorText2 = JText::_("PAYPERDOWNLOADPLUS_FIELD_CANT_BE_LEFT_EMPTY__37", true) . $displayName;
+			$errorText2 = JText::_("PAYPERDOWNLOADPLUS_FIELD_CANT_BE_LEFT_EMPTY", true) . $displayName;
 			$javascript .= "var errmsg2$dataField = '$errorText2';\n";
 			if(!$this->allowBlank)
 			{
@@ -491,7 +490,7 @@ class VisualDataBind extends JObject
 			}
 			if($this->minLength > 0)
 			{
-				$errorText1 = JText::_("PAYPERDOWNLOADPLUS_FIELD_LENGTH_IS_NO_VALID__38", true) . $displayName;
+				$errorText1 = JText::_("PAYPERDOWNLOADPLUS_FIELD_LENGTH_IS_NO_VALID", true) . $displayName;
 				$javascript .= "var errmsg1$dataField = '$errorText1';\n";
 				$javascript .= "if(var_$dataField.value.length < " . $this->minLength. ")\n";
 				$javascript .= "{\n";
@@ -509,7 +508,7 @@ class VisualDataBind extends JObject
 			}
 			if($this->regExp != null)
 			{
-				$errorText3 = JText::_("PAYPERDOWNLOADPLUS_THE_VALUE_FOR_THIS_FIELD_IS_NOT_CORRECT__39", true) . $displayName;
+				$errorText3 = JText::_("PAYPERDOWNLOADPLUS_THE_VALUE_FOR_THIS_FIELD_IS_NOT_CORRECT", true) . $displayName;
 				$javascript .= "var errmsg3$dataField = '$errorText3';\n";
 				$javascript .= "var regExp$dataField = /^".$this->regExp."$/;\n";
 				$javascript .= "if($allowBlankCond !regExp$dataField.test(var_$dataField.value))\n";
@@ -582,7 +581,7 @@ class ComboVisualDataBind extends VisualDataBind
 	function __construct($dataField, $displayName, $tableName, $keyField, $displayField)
 	{
 		parent::__construct($dataField, $displayName);
-		$this->firstItem = JText::_("PAYPERDOWNLOADPLUS_SELECT_40");
+		$this->firstItem = JText::_("PAYPERDOWNLOADPLUS_BOX_SELECT");
 		$this->displayField = $displayField;
 		$this->tableName = $tableName;
 		$this->keyField = $keyField;
@@ -859,7 +858,7 @@ class ComboVisualDataBind extends VisualDataBind
 		$data = $row->{$this->dataField};
 		if(!$this->allowBlank && $data == "")
 		{
-			$row->setError(JText::_("PAYPERDOWNLOADPLUS_YOU_MUST_SELECT_THIS_FIELD__41") . $this->displayName);
+			$row->setError(JText::_("PAYPERDOWNLOADPLUS_YOU_MUST_SELECT_THIS_FIELD") . $this->displayName);
 			return false;
 		}
 		return true;
@@ -876,7 +875,7 @@ class ComboVisualDataBind extends VisualDataBind
 		if(!$this->allowBlank)
 		{
 			$displayName = addslashes($this->displayName);
-			$errorText = JText::_("PAYPERDOWNLOADPLUS_YOU_MUST_SELECT_THIS_FIELD__42", true) . $displayName;
+			$errorText = JText::_("PAYPERDOWNLOADPLUS_YOU_MUST_SELECT_THIS_FIELD", true) . $displayName;
 			$javascript .= "var errmsg$dataField = '$errorText';\n";
 			$javascript .= "if($dataField.value == '')\n";
 			$javascript .= "{\n";
@@ -921,7 +920,7 @@ class RadioVisualDataBind extends VisualDataBind
 	*/
 	function getData($row)
 	{
-		return ($row->{$this->dataField}== 0) ? JText::_("PAYPERDOWNLOADPLUS_NO_43") : JText::_("PAYPERDOWNLOADPLUS_YES_44");
+		return ($row->{$this->dataField}== 0) ? JText::_("JNO") : JText::_("JYES");
 	}
 
 	/**
@@ -970,7 +969,7 @@ class RadioVisualDataBind extends VisualDataBind
 		$html = "<tr>" . $this->renderFieldLabel() . "<td>";
 		if($this->disabled)
 		{
-			$data = ($this->defaultValue == 0) ? JText::_("PAYPERDOWNLOADPLUS_NO_45") : JText::_("PAYPERDOWNLOADPLUS_YES_46");
+			$data = ($this->defaultValue == 0) ? JText::_("JNO") : JText::_("JYES");
 			$html .= htmlspecialchars($data);
 		}
 		else
@@ -998,7 +997,7 @@ class RadioVisualDataBind extends VisualDataBind
 		$html = "<tr>" . $this->renderFieldLabel() . "<td>";
 		if($this->disabled || $this->disabledEdit)
 		{
-			$data = ($row->{$this->dataField} == 0) ? JText::_("PAYPERDOWNLOADPLUS_NO_47") : JText::_("PAYPERDOWNLOADPLUS_YES_48");
+			$data = ($row->{$this->dataField} == 0) ? JText::_("JNO") : JText::_("JYES");
 			$html .= htmlspecialchars($data);
 		}
 		else
@@ -1141,16 +1140,16 @@ class OrderVisualDataBind extends VisualDataBind
 	{
 	?>
 	<span>
-	<a href="#reorder" onclick="return listItemTask('cb<?php echo $rowNumber?>', 'orderup');" alt="<?php echo JText::_("PAYPERDOWNLOADPLUS_MOVER_ARRIBA_49");?>">
-	<img src="<?php echo $root;?>administrator/images/uparrow.png" width="16" height="16" border="0" alt="<?php echo JText::_("PAYPERDOWNLOADPLUS_MOVER_ARRIBA_50");?>"/>
+	<a href="#reorder" onclick="return listItemTask('cb<?php echo $rowNumber?>', 'orderup');" alt="<?php echo JText::_("PAYPERDOWNLOADPLUS_MOVEUP");?>">
+	<img src="<?php echo $root;?>administrator/images/uparrow.png" width="16" height="16" border="0" alt="<?php echo JText::_("PAYPERDOWNLOADPLUS_MOVEUP");?>"/>
 	</a>
 	</span>
 	<?php
 	}
 	?>
 	<span>
-	<a href="#reorder" onclick="return listItemTask('cb<?php echo $rowNumber?>', 'orderdown');" alt="<?php echo JText::_("PAYPERDOWNLOADPLUS_MOVER_ABAJO_51");?>">
-	<img src="<?php echo $root;?>administrator/images/downarrow.png" width="16" height="16" border="0" alt="<?php echo JText::_("PAYPERDOWNLOADPLUS_MOVER_ABAJO_52");?>"/>
+	<a href="#reorder" onclick="return listItemTask('cb<?php echo $rowNumber?>', 'orderdown');" alt="<?php echo JText::_("PAYPERDOWNLOADPLUS_MOVEDOWN");?>">
+	<img src="<?php echo $root;?>administrator/images/downarrow.png" width="16" height="16" border="0" alt="<?php echo JText::_("PAYPERDOWNLOADPLUS_MOVEDOWN");?>"/>
 	</a></span>
 
 	<?php
@@ -1307,10 +1306,11 @@ class WYSIWYGEditotVisualDataBind extends VisualDataBind
 			$data = substr($data, 0, $this->maxGridCellLength) . "...";
 		if($this->isEditLink == 1)
 		{
+		    JHtml::_('bootstrap.tooltip');
 			$gridToolTip = $this->gridToolTip;
 			if(!$gridToolTip)
-				$gridToolTip = JText::_("PAYPERDOWNLOADPLUS_HAGA_CLICK_PARA_EDITAR_53") . "::" . $data;
-			echo "<span class=\"editlinktip hasTip\" title=\"".htmlspecialchars($gridToolTip)."\">";
+				$gridToolTip = JText::_("PAYPERDOWNLOADPLUS_CLICKTOEDIT");
+			echo "<span class=\"editlinktip hasTooltip\" title=\"".htmlspecialchars($gridToolTip)."\">";
 			echo "<a href=\"javascript:void(0);\" onclick=\"return listItemTask('cb$rowNumber','{$this->linkTask}')\">";
 			echo htmlspecialchars($data);
 			echo "</a>";

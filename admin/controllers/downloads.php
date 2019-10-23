@@ -67,7 +67,7 @@ class DownloadsForm extends PPDForm
 			$bind->setEditToolTip(JText::_("PAYPERDOWNLOADPLUS_PAYER_EMAIL_DESC"));
 			$this->dataBindModel->addDataBind( $bind );
 
-			$bind = new ComboVisualDataBind('resource_id', JText::_('PAYPERDOWNLOADPLUS_RESOURCE_120'),
+			$bind = new ComboVisualDataBind('resource_id', JText::_('PAYPERDOWNLOADPLUS_RESOURCE'),
 				"#__payperdownloadplus_resource_licenses",
 				"resource_license_id", "resource_name");
 			$bind->showInGrid = true;

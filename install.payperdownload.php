@@ -37,46 +37,53 @@ class com_payperdownloadInstallerScript
 	 */
 	public function postflight($type, $parent)
 	{
-	    // remove files
+	    // enable plugins
 
-	    $files = array();
-	    $files[] = '/components/com_payperdownload/helpers/version.php';
-	    $files[] = '/administrator/components/com_payperdownload/install.payperdownload.php';
-	    $files[] = '/administrator/components/com_payperdownload/html/about.html.php';
-	    $files[] = '/administrator/components/com_payperdownload/extensions/plugins/payperdownloadplus/phocadownload/phocadownload.zip';
-	    $files[] = '/administrator/components/com_payperdownload/extensions/plugins/editors-xtd/paytoreadmore/paytoreadmore.png';
-	    $files[] = '/administrator/components/com_payperdownload/extensions/plugins/editors-xtd/paytoreadmore/paytoreadmore.css';
-	    $files[] = '/administrator/components/com_payperdownload/extensions/plugins/editors-xtd/paytoreadmore/en-GB.plg_editors_xtd_paytoreadmore.ini';
-	    $files[] = '/administrator/components/com_payperdownload/css/frontend.css';
-	    $files[] = '/administrator/components/com_payperdownload/css/stat.css';
-	    $files[] = '/administrator/components/com_payperdownload/controllers/about.php';
-	    $files[] = '/administrator/components/com_payperdownload/images/icon-48-phocadownload.png';
-	    $files[] = '/administrator/components/com_payperdownload/images/jd.png';
-	    $files[] = '/administrator/components/com_payperdownload/extensions/plugins/payperdownloadplus/kunena/kunena.jpg';
+	    $this->enableExtension('plugin', 'paytoreadmore', 'content');
+	    $this->enableExtension('plugin', 'paytoreadmore', 'editors-xtd');
+	    $this->enableExtension('plugin', 'content', 'payperdownloadplus');
+	    $this->enableExtension('plugin', 'menuitem', 'payperdownloadplus');
+	    $this->enableExtension('plugin', 'payperdownloadplus', 'system');
 
-	    $folders = array();
+	    if ($type == 'update') {
 
-	    foreach ($files as $file) {
-	        if (JFile::exists(JPATH_ROOT.$file) && !JFile::delete(JPATH_ROOT.$file)) {
-	            JFactory::getApplication()->enqueueMessage(JText::sprintf('COM_PAYPERDOWNLOAD_ERROR_DELETINGFILEFOLDER', $file), 'warning');
-	        }
+    	    // remove files
+
+    	    $files = array();
+
+    	    $files[] = '/components/com_payperdownload/helpers/version.php';
+    	    $files[] = '/components/com_payperdownload/views/pay/tmpl/default.xml.15';
+
+    	    $files[] = '/administrator/components/com_payperdownload/install.payperdownload.php';
+    	    $files[] = '/administrator/components/com_payperdownload/html/about.html.php';
+    	    $files[] = '/administrator/components/com_payperdownload/extensions/plugins/payperdownloadplus/phocadownload/phocadownload.zip';
+    	    $files[] = '/administrator/components/com_payperdownload/extensions/plugins/editors-xtd/paytoreadmore/paytoreadmore.png';
+    	    $files[] = '/administrator/components/com_payperdownload/extensions/plugins/editors-xtd/paytoreadmore/paytoreadmore.css';
+    	    $files[] = '/administrator/components/com_payperdownload/extensions/plugins/editors-xtd/paytoreadmore/en-GB.plg_editors_xtd_paytoreadmore.ini';
+    	    $files[] = '/administrator/components/com_payperdownload/css/frontend.css';
+    	    $files[] = '/administrator/components/com_payperdownload/css/stat.css';
+    	    $files[] = '/administrator/components/com_payperdownload/controllers/about.php';
+    	    $files[] = '/administrator/components/com_payperdownload/images/icon-48-phocadownload.png';
+    	    $files[] = '/administrator/components/com_payperdownload/images/jd.png';
+    	    $files[] = '/administrator/components/com_payperdownload/extensions/plugins/payperdownloadplus/kunena/kunena.jpg';
+
+    	    $files[] = '/language/en-GB/en-GB.com_payperdownload.sys.ini';
+    	    $files[] = '/language/es-ES/es-ES.com_payperdownload.sys.ini';
+
+    	    $folders = array();
+
+    	    foreach ($files as $file) {
+    	        if (JFile::exists(JPATH_ROOT.$file) && !JFile::delete(JPATH_ROOT.$file)) {
+    	            JFactory::getApplication()->enqueueMessage(JText::sprintf('COM_PAYPERDOWNLOAD_ERROR_DELETINGFILEFOLDER', $file), 'warning');
+    	        }
+    	    }
+
+    	    foreach ($folders as $folder) {
+    	        if (JFolder::exists(JPATH_ROOT.$folder) && !JFolder::delete(JPATH_ROOT.$folder)) {
+    	            JFactory::getApplication()->enqueueMessage(JText::sprintf('COM_PAYPERDOWNLOAD_ERROR_DELETINGFILEFOLDER', $folder), 'warning');
+    	        }
+    	    }
 	    }
-
-	    foreach ($folders as $folder) {
-	        if (JFolder::exists(JPATH_ROOT.$folder) && !JFolder::delete(JPATH_ROOT.$folder)) {
-	            JFactory::getApplication()->enqueueMessage(JText::sprintf('COM_PAYPERDOWNLOAD_ERROR_DELETINGFILEFOLDER', $folder), 'warning');
-	        }
-	    }
-
-		// enable plugins
-
-	    //if ($type == 'install') {
-	        $this->enableExtension('plugin', 'paytoreadmore', 'content');
-	        $this->enableExtension('plugin', 'paytoreadmore', 'editors-xtd');
-	        $this->enableExtension('plugin', 'content', 'payperdownloadplus');
-	        $this->enableExtension('plugin', 'menuitem', 'payperdownloadplus');
-	        $this->enableExtension('plugin', 'payperdownloadplus', 'system');
-	    //}
 
 	    return true;
 	}

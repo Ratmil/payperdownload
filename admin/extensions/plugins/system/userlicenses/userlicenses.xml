@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension type="plugin" version="3.6" group="system" method="upgrade">
+    <name>PLG_SYSTEM_USERLICENSES</name>
+	<author>Olivier Buisard</author>
+	<creationDate>09/13/2019</creationDate>
+	<copyright>Copyright (C) 2011 Simplify Your Web. All rights reserved.</copyright>
+	<license>GNU General Public License version 3 or later</license>
+	<authorEmail>olivier.buisard@simplifyyourweb.com</authorEmail>
+	<authorUrl>www.simplifyyourweb.com</authorUrl>
+    <version>6.2.0</version>
+    <description>PLG_SYSTEM_USERLICENSES_XML_DESCRIPTION</description>
+    <files>
+        <filename plugin="userlicenses">userlicenses.php</filename>
+        <filename plugin="userlicenses">index.html</filename>
+    </files>
+    <languages>
+        <language tag="de-DE">de-DE.plg_system_userlicenses.sys.ini</language>
+        <language tag="en-GB">en-GB.plg_system_userlicenses.sys.ini</language>
+        <language tag="es-ES">es-ES.plg_system_userlicenses.sys.ini</language>
+        <language tag="fr-FR">fr-FR.plg_system_userlicenses.sys.ini</language>
+        <language tag="nl-NL">nl-NL.plg_system_userlicenses.sys.ini</language>
+    </languages>
+<!--     <config> -->
+<!--     </config> -->
+</extension>

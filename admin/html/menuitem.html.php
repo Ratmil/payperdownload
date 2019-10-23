@@ -25,7 +25,7 @@ class MenuItemVisualDataBind extends VisualDataBind
 		parent::__construct($dataField, $displayName);
 		$this->useForFilter = false;
 		$this->useForTextSearch = false;
-		$this->firstItem = JText::_("PAYPERDOWNLOADPLUS_NONE");
+		$this->firstItem = JText::_("JNONE");
 	}
 
 	/**

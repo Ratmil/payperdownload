@@ -172,7 +172,8 @@ class ImageVisualDataBind extends VisualDataBind
 			return true;
 		}
 		//$userfile = JRequest::getVar($this->dataField . "_file", null, 'files', 'array' );
-		$userfile = $jinput->get($this->dataField . "_file", null, 'array');
+		$userfile = $jinput->files->get($this->dataField . "_file");
+
 		if ( !is_array($userfile) || $userfile['error'] || $userfile['size'] < 1 )
 		{
 			if($row->{$this->dataField} != null)

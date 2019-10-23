@@ -81,5 +81,11 @@ class CouponsForm extends PPDForm
 		}
 		return true;
 	}
+
+	function createToolbar($task, $option)
+	{
+	    JHTML::_('stylesheet', 'administrator/components/'. $option . '/css/backend.css');
+	    parent::createToolbar($task, $option);
+	}
 }
 ?>

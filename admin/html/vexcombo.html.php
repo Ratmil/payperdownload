@@ -33,7 +33,7 @@ class ExComboVisualDataBind extends VisualDataBind
 	function __construct($dataField, $displayName, $tableName, $keyField, $displayField)
 	{
 		parent::__construct($dataField, $displayName);
-		$this->firstItem = JText::_("PAYPERDOWNLOADPLUS_SELECT_54");
+		$this->firstItem = JText::_("PAYPERDOWNLOADPLUS_BOX_SELECT");
 		$this->displayField = $displayField;
 		$this->tableName = $tableName;
 		$this->keyField = $keyField;
@@ -236,7 +236,7 @@ class ExComboVisualDataBind extends VisualDataBind
 	    $option = JFactory::getApplication()->input->get("option");
 
 		echo "<script type=\"text/javascript\">";
-		echo "var cancel_text='" . JText::_("PAYPERDOWNLOADPLUS_CANCELAR_55", true) . "';";
+		echo "var cancel_text='" . JText::_("PAYPERDOWNLOADPLUS_CANCEL", true) . "';";
 		echo "</script>";
 
 		$scriptPath = "administrator/components/$option/js/";
@@ -260,7 +260,7 @@ class ExComboVisualDataBind extends VisualDataBind
 			$html .= "<input type=\"text\" name=\"$dataField" . "_search\" id=\"$dataField" . "_search\"
 				value=\"\" " .
 					$disabled . " />";
-			$html .= "<input type=\"button\" name=\"$dataField" . "_btn\" id=\"$dataField" . "_btn\" value=\"" . JText::_("PAYPERDOWNLOADPLUS_SEARCH_56") . "\" " .
+			$html .= "<input type=\"button\" name=\"$dataField" . "_btn\" id=\"$dataField" . "_btn\" value=\"" . JText::_("PAYPERDOWNLOADPLUS_SEARCH") . "\" " .
 				"onclick=\"excombo_search('" . addslashes($dataField) . "');\"" .
 				$disabled . "/>";
 			$html .= "<div id=\"$dataField" . "_values\" style=\"position:absolute;visibility:hidden;z-index:1000;border-width:1px;border-style:solid;background-color:#ffffff;\"></div>";
@@ -277,7 +277,7 @@ class ExComboVisualDataBind extends VisualDataBind
 	    $option = JFactory::getApplication()->input->get("option");
 
 		echo "<script type=\"text/javascript\">";
-		echo "var cancel_text='" . JText::_("PAYPERDOWNLOADPLUS_CANCELAR_57", true) . "';";
+		echo "var cancel_text='" . JText::_("PAYPERDOWNLOADPLUS_CANCEL", true) . "';";
 		echo "</script>";
 
 		$scriptPath = "administrator/components/$option/js/";
@@ -303,7 +303,7 @@ class ExComboVisualDataBind extends VisualDataBind
 				value=\"\" " .
 					$disabled . " />";
 			$html .= "<input type=\"button\" name=\"$dataField" . "_btn\" id=\"$dataField" . "_btn\" value=\"" .
-				htmlspecialchars(JText::_("PAYPERDOWNLOADPLUS_SEARCH_58")) . "\" " .
+				htmlspecialchars(JText::_("PAYPERDOWNLOADPLUS_SEARCH")) . "\" " .
 				"onclick=\"excombo_search('" . addslashes($dataField) . "');\"" .
 				$disabled . "/>";
 			$html .= "<div id=\"$dataField" . "_values\" style=\"position:absolute;visibility:hidden;z-index:1000;border-width:1px;border-style:solid;background-color:#ffffff;\"></div>";
@@ -320,7 +320,7 @@ class ExComboVisualDataBind extends VisualDataBind
 		$data = $row->{$this->dataField};
 		if(!$this->allowBlank && $data == "")
 		{
-			$row->setError(JText::_("PAYPERDOWNLOADPLUS_YOU_MUST_SELECT_THIS_FIELD__59") . $this->displayName);
+			$row->setError(JText::_("PAYPERDOWNLOADPLUS_YOU_MUST_SELECT_THIS_FIELD") . $this->displayName);
 			return false;
 		}
 		return true;
@@ -337,7 +337,7 @@ class ExComboVisualDataBind extends VisualDataBind
 		if(!$this->allowBlank)
 		{
 			$displayName = addslashes($this->displayName);
-			$errorText = JText::_("PAYPERDOWNLOADPLUS_YOU_MUST_SELECT_THIS_FIELD__60", true) . $displayName;
+			$errorText = JText::_("PAYPERDOWNLOADPLUS_YOU_MUST_SELECT_THIS_FIELD", true) . $displayName;
 			$javascript .= "var errmsg$dataField = '$errorText';\n";
 			$javascript .= "if($dataField.value == '')\n";
 			$javascript .= "{\n";

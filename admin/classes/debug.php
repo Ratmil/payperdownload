@@ -17,6 +17,9 @@ class PayPerDownloadPlusDebug
 	    $debug = $config->get('debug', false);
 
 	    if ($debug) {
+
+	        $debug_days = $config->get('debug_days', '1');
+
     		$db = JFactory::getDBO();
 
     		// Delete old debug texts
@@ -24,7 +27,7 @@ class PayPerDownloadPlusDebug
     		$query = $db->getQuery(true);
 
     		$query->delete($db->quoteName('#__payperdownloadplus_debug'));
-    		$query->where('TO_DAYS(NOW()) - TO_DAYS(' . $db->quoteName('debug_time') . ') > 1');
+    		$query->where('TO_DAYS(NOW()) - TO_DAYS(' . $db->quoteName('debug_time') . ') > ' . $db->quote($debug_days));
 
     		$db->setQuery($query);
 

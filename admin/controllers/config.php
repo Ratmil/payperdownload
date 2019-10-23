@@ -178,12 +178,12 @@ class ConfigForm extends PPDForm
 			$bind->setExtraDescription(JText::_("PAYPERDOWNLOADPLUS_GUEST_NOTIFICATION_EMAIL_TAGS"));
 			$this->dataBindModel->addDataBind( $bind );
 
-			$this->dataBindModel->newFieldSet("Backend", JText::_("PAYPERDOWNLOADPLUS_BACKEND_SETTINGS"));
+// 			$this->dataBindModel->newFieldSet("Backend", JText::_("PAYPERDOWNLOADPLUS_BACKEND_SETTINGS"));
 
-			$bind = new RadioVisualDataBind('show_hints', JText::_('PAYPERDOWNLOADPLUS_SHOW_HINTS'));
-			$bind->setEditToolTip(JText::_("PAYPERDOWNLOADPLUS_SHOW_HINTS_DESC"));
-			$bind->defaultValue = 1;
-			$this->dataBindModel->addDataBind( $bind );
+// 			$bind = new RadioVisualDataBind('show_hints', JText::_('PAYPERDOWNLOADPLUS_SHOW_HINTS'));
+// 			$bind->setEditToolTip(JText::_("PAYPERDOWNLOADPLUS_SHOW_HINTS_DESC"));
+// 			$bind->defaultValue = 1;
+// 			$this->dataBindModel->addDataBind( $bind );
 
 			$this->dataBindModel->newFieldSet("Frontend", JText::_("PAYPERDOWNLOADPLUS_FRONTEND_PANE"));
 
@@ -351,6 +351,7 @@ class ConfigForm extends PPDForm
 
 	function createToolbar($task, $option)
 	{
+	    JHTML::_('stylesheet', 'administrator/components/'. $option . '/css/backend.css');
 		JToolBarHelper::title( $this->toolbarTitle, $this->toolbarIcon );
 		JToolBarHelper::apply();
 

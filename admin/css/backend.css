@@ -58,6 +58,20 @@
 	color: #aaa;
 }
 
+.alert.alert-hint {	
+	background-color: #cfe6e9;
+	color: #08434c;
+	border: 1px solid #bcdce1;
+}
+
+.alert .alert-heading {
+	text-transform: capitalize;
+}
+
+.alert.alert-hint .alert-heading {
+	color: #08434c;
+}
+
 /* info page */
 
 #content .icon a {

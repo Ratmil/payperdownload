@@ -14,6 +14,21 @@ jimport('joomla.event.plugin');
 class plgPayperDownloadPlusJDownload extends JPlugin
 {
     protected $autoloadLanguage = true;
+    static $jdownloads_version;
+
+    static function getJDownloadsVersion()
+    {
+        if (!isset(self::$jdownloads_version)) {
+            self::$jdownloads_version = strval(simplexml_load_file(JPATH_ADMINISTRATOR . '/components/com_jdownloads/jdownloads.xml')->version);
+        }
+
+        return self::$jdownloads_version;
+    }
+
+    static function isNewVersion()
+    {
+        return version_compare(self::getJDownloadsVersion(), '3.9.0', 'ge');
+    }
 
 	function onIsActive(&$plugins)
 	{
@@ -73,10 +88,17 @@ class plgPayperDownloadPlusJDownload extends JPlugin
 
 		$query = $db->getQuery(true);
 
-		$query->select($db->quoteName('file_id', 'id'));
-		$query->select($db->quoteName('file_title', 'title'));
-		$query->from($db->quoteName('#__jdownloads_files'));
-		$query->where($db->quoteName('cat_id') . ' = ' . (int)$cat_id);
+		if (self::isNewVersion()) {
+		    $query->select($db->quoteName('id'));
+		    $query->select($db->quoteName('title'));
+		    $query->from($db->quoteName('#__jdownloads_files'));
+		    $query->where($db->quoteName('catid') . ' = ' . (int)$cat_id);
+		} else {
+    		$query->select($db->quoteName('file_id', 'id'));
+    		$query->select($db->quoteName('file_title', 'title'));
+    		$query->from($db->quoteName('#__jdownloads_files'));
+    		$query->where($db->quoteName('cat_id') . ' = ' . (int)$cat_id);
+		}
 
 		$db->setQuery($query);
 
@@ -169,10 +191,17 @@ class plgPayperDownloadPlusJDownload extends JPlugin
 
 			    $query = $db->getQuery(true);
 
-			    $query->select($db->quoteName('file_id'));
-			    $query->select($db->quoteName('file_title', 'title'));
-			    $query->from($db->quoteName('#__jdownloads_files'));
-			    $query->where($db->quoteName('file_id') . ' = ' . $resourceId);
+			    if (self::isNewVersion()) {
+			        $query->select($db->quoteName('id'));
+			        $query->select($db->quoteName('title'));
+			        $query->from($db->quoteName('#__jdownloads_files'));
+			        $query->where($db->quoteName('id') . ' = ' . $resourceId);
+			    } else {
+    			    $query->select($db->quoteName('file_id'));
+    			    $query->select($db->quoteName('file_title', 'title'));
+    			    $query->from($db->quoteName('#__jdownloads_files'));
+    			    $query->where($db->quoteName('file_id') . ' = ' . $resourceId);
+			    }
 
 			    $db->setQuery($query);
 
@@ -227,9 +256,15 @@ class plgPayperDownloadPlusJDownload extends JPlugin
 
 		$query = $db->getQuery(true);
 
-		$query->select($db->quoteName('cat_id'));
-		$query->from($db->quoteName('#__jdownloads_files'));
-		$query->where($db->quoteName('file_id') . ' = ' . (int)$id);
+		if (self::isNewVersion()) {
+		    $query->select($db->quoteName('catid'));
+		    $query->from($db->quoteName('#__jdownloads_files'));
+		    $query->where($db->quoteName('id') . ' = ' . (int)$id);
+		} else {
+		    $query->select($db->quoteName('cat_id'));
+		    $query->from($db->quoteName('#__jdownloads_files'));
+		    $query->where($db->quoteName('file_id') . ' = ' . (int)$id);
+		}
 
 		$db->setQuery($query);
 
@@ -411,10 +446,17 @@ class plgPayperDownloadPlusJDownload extends JPlugin
 
 		    $query = $db->getQuery(true);
 
-		    $query->select($db->quoteName('file_id'));
-		    $query->select($db->quoteName('file_title', 'title'));
-		    $query->from($db->quoteName('#__jdownloads_files'));
-		    $query->where($db->quoteName('cat_id') . ' = ' . $x);
+		    if (self::isNewVersion()) {
+		        $query->select($db->quoteName('id'));
+		        $query->select($db->quoteName('title'));
+		        $query->from($db->quoteName('#__jdownloads_files'));
+		        $query->where($db->quoteName('catid') . ' = ' . $x);
+		    } else {
+		        $query->select($db->quoteName('file_id'));
+		        $query->select($db->quoteName('file_title', 'title'));
+		        $query->from($db->quoteName('#__jdownloads_files'));
+		        $query->where($db->quoteName('cat_id') . ' = ' . $x);
+		    }
 
 		    $db->setQuery($query);
 
@@ -462,9 +504,15 @@ class plgPayperDownloadPlusJDownload extends JPlugin
 
 		$query = $db->getQuery(true);
 
-		$query->select($db->quoteName('cat_id'));
-		$query->from($db->quoteName('#__jdownloads_files'));
-		$query->where($db->quoteName('file_id') . ' = ' . (int)$downloads[0]);
+		if (self::isNewVersion()) {
+		    $query->select($db->quoteName('catid'));
+		    $query->from($db->quoteName('#__jdownloads_files'));
+		    $query->where($db->quoteName('id') . ' = ' . (int)$downloads[0]);
+		} else {
+		    $query->select($db->quoteName('cat_id'));
+		    $query->from($db->quoteName('#__jdownloads_files'));
+		    $query->where($db->quoteName('file_id') . ' = ' . (int)$downloads[0]);
+		}
 
 		$db->setQuery($query);
 

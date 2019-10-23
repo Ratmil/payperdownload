@@ -81,13 +81,13 @@ class OrdersForm extends PPDForm
 			$bind->gridToolTip = JText::_("PAYPERDOWNLOADPLUS_CLICK_TO_VIEW_102");
 			$this->dataBindModel->addDataBind( $bind );
 
-			$bind = new ExComboVisualDataBind('user_id', JText::_('PAYPERDOWNLOADPLUS_USER_103'),
+			$bind = new ExComboVisualDataBind('user_id', JText::_('PAYPERDOWNLOADPLUS_USER'),
 				'#__users', 'id', 'name');
 			$bind->setColumnWidth(10);
 			$bind->allowBlank = true;
 			$bind->useForFilter = false;
 			$bind->disabled = true;
-			$bind->setEditToolTip(JText::_("PAYPERDOWNLOADPLUS_JOOMLA_USER_104"));
+			$bind->setEditToolTip(JText::_("PAYPERDOWNLOADPLUS_JOOMLA_USER"));
 			$this->dataBindModel->addDataBind( $bind );
 
 			$bind = new VisualDataBind('user_email', JText::_('PAYPERDOWNLOADPLUS_PAYER_EMAIL'));
@@ -104,7 +104,7 @@ class OrdersForm extends PPDForm
 			$bind->setEditToolTip(JText::_("PAYPERDOWNLOADPLUS_PAYMENT_RECEIVER_EMAIL_DESC"));
 			$this->dataBindModel->addDataBind( $bind );
 
-			$bind = new ComboVisualDataBind('license_id', JText::_('PAYPERDOWNLOADPLUS_LICENSE_105'),
+			$bind = new ComboVisualDataBind('license_id', JText::_('PAYPERDOWNLOADPLUS_LICENSE'),
 				'#__payperdownloadplus_licenses', 'license_id', 'license_name');
 			$bind->setColumnWidth(10);
 			$bind->allowBlank = true;
@@ -133,20 +133,20 @@ class OrdersForm extends PPDForm
 			$bind->setEditToolTip(JText::_("PAYPERDOWNLOADPLUS_PAYMENT_AFFILIATED_USER_DESC"));
 			$this->dataBindModel->addDataBind( $bind );
 
-			$bind = new VisualDataBind('amount', JText::_('PAYPERDOWNLOADPLUS_AMOUNT_107'));
+			$bind = new VisualDataBind('amount', JText::_('PAYPERDOWNLOADPLUS_AMOUNT'));
 			$bind->allowBlank = true;
 			$bind->setColumnWidth(5);
 			$bind->disabled = true;
 			$this->dataBindModel->addDataBind( $bind );
 
-			$bind = new VisualDataBind('fee', JText::_('PAYPERDOWNLOADPLUS_FEE_108'));
+			$bind = new VisualDataBind('fee', JText::_('PAYPERDOWNLOADPLUS_FEE'));
 			$bind->allowBlank = true;
 			$bind->setColumnWidth(5);
 			$bind->showInGrid = true;
 			$bind->disabled = true;
 			$this->dataBindModel->addDataBind( $bind );
 
-			$bind = new VisualDataBind('currency', JText::_('PAYPERDOWNLOADPLUS_CURRENCY_109'));
+			$bind = new VisualDataBind('currency', JText::_('PAYPERDOWNLOADPLUS_CURRENCY'));
 			$bind->allowBlank = true;
 			$bind->setColumnWidth(5);
 			$bind->showInGrid = true;

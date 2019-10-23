@@ -15,3 +15,4 @@ DROP TABLE IF EXISTS #__payperdownloadplus_payments;
 DROP TABLE IF EXISTS #__payperdownloadplus_last_time_check;
 DROP TABLE IF EXISTS #__payperdownloadplus_debug;
 DROP TABLE IF EXISTS #__payperdownloadplus_user_balance;
+DROP TABLE IF EXISTS #__payperdownloadplus_currencies;

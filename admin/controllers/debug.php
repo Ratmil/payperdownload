@@ -29,6 +29,14 @@ class DebugForm extends PPDForm
 		$this->formTitle = JText::_('PAYPERDOWNLOADPLUS_DEBUG');
 		$this->toolbarTitle = JText::_('COM_PAYPERDOWNLOAD_DEBUG_TITLE');
 		$this->toolbarIcon = 'wrench';
+		$this->registerTask('wipeout');
+
+		$config = JComponentHelper::getParams('com_payperdownload');
+		if (!$config->get('debug', false)) {
+		    JFactory::getApplication()->enqueueMessage(JText::_('COM_PAYPERDOWNLOAD_DEBUG_WARNING_MESSAGE'), 'warning');
+		} else {
+		    JFactory::getApplication()->enqueueMessage(JText::sprintf('COM_PAYPERDOWNLOAD_DEBUG_INFO_MESSAGE', $config->get('debug_days', '1')), 'info');
+		}
 	}
 
 	/**
@@ -60,7 +68,30 @@ class DebugForm extends PPDForm
 
 	function createToolbar($task, $option)
 	{
+	    JHTML::_('stylesheet', 'administrator/components/'. $option . '/css/backend.css');
+
 		JToolBarHelper::title( $this->toolbarTitle, $this->toolbarIcon );
+
+		JToolBarHelper::custom('wipeout', 'trash', '', JText::_("JCLEAR"), false);
+	}
+
+	function wipeout()
+	{
+	    $db = JFactory::getDBO();
+
+	    $query = $db->getQuery(true);
+
+	    $query->delete($db->quoteName('#__payperdownloadplus_debug'));
+
+	    $db->setQuery($query);
+
+	    try {
+	        $db->execute();
+	    } catch (RuntimeException $e) {
+            // could not delete records
+	    }
+
+	    $this->redirectToList();
 	}
 }
 ?>

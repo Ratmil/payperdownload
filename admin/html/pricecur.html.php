@@ -59,10 +59,11 @@ class PriceCurrencyVisualDataBind extends VisualDataBind
 			$data = substr($data, 0, $this->maxGridCellLength) . "...";
 		if($this->isEditLink == 1)
 		{
+		    JHtml::_('bootstrap.tooltip');
 			$gridToolTip = $this->gridToolTip;
 			if(!$gridToolTip)
-				$gridToolTip = JText::_("PAYPERDOWNLOADPLUS_CLICK_TO_EDIT_33") . "::" . $data;
-			echo "<span class=\"editlinktip hasTip\" title=\"".htmlspecialchars($gridToolTip)."\">";
+				$gridToolTip = JText::_("PAYPERDOWNLOADPLUS_CLICKTOEDIT");
+			echo "<span class=\"editlinktip hasTooltip\" title=\"".htmlspecialchars($gridToolTip)."\">";
 			echo "<a href=\"javascript:void(0);\" onclick=\"return listItemTask('cb$rowNumber','{$this->linkTask}')\">";
 			echo htmlspecialchars($data);
 			echo "</a>";
@@ -74,13 +75,45 @@ class PriceCurrencyVisualDataBind extends VisualDataBind
 		}
 	}
 
-	function renderCurrenciesCombo($value = "USD")
+	function renderCurrenciesCombo($value = '')
 	{
+	    if (empty($value)) { // when new
+	        $config = JComponentHelper::getParams('com_payperdownload');
+	        $value = $config->get('default_currency', 'USD');
+	    }
+
+	    $db = JFactory::getDBO();
+
+	    $query = $db->getQuery(true);
+
+	    //$query->select('DISTINCT iso');
+	    $fields = $db->quoteName(array('iso', 'currency'));
+	    $fields[0] = 'DISTINCT ' . $fields[0]; // prepend distinct to the first quoted field
+	    $query->select($fields);
+	    $query->from($db->quoteName('#__payperdownloadplus_currencies'));
+	    $query->where($db->quoteName('iso') . ' <> ' . $db->quote('-'));
+	    $query->order($db->quoteName('iso') . ' ASC'); // because when translated, currency order has no meaning
+
+	    $db->setQuery($query);
+
+	    $results = null;
+	    try {
+	        //$currencies = $db->loadColumn();
+	        $results = $db->loadAssocList('iso');
+
+	        $currencies = array();
+	        foreach ($results as $result) {
+	            $currencies[] = $result['iso'];
+	        }
+	    } catch (RuntimeException $e) {
+	        $currencies = array("USD",
+	            "AUD", "BRL", "CAD", "CZK", "DKK",
+	            "EUR", "HKD", "HUF", "ILS", "JPY", "MYR", "MXN", "NOK", "PHP", "PLN",
+	            "GBP", "SGD", "SEK", "CHF", "TWD", "THB", "RUB");
+	    }
+
 		$dataField = $this->currency_field;
-		$currencies = array("USD",
-			"AUD", "BRL", "CAD", "CZK", "DKK",
-			"EUR", "HKD", "HUF", "ILS", "JPY", "MYR", "MXN", "NOK", "PHP", "PLN",
-			"GBP", "SGD", "SEK", "CHF", "TWD", "THB", "RUB");
+
 		$html = "<select name=\"$dataField\" id=\"$dataField\">";
 		foreach($currencies as $currency)
 		{
@@ -88,7 +121,17 @@ class PriceCurrencyVisualDataBind extends VisualDataBind
 			if($value == $currency)
 				$selected = "selected";
 			$html .= "<option value=\"" . htmlspecialchars($currency) . "\" $selected>";
-			$html .= htmlspecialchars(JText::_("CURRENCY_" . $currency) . " (" . $currency . ")");
+
+			$translated_currency = JText::_("CURRENCY_" . $currency);
+			if (substr($translated_currency, 0, 3) === 'CUR') { // there is no currency starting with CUR
+			    if (is_null($results)) {
+			        $translated_currency = $currency;
+			    } else {
+			        $translated_currency = ucwords($results[$currency]['currency']);
+			    }
+			}
+
+			$html .= htmlspecialchars($translated_currency . " (" . $currency . ")");
 			$html .= "</option>";
 		}
 		$html .= "</select>";

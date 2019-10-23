@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form>
+	<fieldset addfieldpath="/administrator/components/com_payperdownload/jfields">
+	    <field name="license_id" type="text" readonly="true" class="readonly" default="0" 
+	    	description="JGLOBAL_FIELD_ID_DESC" />
+	    
+	    <field name="license_name" class="input-xxlarge input-large-text" size="40" required="true" 
+	    	label="COM_PAYPERDOWNLOAD_FORM_LBL_LICENSE_LICENSE_NAME" 
+	    	description="COM_PAYPERDOWNLOAD_FORM_DESC_LICENSE_LICENSE_NAME" />
+	    	
+	    <field name="member_title" required="true" 
+	    	label="COM_PAYPERDOWNLOAD_FORM_LBL_LICENSE_MEMBER_TITLE" 
+	    	description="COM_PAYPERDOWNLOAD_FORM_DESC_LICENSE_MEMBER_TITLE" />
+	    	
+	    <field name="expiration" default="0"
+	    	label="COM_PAYPERDOWNLOAD_FORM_LBL_LICENSE_EXPIRATION" 
+	    	description="COM_PAYPERDOWNLOAD_FORM_DESC_LICENSE_EXPIRATION" />
+	    	
+	    <field name="price" required="true" 
+	    	label="COM_PAYPERDOWNLOAD_FORM_LBL_LICENSE_PRICE" 
+	    	description="COM_PAYPERDOWNLOAD_FORM_DESC_LICENSE_PRICE" />
+	    	
+	    <field name="currency_code" type="currencies" 
+	    	label="COM_PAYPERDOWNLOAD_FORM_LBL_LICENSE_CURRENCY_CODE" 
+	    	description="COM_PAYPERDOWNLOAD_FORM_DESC_LICENSE_CURRENCY_CODE" />
+	    
+	    <field name="level" filter="integer" default="0"
+	    	label="COM_PAYPERDOWNLOAD_FORM_LBL_LICENSE_LEVEL" 
+	    	description="COM_PAYPERDOWNLOAD_FORM_DESC_LICENSE_LEVEL" />
+	    	
+	    <field name="max_download" filter="integer" default="0" 
+	    	label="COM_PAYPERDOWNLOAD_FORM_LBL_LICENSE_MAXDOWNLOAD" 
+	    	description="COM_PAYPERDOWNLOAD_FORM_DESC_LICENSE_MAXDOWNLOAD" />
+	    	
+	    <field name="aup" type="text" filter="integer" default="0" 
+	    	label="COM_PAYPERDOWNLOAD_FORM_LBL_LICENSE_AUP" 
+	    	description="COM_PAYPERDOWNLOAD_FORM_DESC_LICENSE_AUP"  />
+	    
+	    <field name="enabled" type="radio" default="0" class="btn-group btn-group-yesno"
+			label="COM_PAYPERDOWNLOAD_FORM_LBL_LICENSE_ENABLED"
+			description="COM_PAYPERDOWNLOAD_FORM_DESC_LICENSE_ENABLED">
+			<option value="0">JNO</option>
+			<option value="1">JYES</option>
+		</field>
+	    
+		<field name="renew" default="0" type="list" 
+	    	label="COM_PAYPERDOWNLOAD_FORM_LBL_LICENSE_RENEW" 
+	    	description="COM_PAYPERDOWNLOAD_FORM_DESC_LICENSE_RENEW">
+				<option value="0">COM_PAYPERDOWNLOADPLUS_VALUE_ALWAYS_ALLOWED</option>
+				<option value="1">COM_PAYPERDOWNLOADPLUS_VALUE_IF_NOT_ACTIVE</option>
+				<option value="2">COM_PAYPERDOWNLOADPLUS_VALUE_NEVER</option>
+	    </field>
+	    
+	    <field name="description" editor="|" buttons="true" filter="JComponentHelper::filterText" type="editor" 
+	    	label="COM_PAYPERDOWNLOAD_FORM_LBL_LICENSE_DESCRIPTION" 
+	    	description="COM_PAYPERDOWNLOAD_FORM_DESC_LICENSE_DESCRIPTION" />
+	    	
+	    <field name="thankyou_text" editor="|" buttons="true" filter="JComponentHelper::filterText" hide="readmore,pagebreak" type="editor" 
+	    	label="COM_PAYPERDOWNLOAD_FORM_LBL_LICENSE_THANKYOUTEXT" 
+	    	description="COM_PAYPERDOWNLOAD_FORM_DESC_LICENSE_THANKYOUTEXT" />
+	    	
+	    <field name="license_image" directory="" type="media" 
+	    	label="COM_PAYPERDOWNLOAD_FORM_LBL_LICENSE_LICENSE_IMAGE" 
+	    	description="COM_PAYPERDOWNLOAD_FORM_DESC_LICENSE_LICENSE_IMAGE" />
+	    	
+	    <field name="user_group" type="usergroup" required="true" 
+	    	label="COM_PAYPERDOWNLOAD_FORM_LBL_LICENSE_USER_GROUP" 
+	    	description="COM_PAYPERDOWNLOAD_FORM_DESC_LICENSE_USER_GROUP" />
+    	
+<!--     <field name="created_by" type="createdby" default="0" label="COM_PAYPERDOWNLOAD_FORM_LBL_LICENSE_CREATED_BY" description="COM_PAYPERDOWNLOAD_FORM_DESC_LICENSE_CREATED_BY" hint="COM_PAYPERDOWNLOAD_FORM_LBL_LICENSE_CREATED_BY"/> -->
+<!--     <field name="version_note" type="text" label="JGLOBAL_FIELD_VERSION_NOTE_LABEL" description="JGLOBAL_FIELD_VERSION_NOTE_DESC" class="inputbox" size="45" labelclass="control-label"/> -->
+	</fieldset>
+</form>

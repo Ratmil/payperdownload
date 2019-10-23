@@ -451,8 +451,8 @@ class PayPerDownloadModelPayResource extends JModelLegacy
 		    PayPerDownloadPlusDebug::debug("Failed database query - createDownloadLink");
 		}
 
-		$secret_word = $this->getRandom($resource_id . $resource_id);
-		$random_value = $this->getRandom($resource_id);
+		$secret_word = $this->getRandom();
+		$random_value = $this->getRandom();
 
 		$query->clear();
 
@@ -881,13 +881,13 @@ class PayPerDownloadModelPayResource extends JModelLegacy
 		return false;
 	}
 
-	function getRandom($seed)
+	function getRandom()
 	{
-		$characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'; 
-		$randomString = ''; 
+		$characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+		$randomString = '';
 		for($i = 0; $i < 30; $i++){
-			$index = mt_rand(0, strlen($characters) - 1); 
-        	$randomString .= $characters[$index]; 
+			$index = mt_rand(0, strlen($characters) - 1);
+        	$randomString .= $characters[$index];
 		}
 		return $randomString;
 	}

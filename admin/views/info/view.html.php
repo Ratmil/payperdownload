@@ -6,6 +6,8 @@
 
 defined('_JEXEC') or die;
 
+define ('SERVER_REMOTE_URI', 'https://updates.simplifyyourweb.com/free/payperdownload/');
+
 // import Joomla view library
 jimport('joomla.application.component.view');
 
@@ -35,9 +37,28 @@ class PayPerDownloadViewInfo extends JViewLegacy
 		$config = JComponentHelper::getParams('com_payperdownload');
 		$this->debug = $config->get('debug', false);
 
+		// extended plugins
+
+		$model = $this->getModel('info');
+		$this->extended_plugins = $model->getExtendedPlugins();
+
 		// installed extension version
 
 		$this->extension_version = strval(simplexml_load_file(JPATH_ADMINISTRATOR . '/components/com_payperdownload/payperdownload.xml')->version);
+
+		// available version
+
+		$HTTPClient = new JHttp();
+
+		$this->version_array = '';
+		try {
+		    $response = $HTTPClient->get(SERVER_REMOTE_URI.'com_payperdownload.json')->body;
+		    if ($response) {
+		        $this->version_array = json_decode($response, true);
+		    }
+		} catch(Exception $e) {
+		    // ignore error
+		}
 
 		// license information
 

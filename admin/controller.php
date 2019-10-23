@@ -26,7 +26,7 @@ class PayPerDownloadController extends JControllerLegacy
 
         // While moving to all MVC
         $view = $input->get('view', 'info');
-        if ($view === 'info') {
+        if ($view === 'info' || $view === 'licenses' || $view === 'license') {
             $input->set('view', $view);
         } else {
             $task = $input->get('task', '');

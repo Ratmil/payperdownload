@@ -6,10 +6,14 @@
 	<creationDate>November 2011</creationDate>
 	<copyright>(c) 2009 Ratmil Torres</copyright>
 	<license>GNU General Public License version 2 or later; see LICENSE.txt</license>
-	<version>6.0.0</version>
+	<version>6.1.0</version>
 	<description></description>
 	<languages>
+		<language tag="de-DE">de-DE.plg_content_paytoreadmore.ini</language>
 		<language tag="en-GB">en-GB.plg_content_paytoreadmore.ini</language>
+		<language tag="es-ES">es-ES.plg_content_paytoreadmore.ini</language>
+		<language tag="fr-FR">fr-FR.plg_content_paytoreadmore.ini</language>
+		<language tag="nl-NL">nl-NL.plg_content_paytoreadmore.ini</language>
 	</languages>
 	<files>
 		<filename plugin="paytoreadmore">paytoreadmore.php</filename>

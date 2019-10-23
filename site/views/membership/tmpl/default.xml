@@ -5,7 +5,6 @@
 			<![CDATA[PAYPERDOWNLOADPLUS_MEMBERSHIP_LAYOUT_DESC]]>
 		</message>
 	</layout>
-		<name>PAYPERDOWNLOADPLUS_MEMBERSHIP_LAYOUT</name>
-		<description>PAYPERDOWNLOADPLUS_MEMBERSHIP_LAYOUT_DESC</description>
-		
+	<!-- <name>PAYPERDOWNLOADPLUS_MEMBERSHIP_LAYOUT</name> -->
+	<!-- <description>PAYPERDOWNLOADPLUS_MEMBERSHIP_LAYOUT_DESC</description> -->
 </metadata>

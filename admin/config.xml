@@ -1,17 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <config> 
-	<fieldset name="integration" label="JGLOBAL_INTEGRATION_LABEL">
+	<fieldset name="integration" label="JGLOBAL_INTEGRATION_LABEL" addfieldpath="/administrator/components/com_payperdownload/jfields">
 		<field name="debug" type="radio" default="0" class="btn-group" 
 			label="PAYPERDOWNLOADPLUS_DEBUG" 
 			description="COM_PAYPERDOWNLOAD_FIELD_DEBUG_DESC">
 			<option value="0">JNO</option>
 			<option value="1">JYES</option>
 		</field>
+		<field name="debug_days" type="text" filter="integer" default="1" 
+			label="COM_PAYPERDOWNLOAD_FIELD_DEBUGDAYS" 
+			description="COM_PAYPERDOWNLOAD_FIELD_DEBUGDAYS_DESC" />
+		<field name="show_hints" type="radio" default="1" class="btn-group" 
+			label="PAYPERDOWNLOADPLUS_SHOW_HINTS" 
+			description="PAYPERDOWNLOADPLUS_SHOW_HINTS_DESC">
+			<option value="0">JNO</option>
+			<option value="1">JYES</option>
+		</field>
+		<field name="default_currency" type="currencies" default="USD"
+	    	label="COM_PAYPERDOWNLOAD_FIELD_DEFAULT_CURRENCY_CODE" 
+	    	description="COM_PAYPERDOWNLOAD_FIELD_DEFAULT_CURRENCY_CODE_DESC" />
+	</fieldset>	
+	<!-- 
+	<fieldset name="shared" label="COM_PAYPERDOWNLOAD_SHAREDOPTIONS">
+		
 	</fieldset>
+	 -->
 	<fieldset name="permissions" label="JCONFIG_PERMISSIONS_LABEL" description="JCONFIG_PERMISSIONS_DESC">
 		<field name="rules" type="rules" label="JCONFIG_PERMISSIONS_LABEL" filter="rules" component="com_payperdownload" section="component">
-			<action name="core.admin" title="JACTION_ADMIN" description="JACTION_ADMIN_COMPONENT_DESC" />
-			<action name="core.manage" title="JACTION_MANAGE" description="JACTION_MANAGE_COMPONENT_DESC" />
+<!-- 			<action name="core.admin" title="JACTION_ADMIN" description="JACTION_ADMIN_COMPONENT_DESC" /> -->
+<!-- 			<action name="core.manage" title="JACTION_MANAGE" description="JACTION_MANAGE_COMPONENT_DESC" /> -->
 		</field>
 	</fieldset>
 </config>

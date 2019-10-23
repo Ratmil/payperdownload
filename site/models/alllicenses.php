@@ -13,6 +13,8 @@ class PayPerDownloadModelAlllicenses extends JModelLegacy
 {
 	function getAllLicenses($start, $limit)
 	{
+	    $params = JFactory::getApplication()->getParams();
+
 	    require_once(JPATH_COMPONENT.'/models/pay.php');
 
 	    require_once (JPATH_ADMINISTRATOR . "/components/com_payperdownload/classes/debug.php");
@@ -25,6 +27,9 @@ class PayPerDownloadModelAlllicenses extends JModelLegacy
 		$query = $db->getQuery(true);
 
 		$query->select($db->quoteName(array('license_id', 'member_title', 'license_name', 'level', 'price', 'currency_code', 'description', 'expiration', 'max_download')));
+		if ($params->get('all_show_lic_img', 0)) {
+		    $query->select($db->quoteName('license_image', 'image'));
+		}
 		$query->from($db->quoteName('#__payperdownloadplus_licenses'));
 		$query->where($db->quoteName('enabled') . ' = 1');
 
@@ -83,7 +88,13 @@ class PayPerDownloadModelAlllicenses extends JModelLegacy
 		            $license->discount_price = $paymodel->getDiscountLicense($license, (int)$user->id);
 		        else
 		            $license->discount_price = $license->price;
-		        $license->resources = $this->getLicenseResources($license);
+
+	            if ($params->get('all_include_resources', 0)) {
+	                $license->resources = $this->getLicenseResources($license);
+	            } else {
+	                $license->resources = array();
+	            }
+
 		        $license->canRenew = $this->canLicenseBeRenewed($license->license_id);
 		    }
 		} catch (RuntimeException $e) {
@@ -144,30 +155,6 @@ class PayPerDownloadModelAlllicenses extends JModelLegacy
 		return $count;
 	}
 
-	function getShowResources()
-	{
-	    require_once (JPATH_ADMINISTRATOR . "/components/com_payperdownload/classes/debug.php");
-	    PayPerDownloadPlusDebug::debug("Get show resources");
-
-	    $db = JFactory::getDBO();
-
-	    $query = $db->getQuery(true);
-
-	    $query->select($db->quoteName('showresources'));
-	    $query->from($db->quoteName('#__payperdownloadplus_config'));
-
-	    $db->setQuery($query, 0, 1);
-
-	    $show_resources = false;
-	    try {
-	        $show_resources = $db->loadResult();
-	    } catch (RuntimeException $e) {
-	        PayPerDownloadPlusDebug::debug("Failed database query - getShowResources");
-	    }
-
-		return $show_resources;
-	}
-
 	function getLicenseResources($license)
 	{
 	    require_once (JPATH_ADMINISTRATOR . "/components/com_payperdownload/classes/debug.php");
@@ -196,7 +183,7 @@ class PayPerDownloadModelAlllicenses extends JModelLegacy
 
 		    $db->setQuery($query);
 
-		    $resources = null;
+		    $resources = array();
 		    try {
 		        $resources = $db->loadObjectList();
 		    } catch (RuntimeException $e) {

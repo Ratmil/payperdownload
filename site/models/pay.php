@@ -237,11 +237,16 @@ class PayPerDownloadModelPay extends JModelLegacy
 		require_once (JPATH_ADMINISTRATOR . "/components/com_payperdownload/classes/debug.php");
 		PayPerDownloadPlusDebug::debug("Get license with id " . $licenseId);
 
+		$params = JFactory::getApplication()->getParams();
+
 		$db = JFactory::getDBO();
 
 		$query = $db->getQuery(true);
 
 		$query->select($db->quoteName(array('license_id', 'license_name', 'price', 'currency_code', 'description', 'notify_url', 'expiration', 'level', 'max_download', 'aup', 'user_group')));
+		if ($params->get('pay_show_lic_img', 0)) {
+		    $query->select($db->quoteName('license_image', 'image'));
+		}
 		$query->from($db->quoteName('#__payperdownloadplus_licenses'));
 		$query->where($db->quoteName('enabled') . ' <> 0');
 		$query->where($db->quoteName('license_id') . ' = ' . (int)$licenseId);
@@ -426,6 +431,8 @@ class PayPerDownloadModelPay extends JModelLegacy
 				    'fee',
 				    'currency'
 				);
+
+				// TODO missing receiver_email in columns
 
 			    $values = array(
 			        (int)$user_id,
@@ -734,11 +741,11 @@ class PayPerDownloadModelPay extends JModelLegacy
 
 	function getRandom()
 	{
-		$characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'; 
-		$randomString = ''; 
+		$characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+		$randomString = '';
 		for($i = 0; $i < 30; $i++){
-			$index = mt_rand(0, strlen($characters) - 1); 
-        	$randomString .= $characters[$index]; 
+			$index = mt_rand(0, strlen($characters) - 1);
+        	$randomString .= $characters[$index];
 		}
 		return $randomString;
 	}
@@ -1629,7 +1636,7 @@ class PayPerDownloadModelPay extends JModelLegacy
 		    if($this->cleanHtml($resource->payment_header) == "")
 		        $resource->payment_header = $this->getResourcePaymentHeader();
 		    if($this->cleanHtml($resource->payment_header) == "")
-		        $resource->payment_header = JText::_('PAYPERDOWNLOAD_PLUS_PAYRESOURCE_HEADER');
+		        $resource->payment_header = JText::_('PAYPERDOWNLOADPLUS_PAYRESOURCE_HEADER');
 		}
 
 		return $resource;
