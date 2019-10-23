@@ -51,11 +51,11 @@
 				<option value="2">COM_PAYPERDOWNLOADPLUS_VALUE_NEVER</option>
 	    </field>
 	    
-	    <field name="description" editor="|" buttons="true" filter="JComponentHelper::filterText" type="editor" 
+	    <field name="description" editor="|" buttons="true" hide="paytoreadmore" filter="JComponentHelper::filterText" type="editor" 
 	    	label="COM_PAYPERDOWNLOAD_FORM_LBL_LICENSE_DESCRIPTION" 
 	    	description="COM_PAYPERDOWNLOAD_FORM_DESC_LICENSE_DESCRIPTION" />
 	    	
-	    <field name="thankyou_text" editor="|" buttons="true" filter="JComponentHelper::filterText" hide="readmore,pagebreak" type="editor" 
+	    <field name="thankyou_text" editor="|" buttons="true" hide="readmore,pagebreak,paytoreadmore" filter="JComponentHelper::filterText" type="editor" 
 	    	label="COM_PAYPERDOWNLOAD_FORM_LBL_LICENSE_THANKYOUTEXT" 
 	    	description="COM_PAYPERDOWNLOAD_FORM_DESC_LICENSE_THANKYOUTEXT" />
 	    	
