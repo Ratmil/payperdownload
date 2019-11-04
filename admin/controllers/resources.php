@@ -198,7 +198,7 @@ class ResourcesForm extends PPDForm
 		}
 		foreach($properties as $property)
 		{
-		    $row->$property = JFactory::getApplication()->input->getWord($property);
+		    $row->$property = JFactory::getApplication()->input->getRaw($property);
 		}
 		return $row;
 	}
